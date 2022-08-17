@@ -1,6 +1,7 @@
 import logo from "./logo.svg";
 import "./App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, HashRouter, Routes, Route } from "react-router-dom";
+// import { HashRouter as Router } from "react-router-dom"
 import Login from "./pages/pages/Login";
 import Dashboard from "./pages/pages/Dashboard";
 import Header from "./pages/pages/Header";
@@ -12,7 +13,10 @@ import ViewOrder from "./pages/pages/ViewOrder";
 import MyProfile from "./pages/pages/MyProfile";
 
 function App() {
-  console.log("Window", window.location.pathname);
+  console.log("process.env.PUBLIC_URL", process.env.PUBLIC_URL);
+
+  console.log("process.env.PUBLIC_URL", window.location.pathname);
+
   useEffect(() => {
     {
       window.location.pathname == "/"
@@ -27,9 +31,10 @@ function App() {
 
   return (
     <>
-      <BrowserRouter>
+      <BrowserRouter basename={process.env.PUBLIC_URL}>
+        {/* <HashRouter> */}
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
         <Routes>
           <Route
@@ -44,7 +49,7 @@ function App() {
         </Routes>
         <Routes>
           <Route
-            path="/dashboard"
+            path="/"
             element={
               <>
                 <Header />
@@ -97,6 +102,7 @@ function App() {
             }
           />
         </Routes>
+        {/* </HashRouter> */}
       </BrowserRouter>
     </>
   );

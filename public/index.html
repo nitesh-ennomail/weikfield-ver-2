@@ -23,21 +23,18 @@
     <meta name="author" content="" />
     <title>Weikfield</title>
     <link
-      href="%PUBLIC_URL%/assets/vendor/bootstrap/css/bootstrap.min.css"
+      href="assets/vendor/bootstrap/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="assets/vendor/fontawesome/css/all.min.css" />
     <link
-      rel="stylesheet"
-      href="%PUBLIC_URL%/assets/vendor/fontawesome/css/all.min.css"
-    />
-    <link
-      href="%PUBLIC_URL%/assets/vendor/datatables/dataTables.bootstrap4.css"
+      href="assets/vendor/datatables/dataTables.bootstrap4.css"
       rel="stylesheet"
     />
-    <link href="%PUBLIC_URL%/assets/css/sb-admin.css" rel="stylesheet" />
-    <link href="%PUBLIC_URL%/assets/css/jquery-ui.css" rel="stylesheet" />
+    <link href="assets/css/sb-admin.css" rel="stylesheet" />
+    <link href="assets/css/jquery-ui.css" rel="stylesheet" />
     <link
-      href="%PUBLIC_URL%/assets/css/animate.css"
+      href="assets/css/animate.css"
       rel="stylesheet"
       type="text/css"
       media="all"
@@ -45,7 +42,7 @@
     <link
       rel="shortcut icon"
       type="image/ico"
-      href="%PUBLIC_URL%/assets/images/Weikfield-Logo.svg"
+      href="assets/images/Weikfield-Logo.svg"
     />
   </head>
 
@@ -63,21 +60,48 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
     <!-- Bootstrap core JavaScript-->
-    <script src="%PUBLIC_URL%/assets/vendor/jquery/jquery.min.js"></script>
-    <script src="%PUBLIC_URL%/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="%PUBLIC_URL%/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
-    <script src="%PUBLIC_URL%/assets/vendor/datatables/jquery.dataTables.js"></script>
-    <script src="%PUBLIC_URL%/assets/vendor/datatables/dataTables.bootstrap4.js"></script>
-    <script src="%PUBLIC_URL%/assets/js/sb-admin.min.js"></script>
-    <script src="%PUBLIC_URL%/assets/js/sb-admin-datatables.min.js"></script>
+    <script src="assets/vendor/jquery/jquery.min.js"></script>
+    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <script src="assets/vendor/datatables/jquery.dataTables.js"></script>
+    <script src="assets/vendor/datatables/dataTables.bootstrap4.js"></script>
+    <script src="assets/js/sb-admin.min.js"></script>
+    <script src="assets/js/sb-admin-datatables.min.js"></script>
 
-    <script
-      type="text/javascript"
-      src="%PUBLIC_URL%/assets/js/loader.js"
-    ></script>
+    <script type="text/javascript" src="assets/js/loader.js"></script>
     <script>
       $('[data-tooltip="tooltip"]').tooltip();
     </script>
+
+    <script type="text/javascript">
+      // Single Page Apps for GitHub Pages
+      // MIT License
+      // https://github.com/rafgraph/spa-github-pages
+      // This script checks to see if a redirect is present in the query string,
+      // converts it back into the correct url and adds it to the
+      // browser's history using window.history.replaceState(...),
+      // which won't cause the browser to attempt to load the new url.
+      // When the single page app is loaded further down in this file,
+      // the correct url will be waiting in the browser's history for
+      // the single page app to route accordingly.
+      (function (l) {
+        if (l.search[1] === "/") {
+          var decoded = l.search
+            .slice(1)
+            .split("&")
+            .map(function (s) {
+              return s.replace(/~and~/g, "&");
+            })
+            .join("?");
+          window.history.replaceState(
+            null,
+            null,
+            l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      })(window.location);
+    </script>
+
     <script>
       $(document).ready(function () {
         $("#dataTables1").dataTable({
@@ -111,7 +135,7 @@
         });
       });
     </script>
-    <script src="%PUBLIC_URL%/assets/js/jquery-ui.js"></script>
+    <script src="assets/js/jquery-ui.js"></script>
     <!-- Code injected by live-server -->
     <script type="text/javascript">
       // <![CDATA[  <-- For SVG support

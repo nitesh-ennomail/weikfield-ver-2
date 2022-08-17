@@ -40,7 +40,7 @@ const Header = () => {
                 <i className="fa fa-fw fa-dashboard"></i>
                 <span className="nav-link-text">Dashboard</span>
               </a> */}
-            <Link className="nav-link" to="/dashboard">
+            <Link className="nav-link" to="/">
               <i className="fa fa-fw fa-dashboard"></i>
               <span className="nav-link-text"> Dashboard</span>
             </Link>

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 const Dashboard = () => {
   let navigate = useNavigate();
@@ -329,7 +329,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-
+      {/* {console.log("public url: ", process.env.PUBLIC_URL)} */}
       <div
         className="modal bd-example-modal-lg fade"
         id="vieworderpop"
