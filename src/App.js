@@ -34,7 +34,7 @@ function App() {
       <BrowserRouter basename={process.env.PUBLIC_URL}>
         {/* <HashRouter> */}
         <Routes>
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
         </Routes>
         <Routes>
           <Route
@@ -49,7 +49,7 @@ function App() {
         </Routes>
         <Routes>
           <Route
-            path="/"
+            path="/dashboard"
             element={
               <>
                 <Header />
