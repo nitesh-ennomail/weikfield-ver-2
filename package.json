@@ -1,5 +1,5 @@
 {
-  "name": "html-to-react",
+  "name": "wikifield",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -13,6 +13,9 @@
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "startbootstrap-sb-admin": "^7.0.5",
+    "react-snapshot": "^1.3.0",
+    "react-helmet": "^6.1.0",
+    "styled-components": "^5.3.6",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -41,8 +44,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "gh-pages": "^4.0.0"
   }
 }
