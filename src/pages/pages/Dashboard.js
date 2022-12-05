@@ -1,11 +1,80 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import {
+	selectedProduct,
+	setProducts,
+} from "../../redux/actions/productActions";
+
 const Dashboard = () => {
-	let navigate = useNavigate();
+	const navigate = useNavigate();
+	const products = useSelector((state) => state.allProducts.products);
+	const [data, setData] = useState([]);
+	const productDetails = useSelector(
+		(state) => state.allProducts.selectedProduct
+	);
+
+	const dispatch = useDispatch();
+
+	const fetchProduct = async () => {
+		const response = await axios
+			.get("https://fakestoreapi.com/products")
+			// .get("https://fakestoreapi.com/products?limit=10")
+			.catch((err) => {
+				console.log(err);
+			});
+		console.log("response", response);
+		dispatch(setProducts(response.data));
+		setData(response.data);
+	};
+
+	useEffect(() => {
+		fetchProduct();
+	}, []);
+
+	const getProductDetails = async (item) => {
+		const response = await axios
+			.get(`https://fakestoreapi.com/products/${item.id}`)
+			.catch((err) => {
+				console.log(err);
+			});
+		// console.log("response details", response.data);
+		dispatch(selectedProduct(response.data));
+	};
+
 	return (
 		<>
 			<Helmet title="Dashboard" />
+
+			{/* <div className="container">
+				<div className="row">
+					{products &&
+						products.map((item, index) => (
+							<div
+								key={index}
+								onClick={() => getProductDetails(item)}
+								className="col-6"
+								style={{ border: "2px solid #eee", textAlign: "center" }}>
+								{item.title}
+								<br />
+								<img src={item.image} height="120px" width="100px" />
+								<h2>
+									<a
+										href="#vieworderpop"
+										data-toggle="modal"
+										data-tooltip="tooltip"
+										title="View Order">
+										2022200001
+									</a>
+									{item.price}
+								</h2>
+							</div>
+						))}
+				</div>
+			</div> */}
+
 			<div className="content-wrapper">
 				<div className="container-fluid">
 					<div className="row">
@@ -87,232 +156,88 @@ const Dashboard = () => {
 							</div>
 							<div className="card border-0 rounded-0 mb-3">
 								<div className="card-body">
-									<div className="table-responsive">
-										<table
-											className="table table-bordered"
-											id="dataTable"
-											width="100%"
-											cellSpacing="0">
-											<thead>
-												<tr>
-													<th>Order No</th>
-													<th>Order Date</th>
-													<th>Distributor Name</th>
-													<th>Order Qty</th>
-													<th>Order Amount</th>
-													<th>Invoice Qty</th>
-													<th>Invoice Amount</th>
-													<th style={{ minWidth: "120px" }}>Status</th>
-													<th>ERP Ref No.</th>
-												</tr>
-											</thead>
-											<tfoot>
-												<tr>
-													<th>Order No</th>
-													<th>Order Date</th>
-													<th>Distributor Name</th>
-													<th>Order Qty</th>
-													<th>Order Amount</th>
-													<th>Invoice Qty</th>
-													<th>Invoice Amount</th>
-													<th>Status</th>
-													<th>ERP Ref No.</th>
-												</tr>
-											</tfoot>
-											<tbody>
-												<tr>
-													<td>
-														<a
-															href="#vieworderpop"
-															data-toggle="modal"
-															data-tooltip="tooltip"
-															title="View Order">
-															2022200001
-														</a>
-													</td>
-													<td>08/02/2022</td>
-													<td>Gautam Foods</td>
-													<td>11</td>
-													<td>25257.25</td>
-													<td>5</td>
-													<td>25257.25</td>
-													<td>Waiting for approval</td>
-													<td>11021</td>
-												</tr>
-												<tr>
-													<td>
-														<a
-															href="#vieworderpop"
-															data-toggle="modal"
-															data-tooltip="tooltip"
-															title="View Order">
-															2022200002
-														</a>
-													</td>
-													<td>09/02/2022</td>
-													<td>Gautam Foods</td>
-													<td>15</td>
-													<td>14525.25</td>
-													<td>4</td>
-													<td>14525.25</td>
-													<td>Waiting for approval</td>
-													<td>00122</td>
-												</tr>
-												<tr>
-													<td>
-														<a
-															href="#vieworderpop"
-															data-toggle="modal"
-															data-tooltip="tooltip"
-															title="View Order">
-															2022200003
-														</a>
-													</td>
-													<td>10/02/2022</td>
-													<td>Gautam Foods</td>
-													<td>18</td>
-													<td>36521.25</td>
-													<td>1</td>
-													<td>36521.25</td>
-													<td>Waiting for approval</td>
-													<td>00123</td>
-												</tr>
-												<tr>
-													<td>
-														<a
-															href="#vieworderpop"
-															data-toggle="modal"
-															data-tooltip="tooltip"
-															title="View Order">
-															2022200004
-														</a>
-													</td>
-													<td>11/02/2022</td>
-													<td>Gautam Foods</td>
-													<td>22</td>
-													<td>12458.29</td>
-													<td>3</td>
-													<td>12458.29</td>
-													<td>Waiting for approval</td>
-													<td>00124</td>
-												</tr>
-												<tr>
-													<td>
-														<a
-															href="#vieworderpop"
-															data-toggle="modal"
-															data-tooltip="tooltip"
-															title="View Order">
-															2022200005
-														</a>
-													</td>
-													<td>12/02/2022</td>
-													<td>Gautam Foods</td>
-													<td>12</td>
-													<td>15624.32</td>
-													<td>6</td>
-													<td>15624.32</td>
-													<td>Waiting for approval</td>
-													<td>00125</td>
-												</tr>
-												<tr>
-													<td>
-														<a
-															href="#vieworderpop"
-															data-toggle="modal"
-															data-tooltip="tooltip"
-															title="View Order">
-															2022200006
-														</a>
-													</td>
-													<td>13/02/2022</td>
-													<td>SA Enterproses</td>
-													<td>15</td>
-													<td>19852.12</td>
-													<td>8</td>
-													<td>19852.12</td>
-													<td>Approved</td>
-													<td>00126</td>
-												</tr>
-												<tr>
-													<td>
-														<a
-															href="#vieworderpop"
-															data-toggle="modal"
-															data-tooltip="tooltip"
-															title="View Order">
-															2022200007
-														</a>
-													</td>
-													<td>14/02/2022</td>
-													<td>SA Enterproses</td>
-													<td>10</td>
-													<td>11256.26</td>
-													<td>2</td>
-													<td>11256.26</td>
-													<td>Approved</td>
-													<td>00127</td>
-												</tr>
-												<tr>
-													<td>
-														<a
-															href="#vieworderpop"
-															data-toggle="modal"
-															data-tooltip="tooltip"
-															title="View Order">
-															2022200008
-														</a>
-													</td>
-													<td>15/02/2022</td>
-													<td>SA Enterproses</td>
-													<td>25</td>
-													<td>17852.96</td>
-													<td>3</td>
-													<td>17852.96</td>
-													<td>Approved</td>
-													<td>00128</td>
-												</tr>
-												<tr>
-													<td>
-														<a
-															href="#vieworderpop"
-															data-toggle="modal"
-															data-tooltip="tooltip"
-															title="View Order">
-															2022200009
-														</a>
-													</td>
-													<td>16/02/2022</td>
-													<td>SA Enterproses</td>
-													<td>24</td>
-													<td>21458.11</td>
-													<td>5</td>
-													<td>21458.11</td>
-													<td>Approved</td>
-													<td>00129</td>
-												</tr>
-												<tr>
-													<td>
-														<a
-															href="#vieworderpop"
-															data-toggle="modal"
-															data-tooltip="tooltip"
-															title="View Order">
-															2022200010
-														</a>
-													</td>
-													<td>17/02/2022</td>
-													<td>SA Enterproses</td>
-													<td>13</td>
-													<td>25412.36</td>
-													<td>7</td>
-													<td>25412.36</td>
-													<td>Approved</td>
-													<td>00130</td>
-												</tr>
-											</tbody>
-										</table>
-									</div>
+									{products.length > 0 && (
+										<div className="table-responsive">
+											<table
+												className="table table-bordered"
+												id="dataTable"
+												width="100%"
+												cellSpacing="0">
+												<thead>
+													<tr>
+														<th>Order No</th>
+														<th>Order Date</th>
+														<th>Distributor Name</th>
+														<th>Order Qty</th>
+														<th>Order Amount</th>
+														<th>Invoice Qty</th>
+														<th>Invoice Amount</th>
+														<th style={{ minWidth: "120px" }}>Status</th>
+														<th>ERP Ref No.</th>
+													</tr>
+												</thead>
+												<tfoot>
+													<tr>
+														<th>Order No</th>
+														<th>Order Date</th>
+														<th>Distributor Name</th>
+														<th>Order Qty</th>
+														<th>Order Amount</th>
+														<th>Invoice Qty</th>
+														<th>Invoice Amount</th>
+														<th>Status</th>
+														<th>ERP Ref No.</th>
+													</tr>
+												</tfoot>
+												<tbody>
+													{products.map((item, i) => (
+														<tr key={i}>
+															<td onClick={() => getProductDetails(item)}>
+																<a
+																	href="#vieworderpop"
+																	data-toggle="modal"
+																	data-tooltip="tooltip"
+																	title="View Order">
+																	{`FG-${item.id}`}
+																</a>
+															</td>
+															<td>08/02/2022</td>
+															<td>Gautam Foods</td>
+															<td>11</td>
+															<td>25257.25</td>
+															<td>5</td>
+															<td>25257.25</td>
+															<td>Waiting for approval</td>
+															<td>11021</td>
+														</tr>
+													))}
+												</tbody>
+												{/* <tbody>
+													{products.map((item, index) => (
+														<tr key={index}>
+															<td>
+																<a
+																	href="#vieworderpop"
+																	data-toggle="modal"
+																	data-tooltip="tooltip"
+																	title="View Order">
+																	{item.id}
+																</a>
+															</td>
+															<td>08/02/2022</td>
+															<td>Gautam Foods</td>
+															<td>11</td>
+															<td>25257.25</td>
+															<td>5</td>
+															<td>25257.25</td>
+															<td>Waiting for approval</td>
+															<td>11021</td>
+														</tr>
+													))}
+												</tbody> */}
+											</table>
+										</div>
+									)}
 								</div>
 							</div>
 						</div>
@@ -345,7 +270,7 @@ const Dashboard = () => {
 							<div className="row bg-info-light m-0">
 								<div className="col-md-4">
 									<label className="font-weight-bold my-2">Order No:</label>
-									202220000214
+									202220000214 {productDetails.id}
 								</div>
 								<div className="col-md-4">
 									<label className="font-weight-bold my-2">Order Date:</label>
@@ -353,7 +278,7 @@ const Dashboard = () => {
 								</div>
 								<div className="col-md-4">
 									<label className="font-weight-bold my-2">Distributor:</label>
-									Gautam Foods
+									Gautam Foods{productDetails.title}
 								</div>
 							</div>
 							<div className="table-responsive">

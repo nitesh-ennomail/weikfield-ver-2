@@ -12,7 +12,6 @@ const ProductMaster = () => {
 						<div className="col-md-12">
 							<ol className="breadcrumb">
 								<li className="breadcrumb-item">
-									{" "}
 									<a href="Dashboard.html">Dashboard</a>{" "}
 								</li>
 								<li className="breadcrumb-item active">Product Master</li>

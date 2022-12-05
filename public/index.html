@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!--
+	<head>
+		<!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
       Only files inside the `public` folder can be referenced from the HTML.
@@ -10,46 +10,41 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <!-- <title>React App</title> -->
+		<!-- <title>React App</title> -->
 
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
-    <meta name="theme-color" content="#3dae2b" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <title>Weikfield</title>
-    <link
-      href="assets/vendor/bootstrap/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="assets/vendor/fontawesome/css/all.min.css" />
-    <link
-      href="assets/vendor/datatables/dataTables.bootstrap4.css"
-      rel="stylesheet"
-    />
-    <link href="assets/css/sb-admin.css" rel="stylesheet" />
-    <link href="assets/css/jquery-ui.css" rel="stylesheet" />
-    <link
-      href="assets/css/animate.css"
-      rel="stylesheet"
-      type="text/css"
-      media="all"
-    />
-    <link
-      rel="shortcut icon"
-      type="image/ico"
-      href="assets/images/Weikfield-Logo.svg"
-    />
-  </head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+		<meta name="theme-color" content="#3dae2b" />
+		<meta name="description" content="" />
+		<meta name="author" content="" />
+		<title>Weikfield</title>
+		<link
+			href="assets/vendor/bootstrap/css/bootstrap.min.css"
+			rel="stylesheet" />
+		<link rel="stylesheet" href="assets/vendor/fontawesome/css/all.min.css" />
+		<link
+			href="assets/vendor/datatables/dataTables.bootstrap4.css"
+			rel="stylesheet" />
+		<link href="assets/css/sb-admin.css" rel="stylesheet" />
+		<link href="assets/css/jquery-ui.css" rel="stylesheet" />
+		<link
+			href="assets/css/animate.css"
+			rel="stylesheet"
+			type="text/css"
+			media="all" />
+		<link
+			rel="shortcut icon"
+			type="image/ico"
+			href="assets/images/Weikfield-Logo.svg" />
+	</head>
 
-  <body class="bg-dark" id="page-top">
-    <!-- <noscript>You need to enable JavaScript to run this app.</noscript> -->
-    <div id="root"></div>
-    <!--
+	<body class="bg-dark" id="page-top">
+		<!-- <noscript>You need to enable JavaScript to run this app.</noscript> -->
+		<div id="root"></div>
+		<!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
 
@@ -59,134 +54,152 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-    <!-- Bootstrap core JavaScript-->
-    <script src="assets/vendor/jquery/jquery.min.js"></script>
-    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/vendor/jquery-easing/jquery.easing.min.js"></script>
-    <script src="assets/vendor/datatables/jquery.dataTables.js"></script>
-    <script src="assets/vendor/datatables/dataTables.bootstrap4.js"></script>
-    <script src="assets/js/sb-admin.min.js"></script>
-    <script src="assets/js/sb-admin-datatables.min.js"></script>
+		<!-- Bootstrap core JavaScript-->
+		<script src="assets/vendor/jquery/jquery.min.js"></script>
+		<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+		<script src="assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+		<script src="assets/vendor/datatables/jquery.dataTables.js"></script>
+		<script src="assets/vendor/datatables/dataTables.bootstrap4.js"></script>
+		<script src="assets/js/sb-admin.min.js"></script>
+		<script src="assets/js/sb-admin-datatables.min.js"></script>
 
-    <script type="text/javascript" src="assets/js/loader.js"></script>
-    <script>
-      $('[data-tooltip="tooltip"]').tooltip();
-    </script>
+		<script type="text/javascript" src="assets/js/loader.js"></script>
+		<script src="assets/js/jquery-ui.js"></script>
 
-    <script type="text/javascript">
-      // Single Page Apps for GitHub Pages
-      // MIT License
-      // https://github.com/rafgraph/spa-github-pages
-      // This script checks to see if a redirect is present in the query string,
-      // converts it back into the correct url and adds it to the
-      // browser's history using window.history.replaceState(...),
-      // which won't cause the browser to attempt to load the new url.
-      // When the single page app is loaded further down in this file,
-      // the correct url will be waiting in the browser's history for
-      // the single page app to route accordingly.
-      (function (l) {
-        if (l.search[1] === "/") {
-          var decoded = l.search
-            .slice(1)
-            .split("&")
-            .map(function (s) {
-              return s.replace(/~and~/g, "&");
-            })
-            .join("?");
-          window.history.replaceState(
-            null,
-            null,
-            l.pathname.slice(0, -1) + decoded + l.hash
-          );
-        }
-      })(window.location);
-    </script>
+		<script>
+			$('[data-tooltip="tooltip"]').tooltip();
+		</script>
 
-    <script>
-      $(document).ready(function () {
-        $("#dataTables1").dataTable({
-          ordering: false,
-          info: false,
-          searching: false,
-          lengthChange: false,
-          paging: false,
-        });
+		<script>
+			$(document).ready(function () {
+				$("#pagination").DataTable();
+			});
+			$(document).on("click", "#mainNav", function (o) {
+				$("#pagination").DataTable();
+			});
+		</script>
 
-        $(document).on("click", "#mainNav", function (o) {
-          $(".datepicker").datepicker({
-            changeMonth: true,
-            changeYear: true,
-          });
-        });
-        $(document).ready(function () {
-          $(".datepicker").datepicker({
-            changeMonth: true,
-            changeYear: true,
-          });
-        });
-        $(document).on("click", "#mainNav", function (o) {
-          var url = window.location.pathname,
-            urlRegExp = new RegExp(url.replace(/\/$/, "") + "$");
-          $(".nav-item a").each(function () {
-            if (urlRegExp.test(this.href.replace(/\/$/, ""))) {
-              $(this).parent("li").addClass("active");
-            }
-          });
-        });
-      });
-    </script>
-    <script src="assets/js/jquery-ui.js"></script>
-    <!-- Code injected by live-server -->
-    <script type="text/javascript">
-      // <![CDATA[  <-- For SVG support
-      if ("WebSocket" in window) {
-        (function () {
-          function refreshCSS() {
-            var sheets = [].slice.call(document.getElementsByTagName("link"));
-            var head = document.getElementsByTagName("head")[0];
-            for (var i = 0; i < sheets.length; ++i) {
-              var elem = sheets[i];
-              var parent = elem.parentElement || head;
-              parent.removeChild(elem);
-              var rel = elem.rel;
-              if (
-                (elem.href && typeof rel != "string") ||
-                rel.length == 0 ||
-                rel.toLowerCase() == "stylesheet"
-              ) {
-                var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, "");
-                elem.href =
-                  url +
-                  (url.indexOf("?") >= 0 ? "&" : "?") +
-                  "_cacheOverride=" +
-                  new Date().valueOf();
-              }
-              parent.appendChild(elem);
-            }
-          }
-          var protocol =
-            window.location.protocol === "http:" ? "ws://" : "wss://";
-          var address =
-            protocol + window.location.host + window.location.pathname + "/ws";
-          var socket = new WebSocket(address);
-          socket.onmessage = function (msg) {
-            if (msg.data == "reload") window.location.reload();
-            else if (msg.data == "refreshcss") refreshCSS();
-          };
-          if (
-            sessionStorage &&
-            !sessionStorage.getItem("IsThisFirstTime_Log_From_LiveServer")
-          ) {
-            console.log("Live reload enabled.");
-            sessionStorage.setItem("IsThisFirstTime_Log_From_LiveServer", true);
-          }
-        })();
-      } else {
-        console.error(
-          "Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading."
-        );
-      }
-      // ]]>
-    </script>
-  </body>
+		<script type="text/javascript">
+			// Single Page Apps for GitHub Pages
+			// MIT License
+			// https://github.com/rafgraph/spa-github-pages
+			// This script checks to see if a redirect is present in the query string,
+			// converts it back into the correct url and adds it to the
+			// browser's history using window.history.replaceState(...),
+			// which won't cause the browser to attempt to load the new url.
+			// When the single page app is loaded further down in this file,
+			// the correct url will be waiting in the browser's history for
+			// the single page app to route accordingly.
+			(function (l) {
+				if (l.search[1] === "/") {
+					var decoded = l.search
+						.slice(1)
+						.split("&")
+						.map(function (s) {
+							return s.replace(/~and~/g, "&");
+						})
+						.join("?");
+					window.history.replaceState(
+						null,
+						null,
+						l.pathname.slice(0, -1) + decoded + l.hash
+					);
+				}
+			})(window.location);
+		</script>
+
+		<script>
+			$(document).ready(function () {
+				var x = document.getElementById("dataTable").rows.length;
+				console.log("X", x);
+			});
+		</script>
+
+		<script>
+			$(document).ready(function () {
+				$("#dataTables1").dataTable({
+					ordering: false,
+					info: false,
+					searching: false,
+					lengthChange: false,
+					paging: false,
+				});
+
+				$(document).on("click", "#mainNav", function (o) {
+					$(".datepicker").datepicker({
+						changeMonth: true,
+						changeYear: true,
+					});
+				});
+				$(document).ready(function () {
+					$(".datepicker").datepicker({
+						changeMonth: true,
+						changeYear: true,
+					});
+				});
+				$(document).on("click", "#mainNav", function (o) {
+					var url = window.location.pathname,
+						urlRegExp = new RegExp(url.replace(/\/$/, "") + "$");
+					$(".nav-item a").each(function () {
+						if (urlRegExp.test(this.href.replace(/\/$/, ""))) {
+							$(this).parent("li").addClass("active");
+						}
+					});
+				});
+			});
+		</script>
+
+		<!-- Code injected by live-server -->
+		<!-- <script type="text/javascript">
+			// <![CDATA[  <-- For SVG support
+			if ("WebSocket" in window) {
+				(function () {
+					function refreshCSS() {
+						var sheets = [].slice.call(document.getElementsByTagName("link"));
+						var head = document.getElementsByTagName("head")[0];
+						for (var i = 0; i < sheets.length; ++i) {
+							var elem = sheets[i];
+							var parent = elem.parentElement || head;
+							parent.removeChild(elem);
+							var rel = elem.rel;
+							if (
+								(elem.href && typeof rel != "string") ||
+								rel.length == 0 ||
+								rel.toLowerCase() == "stylesheet"
+							) {
+								var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, "");
+								elem.href =
+									url +
+									(url.indexOf("?") >= 0 ? "&" : "?") +
+									"_cacheOverride=" +
+									new Date().valueOf();
+							}
+							parent.appendChild(elem);
+						}
+					}
+					var protocol =
+						window.location.protocol === "http:" ? "ws://" : "wss://";
+					var address =
+						protocol + window.location.host + window.location.pathname + "/ws";
+					var socket = new WebSocket(address);
+					socket.onmessage = function (msg) {
+						if (msg.data == "reload") window.location.reload();
+						else if (msg.data == "refreshcss") refreshCSS();
+					};
+					if (
+						sessionStorage &&
+						!sessionStorage.getItem("IsThisFirstTime_Log_From_LiveServer")
+					) {
+						console.log("Live reload enabled.");
+						sessionStorage.setItem("IsThisFirstTime_Log_From_LiveServer", true);
+					}
+				})();
+			} else {
+				console.error(
+					"Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading."
+				);
+			}
+			// ]]>
+		</script> -->
+	</body>
 </html>

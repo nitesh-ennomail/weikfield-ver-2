@@ -1,18 +1,12 @@
+import { click } from "@testing-library/user-event/dist/click";
 import React, { Component, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-const Header = ({ isActiveMenu }) => {
-	const { isActive, setIsActive } = useState(isActiveMenu);
+const Header = () => {
+	// const { isActive, setIsActive } = useState(isActiveMenu);
+	const click = () => {};
 	useEffect(() => {
-		console.log(
-			"window.location.pathname",
-
-			window.location.pathname
-		);
-
-		// return () => {
-		// 	second;
-		// };
+		click();
 	}, [window.location.pathname]);
 
 	return (
