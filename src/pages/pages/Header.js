@@ -129,9 +129,9 @@ const Header = () => {
 								</Link>
 							</li>
 							<li>
-								<a href="/">
+								<Link to="/logout">
 									<i className="fa fa-sign-out"></i> Logout
-								</a>
+								</Link>
 							</li>
 						</ul>
 					</li>

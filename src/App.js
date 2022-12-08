@@ -10,6 +10,7 @@ import DistributorMaster from "./pages/pages/DistributorMaster";
 import PlaceOrder from "./pages/pages/PlaceOrder";
 import ViewOrder from "./pages/pages/ViewOrder";
 import MyProfile from "./pages/pages/MyProfile";
+import Logout from "./pages/pages/Logout";
 
 function App() {
 	// console.log("process.env.PUBLIC_URL", process.env.PUBLIC_URL);
@@ -17,15 +18,14 @@ function App() {
 	// console.log("process.env.PUBLIC_URL", window.location.pathname);
 
 	useEffect(() => {
-		{
-			window.location.pathname == "/"
-				? document.body.classList.add("loginBG")
-				: document.body.classList.add(
-						"fixed-nav",
-						"sticky-footer",
-						"sidenav-toggled"
-				  );
-		}
+		window.location.pathname == "/"
+			? document.body.classList.add("loginBG")
+			: document.body.classList.add(
+					"fixed-nav",
+					"sticky-footer",
+					"sidenav-toggled"
+			  );
+		console.log("window.location.pathname", window.location.pathname);
 	}, [window.location.pathname]);
 
 	return (
@@ -92,6 +92,15 @@ function App() {
 							<>
 								<Header />
 								<MyProfile />
+							</>
+						}
+					/>
+
+					<Route
+						path="/logout"
+						element={
+							<>
+								<Logout />
 							</>
 						}
 					/>

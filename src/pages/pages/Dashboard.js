@@ -7,10 +7,13 @@ import {
 	selectedProduct,
 	setProducts,
 } from "../../redux/actions/productActions";
+import $ from "jquery";
 
 const Dashboard = () => {
 	const navigate = useNavigate();
 	const products = useSelector((state) => state.allProducts.products);
+	const userProfile = useSelector((state) => state.userProfile);
+
 	const [data, setData] = useState([]);
 	const productDetails = useSelector(
 		(state) => state.allProducts.selectedProduct
@@ -31,7 +34,11 @@ const Dashboard = () => {
 	};
 
 	useEffect(() => {
-		fetchProduct();
+		if (userProfile.userData !== "null") {
+			fetchProduct();
+		} else {
+			navigate("/");
+		}
 	}, []);
 
 	const getProductDetails = async (item) => {
