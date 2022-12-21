@@ -28,7 +28,6 @@ const Dashboard = () => {
 			.catch((err) => {
 				console.log(err);
 			});
-		console.log("response", response);
 		dispatch(setProducts(response.data));
 		setData(response.data);
 	};

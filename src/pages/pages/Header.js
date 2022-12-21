@@ -1,13 +1,30 @@
 import { click } from "@testing-library/user-event/dist/click";
 import React, { Component, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { sortMenuFunction } from "./utils/sortMenu";
+
+import { setMenu } from "../../redux/actions/menuAction";
 
 const Header = () => {
-	// const { isActive, setIsActive } = useState(isActiveMenu);
-	const click = () => {};
+	const dispatch = useDispatch();
+
+	const menus = useSelector((state) => state.menuData.menuData);
+	const { menu_details, profile_details } = menus[0].data;
+
 	useEffect(() => {
-		click();
-	}, [window.location.pathname]);
+		// sortMenuFunction(menu_details);
+		// console.log("ASDSADAS", sortMenuFunction(menu_details));
+		// sortMenuFunction(menu_details);
+		// dispatch(setMenu(menu_details));
+		// console.log("profile_details", profile_details[0]);
+		// {
+		// 	menu_details &&
+		// 		menu_details.sort((a, b) => {
+		// 			return a.menu_index - b.menu_index;
+		// 		});
+		// }
+	}, []);
 
 	return (
 		<nav
@@ -35,70 +52,28 @@ const Header = () => {
 					</li>
 				</ul>
 				<ul className="navbar-nav navbar-sidenav" id="exampleAccordion">
-					<li
-						className={`nav-item ${
-							window.location.pathname === "/dashboard" ? "active" : ""
-						}`}
-						data-toggle="tooltip"
-						data-placement="right"
-						title="Dashboard">
-						{/* <a className="nav-link">
-                <i className="fa fa-fw fa-dashboard"></i>
-                <span className="nav-link-text">Dashboard</span>
-              </a> */}
-						<Link className="nav-link" to="/dashboard">
-							<i className="fa fa-fw fa-dashboard"></i>
-							<span className="nav-link-text"> Dashboard</span>
-						</Link>
-					</li>
-					<li
-						className={`nav-item ${
-							window.location.pathname === "/product" ? "active" : ""
-						}`}
-						data-toggle="tooltip"
-						data-placement="right"
-						title="Product Master">
-						<Link className="nav-link" to="/product">
-							<i className="fa fa-fw fa-brands fa-product-hunt"></i>
-							<span className="nav-link-text"> Product Master</span>
-						</Link>
-					</li>
-					<li
-						className={`nav-item ${
-							window.location.pathname === "/distribution" ? "active" : ""
-						}`}
-						data-toggle="tooltip"
-						data-placement="right"
-						title="Distributor Master">
-						<Link className="nav-link" to="/distribution">
-							<i className="fa fa-fw fa-user-circle"></i>
-							<span className="nav-link-text"> Distributor Master</span>
-						</Link>
-					</li>
-					<li
-						className={`nav-item ${
-							window.location.pathname === "/placeorder" ? "active" : ""
-						}`}
-						data-toggle="tooltip"
-						data-placement="right"
-						title="Place Order">
-						<Link className="nav-link" to="/placeorder">
-							<i className="fa fa-fw fa-cart-plus"></i>
-							<span className="nav-link-text"> Place Order</span>
-						</Link>
-					</li>
-					<li
-						className={`nav-item ${
-							window.location.pathname === "/vieworder" ? "active" : ""
-						}`}
-						data-toggle="tooltip"
-						data-placement="right"
-						title="View Order">
-						<Link className="nav-link" to="/vieworder">
-							<i className="fa fa-fw fa-eye"></i>
-							<span className="nav-link-text"> View Order</span>
-						</Link>
-					</li>
+					{/* {console.log("employees - menu_details", menu)} */}
+					{menu_details &&
+						menu_details.map((item, index) => (
+							<li
+								key={index}
+								className={`nav-item ${
+									window.location.pathname === `${item.menu_href}`
+										? "active"
+										: ""
+								}`}
+								data-toggle="tooltip"
+								data-placement="right"
+								title={item.menu_display_name}>
+								<Link className="nav-link" to={item.menu_href}>
+									<i className={`fa fa-fw ${item.menu_icon}`}></i>
+									<span className="nav-link-text">
+										{" "}
+										{item.menu_display_name}
+									</span>
+								</Link>
+							</li>
+						))}
 				</ul>
 				<ul className="navbar-nav ml-auto">
 					<li className="nav-item dropdown profile_details_drop">
@@ -117,8 +92,9 @@ const Header = () => {
 									/>
 								</div>
 								<div className="user-name">
-									<p>Subhadeep Sen</p>
-									<span>S4140</span>
+									{/* <p>Subhadeep Sen</p> */}
+									<p>{profile_details[0].user_name}</p>
+									<span>{profile_details[0].user_id}</span>
 								</div>
 							</div>
 						</a>

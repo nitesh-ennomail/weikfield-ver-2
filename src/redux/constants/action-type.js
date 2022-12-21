@@ -5,4 +5,6 @@ export const ActionTypes = {
 
 	SET_USER_AUTH: "SET_USER_AUTH",
 	REMOVE_USER_AUTH: "REMOVE_USER_AUTH",
+
+	SET_MENU: "SET_MENU",
 };
