@@ -9,10 +9,14 @@ import {
 } from "../../redux/actions/productActions";
 import $ from "jquery";
 
+import ProductService from "../../axios/services/api/product";
+
 const Dashboard = () => {
 	const navigate = useNavigate();
 	const products = useSelector((state) => state.allProducts.products);
 	const userProfile = useSelector((state) => state.userProfile);
+	const menus = useSelector((state) => state.menuData.menuData);
+	const { alert_details } = menus[0].data;
 
 	const [data, setData] = useState([]);
 	const productDetails = useSelector(
@@ -22,33 +26,50 @@ const Dashboard = () => {
 	const dispatch = useDispatch();
 
 	const fetchProduct = async () => {
-		const response = await axios
-			.get("https://fakestoreapi.com/products")
-			// .get("https://fakestoreapi.com/products?limit=10")
-			.catch((err) => {
-				console.log(err);
-			});
-		dispatch(setProducts(response.data));
-		setData(response.data);
+		// const response = await axios
+		// 	.get("https://fakestoreapi.com/products")
+		// 	.catch((err) => {
+		// 		console.log(err);
+		// 	});
+		// dispatch(setProducts(response.data));
+		// setData(response.data);
+	};
+
+	const getProduct = async () => {
+		//AXIOS WRAPPER FOR API CALL
+		await ProductService.getProduct().then((response) => {
+			dispatch(setProducts(response));
+			setData(response);
+			console.log(response);
+		});
+		//AXIOS WRAPPER FOR API CALL
+	};
+
+	const getProductDetails = async (item) => {
+		//AXIOS WRAPPER FOR API CALL
+		await ProductService.getProductDetails(item).then((response) => {
+			dispatch(selectedProduct(response));
+		});
+		//AXIOS WRAPPER FOR API CALL
+	};
+
+	const addOrder = async (item) => {
+		//AXIOS WRAPPER FOR API CALL
+		await ProductService.addOrder(item).then((response) => {
+			alert(`New Message with id ${response.id} created!`);
+			console.log("submitted!", response);
+			// dispatch(selectedProduct(response));
+		});
+		//AXIOS WRAPPER FOR API CALL
 	};
 
 	useEffect(() => {
 		if (userProfile.userData !== "null") {
-			fetchProduct();
+			getProduct();
 		} else {
 			navigate("/");
 		}
 	}, []);
-
-	const getProductDetails = async (item) => {
-		const response = await axios
-			.get(`https://fakestoreapi.com/products/${item.id}`)
-			.catch((err) => {
-				console.log(err);
-			});
-		// console.log("response details", response.data);
-		dispatch(selectedProduct(response.data));
-	};
 
 	return (
 		<>
@@ -82,6 +103,8 @@ const Dashboard = () => {
 			</div> */}
 
 			<div className="content-wrapper">
+				<button onClick={addOrder}>click</button>
+
 				<div className="container-fluid">
 					<div className="row">
 						<div className="col-md-12">
@@ -98,6 +121,7 @@ const Dashboard = () => {
 								</button>
 								<h4 className="alert-heading">Alert message heading!</h4>
 								<p className="mb-0">
+									{alert_details[0].alert_message}
 									Alert message description text will come here
 								</p>
 							</div>
