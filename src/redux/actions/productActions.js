@@ -13,3 +13,10 @@ export const selectedProduct = (product) => {
 		payload: product,
 	};
 };
+
+export const addProduct = (product) => {
+	return {
+		type: ActionTypes.ADD_PRODUCT,
+		payload: product,
+	};
+};
