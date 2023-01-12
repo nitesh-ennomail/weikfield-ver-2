@@ -7,6 +7,7 @@
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.2.0",
+    "bootstrap": "^5.2.3",
     "jquery": "^3.6.0",
     "react": "^18.2.0",
     "react-datepicker": "^4.8.0",
@@ -19,6 +20,8 @@
     "redux": "^4.2.0",
     "startbootstrap-sb-admin": "^7.0.5",
     "styled-components": "^5.3.6",
+    "sweetalert2": "^11.6.16",
+    "sweetalert2-react-content": "^5.0.7",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
