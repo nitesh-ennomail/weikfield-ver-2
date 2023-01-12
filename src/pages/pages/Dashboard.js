@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { useDispatch, useSelector } from "react-redux";
@@ -24,6 +24,15 @@ const Dashboard = () => {
 	);
 
 	const dispatch = useDispatch();
+
+	useLayoutEffect(() => {
+		document.body.classList.remove("loginBG");
+		document.body.classList.add(
+			"fixed-nav",
+			"sticky-footer",
+			"sidenav-toggled"
+		);
+	}, []);
 
 	const fetchProduct = async () => {
 		// const response = await axios

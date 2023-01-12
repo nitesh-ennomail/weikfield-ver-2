@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setUser } from "../../redux/actions/authActions";
@@ -14,16 +14,25 @@ const Login = () => {
 		dispatch(setUser({ id, password, userType }));
 	};
 
-	useEffect(() => {
-		window.location.pathname == "/"
-			? document.body.classList.add("loginBG")
-			: document.body.classList.add(
-					"fixed-nav",
-					"sticky-footer",
-					"sidenav-toggled"
-			  );
-		console.log("window.location.pathname", window.location.pathname);
-	}, [window.location.pathname]);
+	// useEffect(() => {
+	// 	window.location.pathname == "/"
+	// 		? document.body.classList.add("loginBG")
+	// 		: document.body.classList.add(
+	// 				"fixed-nav",
+	// 				"sticky-footer",
+	// 				"sidenav-toggled"
+	// 		  );
+	// 	console.log("window.location.pathname", window.location.pathname);
+	// }, [window.location.pathname]);
+
+	useLayoutEffect(() => {
+		document.body.classList.add("loginBG");
+		document.body.classList.remove(
+			"fixed-nav",
+			"sticky-footer",
+			"sidenav-toggled"
+		);
+	}, []);
 
 	useEffect(() => {
 		console.log("constants userType", userProfile.userData);

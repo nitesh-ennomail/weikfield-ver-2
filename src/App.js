@@ -21,19 +21,7 @@ function App() {
 					"sticky-footer",
 					"sidenav-toggled"
 			  );
-		console.log("window.location.pathname", window.location.pathname);
-
-		return () => {
-			window.location.pathname == "/"
-				? document.body.classList.add("loginBG")
-				: document.body.classList.add(
-						"fixed-nav",
-						"sticky-footer",
-						"sidenav-toggled"
-				  );
-			console.log("window.location.pathname", window.location.pathname);
-		};
-	}, [window.location.pathname]);
+	}, []);
 
 	return (
 		<>
