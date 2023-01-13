@@ -10,9 +10,11 @@ import {
 import $ from "jquery";
 
 import ProductService from "../../axios/services/api/product";
+import { ColorRing } from "react-loader-spinner";
 
 const Dashboard = () => {
 	const navigate = useNavigate();
+	const [loading, setLoading] = useState(false);
 	const products = useSelector((state) => state.allProducts.products);
 	const userProfile = useSelector((state) => state.userProfile);
 	const menus = useSelector((state) => state.menuData.menuData);
@@ -46,10 +48,12 @@ const Dashboard = () => {
 
 	const getProduct = async () => {
 		//AXIOS WRAPPER FOR API CALL
+		setLoading(true);
 		await ProductService.getProduct().then((response) => {
 			dispatch(setProducts(response));
 			setData(response);
 			console.log(response);
+			setLoading(false);
 		});
 		//AXIOS WRAPPER FOR API CALL
 	};
@@ -195,63 +199,81 @@ const Dashboard = () => {
 							</div>
 							<div className="card border-0 rounded-0 mb-3">
 								<div className="card-body">
-									{products.length > 0 && (
-										<div className="table-responsive">
-											<table
-												className="table table-bordered"
-												id="dataTable"
-												width="100%"
-												cellSpacing="0">
-												<thead>
-													<tr>
-														<th>Order No</th>
-														<th>Order Date</th>
-														<th>Distributor Name</th>
-														<th>Order Qty</th>
-														<th>Order Amount</th>
-														<th>Invoice Qty</th>
-														<th>Invoice Amount</th>
-														<th style={{ minWidth: "120px" }}>Status</th>
-														<th>ERP Ref No.</th>
-													</tr>
-												</thead>
-												<tfoot>
-													<tr>
-														<th>Order No</th>
-														<th>Order Date</th>
-														<th>Distributor Name</th>
-														<th>Order Qty</th>
-														<th>Order Amount</th>
-														<th>Invoice Qty</th>
-														<th>Invoice Amount</th>
-														<th>Status</th>
-														<th>ERP Ref No.</th>
-													</tr>
-												</tfoot>
-												<tbody>
-													{products.map((item, i) => (
-														<tr key={i}>
-															<td onClick={() => getProductDetails(item)}>
-																<a
-																	href="#vieworderpop"
-																	data-toggle="modal"
-																	data-tooltip="tooltip"
-																	title="View Order">
-																	{`FG-${item.id}`}
-																</a>
-															</td>
-															<td>08/02/2022</td>
-															<td>Gautam Foods</td>
-															<td>11</td>
-															<td>25257.25</td>
-															<td>5</td>
-															<td>25257.25</td>
-															<td>Waiting for approval</td>
-															<td>11021</td>
-														</tr>
-													))}
-												</tbody>
-												{/* <tbody>
+									{loading ? (
+										<ColorRing
+											visible={true}
+											height="80"
+											width="100%"
+											ariaLabel="blocks-loading"
+											wrapperStyle={{}}
+											wrapperClass="blocks-wrapper"
+											colors={[
+												"#e15b64",
+												"#f47e60",
+												"#f8b26a",
+												"#abbd81",
+												"#849b87",
+											]}
+										/>
+									) : (
+										<>
+											{products.length > 0 && (
+												<div className="table-responsive">
+													<table
+														className="table table-bordered"
+														id="dataTable"
+														width="100%"
+														cellSpacing="0">
+														<thead>
+															<tr>
+																<th>Order No</th>
+																<th>Order Date</th>
+																<th>Distributor Name</th>
+																<th>Order Qty</th>
+																<th>Order Amount</th>
+																<th>Invoice Qty</th>
+																<th>Invoice Amount</th>
+																<th style={{ minWidth: "120px" }}>Status</th>
+																<th>ERP Ref No.</th>
+															</tr>
+														</thead>
+														<tfoot>
+															<tr>
+																<th>Order No</th>
+																<th>Order Date</th>
+																<th>Distributor Name</th>
+																<th>Order Qty</th>
+																<th>Order Amount</th>
+																<th>Invoice Qty</th>
+																<th>Invoice Amount</th>
+																<th>Status</th>
+																<th>ERP Ref No.</th>
+															</tr>
+														</tfoot>
+														<tbody>
+															{products.map((item, i) => (
+																<tr key={i}>
+																	<td onClick={() => getProductDetails(item)}>
+																		<a
+																			href="#vieworderpop"
+																			data-toggle="modal"
+																			data-tooltip="tooltip"
+																			title="View Order">
+																			{`FG-${item.id}`}
+																		</a>
+																	</td>
+																	<td>08/02/2022</td>
+																	<td>Gautam Foods</td>
+																	<td>11</td>
+																	<td>25257.25</td>
+																	<td>5</td>
+																	<td>25257.25</td>
+																	<td>Waiting for approval</td>
+																	<td>11021</td>
+																</tr>
+															))}
+														</tbody>
+														{/* <tbody>
 													{products.map((item, index) => (
 														<tr key={index}>
 															<td>
@@ -274,8 +296,10 @@ const Dashboard = () => {
 														</tr>
 													))}
 												</tbody> */}
-											</table>
-										</div>
+													</table>
+												</div>
+											)}
+										</>
 									)}
 								</div>
 							</div>

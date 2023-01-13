@@ -9,21 +9,13 @@ const Login = () => {
 	const navigate = useNavigate();
 
 	const userProfile = useSelector((state) => state.userProfile);
+	const submitForm = (event) => {
+		let id = event.target[0].value;
+		let password = event.target[1].value;
+		let userType = "ADMIN";
 
-	const submitForm = ({ id = "123", password = "123", userType = "ADMIN" }) => {
 		dispatch(setUser({ id, password, userType }));
 	};
-
-	// useEffect(() => {
-	// 	window.location.pathname == "/"
-	// 		? document.body.classList.add("loginBG")
-	// 		: document.body.classList.add(
-	// 				"fixed-nav",
-	// 				"sticky-footer",
-	// 				"sidenav-toggled"
-	// 		  );
-	// 	console.log("window.location.pathname", window.location.pathname);
-	// }, [window.location.pathname]);
 
 	useLayoutEffect(() => {
 		document.body.classList.add("loginBG");
@@ -66,6 +58,7 @@ const Login = () => {
 								<div className="form-group">
 									<label htmlFor="InputUserid">Login ID</label>
 									<input
+										name="uname"
 										className="form-control"
 										id="InputUserid"
 										type="text"
@@ -77,6 +70,7 @@ const Login = () => {
 								<div className="form-group">
 									<label htmlFor="exampleInputPassword1">Password</label>
 									<input
+										name="pass"
 										className="form-control"
 										id="exampleInputPassword1"
 										type="password"
