@@ -11,6 +11,9 @@ import $ from "jquery";
 
 import ProductService from "../../axios/services/api/product";
 import { ColorRing } from "react-loader-spinner";
+import DashboardService from "../../axios/services/api/dashboard";
+import { setDashboard } from "../../redux/actions/dashboardAction";
+import { setMenu } from "../../redux/actions/menuAction";
 
 const Dashboard = () => {
 	const navigate = useNavigate();
@@ -18,7 +21,9 @@ const Dashboard = () => {
 	const products = useSelector((state) => state.allProducts.products);
 	const userProfile = useSelector((state) => state.userProfile);
 	const menus = useSelector((state) => state.menuData.menuData);
-	const { alert_details } = menus[0].data;
+
+	const dashboard = useSelector((state) => state.dashboard.dashboard);
+	const { alert_details, order_details } = dashboard;
 
 	const [data, setData] = useState([]);
 	const productDetails = useSelector(
@@ -35,16 +40,6 @@ const Dashboard = () => {
 			"sidenav-toggled"
 		);
 	}, []);
-
-	const fetchProduct = async () => {
-		// const response = await axios
-		// 	.get("https://fakestoreapi.com/products")
-		// 	.catch((err) => {
-		// 		console.log(err);
-		// 	});
-		// dispatch(setProducts(response.data));
-		// setData(response.data);
-	};
 
 	const getProduct = async () => {
 		//AXIOS WRAPPER FOR API CALL
@@ -76,9 +71,26 @@ const Dashboard = () => {
 		//AXIOS WRAPPER FOR API CALL
 	};
 
+	const getDashboard = async () => {
+		//AXIOS WRAPPER FOR API CALL
+		setLoading(true);
+		await DashboardService.getDashboardDetails(userProfile).then((response) => {
+			// dispatch(setProducts(response.data.order_details));
+			// dispatch(setMenu(response));
+
+			dispatch(setDashboard(response.data));
+
+			// setData(response);
+			console.log("response response ", response.data.order_details);
+			setLoading(false);
+		});
+		//AXIOS WRAPPER FOR API CALL
+	};
+
 	useEffect(() => {
-		if (userProfile.userData !== "null") {
-			getProduct();
+		if (userProfile.usertype !== "null") {
+			// getProduct();
+			getDashboard();
 		} else {
 			navigate("/");
 		}
@@ -116,7 +128,7 @@ const Dashboard = () => {
 			</div> */}
 
 			<div className="content-wrapper">
-				<button onClick={addOrder}>click</button>
+				{/* <button onClick={addOrder}>click</button> */}
 
 				<div className="container-fluid">
 					<div className="row">
@@ -134,7 +146,7 @@ const Dashboard = () => {
 								</button>
 								<h4 className="alert-heading">Alert message heading!</h4>
 								<p className="mb-0">
-									{alert_details[0].alert_message}
+									{alert_details.alert_message}
 									Alert message description text will come here
 								</p>
 							</div>
@@ -217,7 +229,7 @@ const Dashboard = () => {
 										/>
 									) : (
 										<>
-											{products.length > 0 && (
+											{order_details.length > 0 && (
 												<div className="table-responsive">
 													<table
 														className="table table-bordered"
@@ -228,7 +240,7 @@ const Dashboard = () => {
 															<tr>
 																<th>Order No</th>
 																<th>Order Date</th>
-																<th>Distributor Name</th>
+																<th>Customer Name</th>
 																<th>Order Qty</th>
 																<th>Order Amount</th>
 																<th>Invoice Qty</th>
@@ -241,7 +253,7 @@ const Dashboard = () => {
 															<tr>
 																<th>Order No</th>
 																<th>Order Date</th>
-																<th>Distributor Name</th>
+																<th>Customer Name</th>
 																<th>Order Qty</th>
 																<th>Order Amount</th>
 																<th>Invoice Qty</th>
@@ -251,7 +263,7 @@ const Dashboard = () => {
 															</tr>
 														</tfoot>
 														<tbody>
-															{products.map((item, i) => (
+															{order_details.map((item, i) => (
 																<tr key={i}>
 																	<td onClick={() => getProductDetails(item)}>
 																		<a
@@ -259,13 +271,13 @@ const Dashboard = () => {
 																			data-toggle="modal"
 																			data-tooltip="tooltip"
 																			title="View Order">
-																			{`FG-${item.id}`}
+																			{item.order_no}
 																		</a>
 																	</td>
-																	<td>08/02/2022</td>
-																	<td>Gautam Foods</td>
+																	<td>{item.order_date}</td>
+																	<td>{item.customer_name}</td>
 																	<td>11</td>
-																	<td>25257.25</td>
+																	<td>{item.order_amount}</td>
 																	<td>5</td>
 																	<td>25257.25</td>
 																	<td>Waiting for approval</td>

@@ -76,7 +76,7 @@ const initialState = {
 
 	// userData: userProfile ? JSON.parse(userProfile) : "null",
 };
-console.log("menuData", menuData);
+// console.log("menuData", menuData);
 export const menuReducer = (state = initialState, { type, payload }) => {
 	switch (type) {
 		case ActionTypes.SET_MENU:

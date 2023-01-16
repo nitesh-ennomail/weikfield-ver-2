@@ -6,25 +6,12 @@ import { sortMenuFunction } from "./utils/sortMenu";
 
 import { setMenu } from "../../redux/actions/menuAction";
 
-const Header = () => {
+const Header = (props) => {
 	const dispatch = useDispatch();
 
-	const menus = useSelector((state) => state.menuData.menuData);
-	const { menu_details, profile_details } = menus[0].data;
+	const dashboard = useSelector((state) => state.dashboard.dashboard);
 
-	useEffect(() => {
-		// sortMenuFunction(menu_details);
-		// console.log("ASDSADAS", sortMenuFunction(menu_details));
-		// sortMenuFunction(menu_details);
-		// dispatch(setMenu(menu_details));
-		// console.log("profile_details", profile_details[0]);
-		// {
-		// 	menu_details &&
-		// 		menu_details.sort((a, b) => {
-		// 			return a.menu_index - b.menu_index;
-		// 		});
-		// }
-	}, []);
+	const { menu_details, profile_details } = dashboard;
 
 	return (
 		<nav
@@ -92,7 +79,6 @@ const Header = () => {
 									/>
 								</div>
 								<div className="user-name">
-									{/* <p>Subhadeep Sen</p> */}
 									<p>{profile_details[0].user_name}</p>
 									<span>{profile_details[0].user_id}</span>
 								</div>

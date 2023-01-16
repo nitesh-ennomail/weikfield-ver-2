@@ -9,9 +9,27 @@ export const setUser = (userData) => {
 };
 
 export const removeUser = () => {
-	localStorage.removeItem("userProfile");
+	localStorage.removeItem("token");
+	localStorage.removeItem("usertype");
+
 	return {
 		type: ActionTypes.REMOVE_USER_AUTH,
 		payload: {},
+	};
+};
+
+export const setToken = (token) => {
+	localStorage.setItem("token", JSON.stringify(token));
+	return {
+		type: ActionTypes.SET_TOKEN,
+		payload: token,
+	};
+};
+
+export const setUserType = (usertype) => {
+	localStorage.setItem("usertype", JSON.stringify(usertype));
+	return {
+		type: ActionTypes.SET_USER_TYPE,
+		payload: usertype,
 	};
 };

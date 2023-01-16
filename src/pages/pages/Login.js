@@ -1,7 +1,12 @@
 import React, { useEffect, useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setUser } from "../../redux/actions/authActions";
+import AuthService from "../../axios/services/api/auth";
+import {
+	setToken,
+	setUserType,
+	setUser,
+} from "../../redux/actions/authActions";
 import { userType } from "../pages/constants/constants";
 
 const Login = () => {
@@ -9,12 +14,34 @@ const Login = () => {
 	const navigate = useNavigate();
 
 	const userProfile = useSelector((state) => state.userProfile);
+
+	// const submitForm = (event) => {
+	// 	let id = event.target[0].value;
+	// 	let password = event.target[1].value;
+	// 	let userType = "ADMIN";
+	// 	dispatch(setUser({ id, password, userType }));
+	// };
+
+	const authUser = async (data) => {
+		//AXIOS WRAPPER FOR API CALL
+		await AuthService.addUser(data).then((response) => {
+			dispatch(setToken(response.token));
+			AuthService.getUserType(response.token).then((resp) => {
+				console.log("usertype", resp.data[0].usertype);
+				dispatch(setUserType(resp.data[0].usertype));
+			});
+		});
+		//AXIOS WRAPPER FOR API CALL
+	};
+
 	const submitForm = (event) => {
-		let id = event.target[0].value;
+		event.preventDefault();
+		let username = event.target[0].value;
 		let password = event.target[1].value;
 		let userType = "ADMIN";
+		authUser({ username, password });
 
-		dispatch(setUser({ id, password, userType }));
+		// dispatch(setUser({ id, password, userType }));
 	};
 
 	useLayoutEffect(() => {
@@ -27,17 +54,15 @@ const Login = () => {
 	}, []);
 
 	useEffect(() => {
-		console.log("constants userType", userProfile.userData);
+		console.log("constants userType", userProfile.usertype);
 
-		if (userProfile && userProfile.userData.userType === userType.ADMIN) {
+		if (userProfile.usertype === userType.ADMIN) {
 			navigate("/dashboard");
-		} else if (
-			userProfile &&
-			userProfile.userData.userType === userType.DISTRIBUTOR
-		) {
-			navigate("/placeOrder");
+		} else if (userProfile.usertype === userType.DISTRIBUTOR) {
+			// navigate("/placeOrder");
+			navigate("/dashboard");
 		}
-	}, []);
+	}, [userProfile]);
 
 	return (
 		<div className="container-fluid">

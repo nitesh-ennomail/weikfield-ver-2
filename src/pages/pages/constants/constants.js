@@ -1,4 +1,4 @@
 export const userType = {
-	ADMIN: "ADMIN",
-	DISTRIBUTOR: "DISTRIBUTOR",
+	ADMIN: "admin",
+	DISTRIBUTOR: "distributor",
 };
