@@ -1,5 +1,13 @@
 import React, { Component, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { json, useNavigate } from "react-router-dom";
+import PlaceOrderService from "../../axios/services/api/placeOrder";
+import {
+	setFlavour,
+	setOrderDetails,
+	setOrderFilter,
+	setProductLine,
+} from "../../redux/actions/placeOrderAction";
 
 import {
 	addProduct,
@@ -8,6 +16,16 @@ import {
 
 const PlaceOrder = (props) => {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
+
+	const userProfile = useSelector((state) => state.userProfile);
+	const orderFilter = useSelector((state) => state.placeOrder.orderFilter);
+	const productLine = useSelector((state) => state.placeOrder.productLine);
+	const flavour = useSelector((state) => state.placeOrder.flavour);
+	const { flavour_details } = flavour;
+	const { product_line_details } = productLine;
+	const { distributor_details, brand_details } = orderFilter;
+
 	let cartTotal = 0;
 	const [input, setInput] = useState([]);
 	const productData = [
@@ -84,12 +102,96 @@ const PlaceOrder = (props) => {
 			qty: 1,
 		},
 	];
-	console.log("productData", productData);
 
 	const [orderData, setOrderData] = useState([]);
+	const [loading, setLoading] = useState(false);
+	const [selectedBrand, setSelectedBrand] = useState(null);
+	const [selectedFlavour, setSelectedFlavour] = useState(null);
+	const [selectedProductLine, setSelectedProductLine] = useState(null);
+
+	const [disableFilter, setDisableFilter] = useState(true);
+
+	const getOrderFilters = async () => {
+		//AXIOS WRAPPER FOR API CALL
+		setLoading(true);
+		await PlaceOrderService.getOrderFilters(userProfile).then((response) => {
+			dispatch(setOrderFilter(response.data));
+			setLoading(false);
+		});
+		//AXIOS WRAPPER FOR API CALL
+	};
+
+	const getOrderDetails = async (data) => {
+		// AXIOS WRAPPER FOR API CALL
+		{
+			data !== null ? (
+				<>
+					{
+						(setLoading(true),
+						await PlaceOrderService.getOrderDetails({ userProfile, data }).then(
+							(response) => {
+								dispatch(setOrderDetails(response.data));
+								setLoading(false);
+								setDisableFilter(false);
+							}
+						))
+					}
+				</>
+			) : (
+				setDisableFilter(true)
+			);
+		}
+		// AXIOS WRAPPER FOR API CALL
+	};
+
+	const getProductLine = async (brand) => {
+		// AXIOS WRAPPER FOR API CALL
+		setSelectedBrand(brand);
+		dispatch(setFlavour("null"));
+		dispatch(setProductLine("null"));
+		setLoading(true);
+		await PlaceOrderService.getProductLine({ userProfile, brand }).then(
+			(response) => {
+				dispatch(setProductLine(response.data));
+				setLoading(false);
+			}
+		);
+		// AXIOS WRAPPER FOR API CALL
+	};
+
+	const getFlavour = async (productLine) => {
+		// AXIOS WRAPPER FOR API CALL
+		setSelectedProductLine(productLine);
+		setLoading(true);
+		await PlaceOrderService.getFlavour({
+			userProfile,
+			selectedBrand,
+			productLine,
+		}).then((response) => {
+			dispatch(setFlavour(response.data));
+			setLoading(false);
+		});
+		// AXIOS WRAPPER FOR API CALL
+	};
+
+	// useEffect(() => {
+	// 	setOrderData(productData);
+	// }, []);
+
+	const showFilterData = async () => {
+		console.log(
+			selectedBrand.brand_desc,
+			selectedProductLine.product_line_desc,
+			selectedFlavour.flavour_desc
+		);
+	};
 
 	useEffect(() => {
-		setOrderData(productData);
+		if (userProfile.usertype !== "null") {
+			getOrderFilters();
+		} else {
+			navigate("/");
+		}
 	}, []);
 
 	const addToCart = (product) => {
@@ -154,13 +256,21 @@ const PlaceOrder = (props) => {
 																		name="Distributor"
 																		className="form-control"
 																		data-live-search="true"
+																		onChange={(e) =>
+																			getOrderDetails(
+																				JSON.parse(e.target.value)
+																			)
+																		}
 																		required>
-																		<option>Show All</option>
-																		<option defaultValue="1">Option 01</option>
-																		<option defaultValue="2">Option 02</option>
-																		<option defaultValue="3">Option 03</option>
-																		<option defaultValue="4">Option 04</option>
-																		<option defaultValue="4">Option 05</option>
+																		<option value="null">Show All</option>
+																		{distributor_details &&
+																			distributor_details.map((data, index) => (
+																				<option
+																					key={index}
+																					value={JSON.stringify(data)}>
+																					{data.customer_name}
+																				</option>
+																			))}
 																	</select>
 																</div>
 															</div>
@@ -180,7 +290,7 @@ const PlaceOrder = (props) => {
 																		name="SalePerson"
 																		className="form-control"
 																		defaultValue="Subhadeep Sen"
-																		readOnly
+																		readOnly={true}
 																	/>
 																</div>
 															</div>
@@ -200,6 +310,7 @@ const PlaceOrder = (props) => {
 																	<div className="lbl-radio-group d-flex">
 																		<div className="lbl-radio-btn flex-fill">
 																			<input
+																				disabled={disableFilter}
 																				type="radio"
 																				defaultValue="0"
 																				id="proSale"
@@ -209,6 +320,7 @@ const PlaceOrder = (props) => {
 																		</div>
 																		<div className="lbl-radio-btn flex-fill">
 																			<input
+																				disabled={disableFilter}
 																				type="radio"
 																				defaultValue="0"
 																				id="proRent"
@@ -236,246 +348,53 @@ const PlaceOrder = (props) => {
 																		name="ProductFamily"
 																		className="form-control d-none d-sm-block"
 																		data-live-search="true"
+																		disabled={disableFilter}
+																		onChange={(e) =>
+																			// getProductLine(e.target.value)
+																			getProductLine(JSON.parse(e.target.value))
+																		}
 																		required>
 																		<option>Show All</option>
-																		<option defaultValue="1">Option 01</option>
-																		<option defaultValue="2">Option 02</option>
-																		<option defaultValue="3">Option 03</option>
-																		<option defaultValue="4">Option 04</option>
-																		<option defaultValue="5">Option 05</option>
+
+																		{brand_details &&
+																			brand_details.map((brand, index) => (
+																				<option
+																					key={brand.brand_code}
+																					// value={brand.brand_code}
+																					value={JSON.stringify(brand)}>
+																					{brand.brand_desc}
+																				</option>
+																			))}
 																	</select>
 																	<div className="lbl-radio-group hrl-scrl-rdo d-block d-sm-none">
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option01"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option01">
-																				Option 01
-																			</label>
-																		</div>
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option02"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option02">
-																				Option 02
-																			</label>
-																		</div>
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option03"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option03">
-																				Option 03
-																			</label>
-																		</div>
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option04"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option04">
-																				Option 04
-																			</label>
-																		</div>
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option05"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option05">
-																				Option 05
-																			</label>
-																		</div>
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option06"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option06">
-																				Option 06
-																			</label>
-																		</div>
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option07"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option07">
-																				Option 07
-																			</label>
-																		</div>
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option08"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option08">
-																				Option 08
-																			</label>
-																		</div>
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option09"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option09">
-																				Option 09
-																			</label>
-																		</div>
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option10"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option10">
-																				Option 10
-																			</label>
-																		</div>
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option11"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option11">
-																				Option 11
-																			</label>
-																		</div>
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option12"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option12">
-																				Option 12
-																			</label>
-																		</div>
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option13"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option13">
-																				Option 13
-																			</label>
-																		</div>
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option14"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option14">
-																				Option 14
-																			</label>
-																		</div>
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option15"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option15">
-																				Option 15
-																			</label>
-																		</div>
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option16"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option16">
-																				Option 16
-																			</label>
-																		</div>
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option17"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option17">
-																				Option 17
-																			</label>
-																		</div>
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option18"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option18">
-																				Option 18
-																			</label>
-																		</div>
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option19"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option19">
-																				Option 19
-																			</label>
-																		</div>
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option20"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option20">
-																				Option 20
-																			</label>
-																		</div>
-																		<div className="lbl-radio-btn">
-																			<input
-																				type="radio"
-																				defaultValue="0"
-																				id="Option21"
-																				name="brandRdoGrp"
-																			/>
-																			<label htmlFor="Option21">
-																				Option 21
-																			</label>
-																		</div>
+																		{disableFilter ? (
+																			<label>show all</label>
+																		) : (
+																			<>
+																				{brand_details &&
+																					brand_details.map((brand, index) => (
+																						<div
+																							className="lbl-radio-btn"
+																							key={brand.brand_code}>
+																							<input
+																								disabled={disableFilter}
+																								type="radio"
+																								value={JSON.stringify(brand)}
+																								id={brand.brand_code}
+																								name="brandRdoGrp"
+																								onChange={(e) =>
+																									getProductLine(
+																										JSON.parse(e.target.value)
+																									)
+																								}
+																							/>
+																							<label htmlFor={brand.brand_code}>
+																								{brand.brand_desc}
+																							</label>
+																						</div>
+																					))}
+																			</>
+																		)}
 																	</div>
 																</div>
 															</div>
@@ -496,13 +415,23 @@ const PlaceOrder = (props) => {
 																		name="ProductClass"
 																		className="form-control"
 																		data-live-search="true"
+																		disabled={disableFilter}
+																		onChange={(e) =>
+																			getFlavour(JSON.parse(e.target.value))
+																		}
 																		required>
 																		<option>Show All</option>
-																		<option defaultValue="1">Option 01</option>
-																		<option defaultValue="2">Option 02</option>
-																		<option defaultValue="3">Option 03</option>
-																		<option defaultValue="4">Option 04</option>
-																		<option defaultValue="4">Option 05</option>
+
+																		{product_line_details &&
+																			product_line_details.map(
+																				(product, index) => (
+																					<option
+																						key={product.product_line_code}
+																						value={JSON.stringify(product)}>
+																						{product.product_line_desc}
+																					</option>
+																				)
+																			)}
 																	</select>
 																</div>
 															</div>
@@ -521,16 +450,39 @@ const PlaceOrder = (props) => {
 																		name="ProductClass"
 																		className="form-control"
 																		data-live-search="true"
+																		disabled={disableFilter}
+																		onChange={(e) =>
+																			setSelectedFlavour(
+																				JSON.parse(e.target.value)
+																			)
+																		}
 																		required>
 																		<option>Show All</option>
-																		<option defaultValue="1">Option 01</option>
-																		<option defaultValue="2">Option 02</option>
-																		<option defaultValue="3">Option 03</option>
-																		<option defaultValue="4">Option 04</option>
-																		<option defaultValue="4">Option 05</option>
+																		{flavour_details &&
+																			flavour_details.map((flavour, index) => (
+																				<option
+																					key={flavour.flavour_code}
+																					value={JSON.stringify(flavour)}>
+																					{flavour.flavour_desc}
+																				</option>
+																			))}
 																	</select>
 																</div>
 															</div>
+														</div>
+													</div>
+													<div className="form-group row">
+														<div className="col-md-10"></div>
+														<div className="col-md-2">
+															{/* <button className="form-control"> */}
+
+															<button
+																disabled={disableFilter}
+																type="button"
+																onClick={() => showFilterData()}
+																className="btn btn-block btn-primary btn-md">
+																<i className="fas fa fa-search mr-2"></i> Search
+															</button>
 														</div>
 													</div>
 												</form>
