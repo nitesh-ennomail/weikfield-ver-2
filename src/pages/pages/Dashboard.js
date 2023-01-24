@@ -146,7 +146,7 @@ const Dashboard = () => {
 								</button>
 								<h4 className="alert-heading">Alert message heading!</h4>
 								<p className="mb-0">
-									{alert_details.alert_message}
+									{alert_details && alert_details.alert_message}
 									Alert message description text will come here
 								</p>
 							</div>
@@ -229,7 +229,7 @@ const Dashboard = () => {
 										/>
 									) : (
 										<>
-											{order_details.length > 0 && (
+											{order_details && order_details.length > 0 && (
 												<div className="table-responsive">
 													<table
 														className="table table-bordered"
@@ -263,27 +263,28 @@ const Dashboard = () => {
 															</tr>
 														</tfoot>
 														<tbody>
-															{order_details.map((item, i) => (
-																<tr key={i}>
-																	<td onClick={() => getProductDetails(item)}>
-																		<a
-																			href="#vieworderpop"
-																			data-toggle="modal"
-																			data-tooltip="tooltip"
-																			title="View Order">
-																			{item.order_no}
-																		</a>
-																	</td>
-																	<td>{item.order_date}</td>
-																	<td>{item.customer_name}</td>
-																	<td>11</td>
-																	<td>{item.order_amount}</td>
-																	<td>5</td>
-																	<td>25257.25</td>
-																	<td>Waiting for approval</td>
-																	<td>11021</td>
-																</tr>
-															))}
+															{order_details &&
+																order_details.map((item, i) => (
+																	<tr key={i}>
+																		<td onClick={() => getProductDetails(item)}>
+																			<a
+																				href="#vieworderpop"
+																				data-toggle="modal"
+																				data-tooltip="tooltip"
+																				title="View Order">
+																				{item.order_no}
+																			</a>
+																		</td>
+																		<td>{item.order_date}</td>
+																		<td>{item.customer_name}</td>
+																		<td>11</td>
+																		<td>{item.order_amount}</td>
+																		<td>5</td>
+																		<td>25257.25</td>
+																		<td>Waiting for approval</td>
+																		<td>11021</td>
+																	</tr>
+																))}
 														</tbody>
 														{/* <tbody>
 													{products.map((item, index) => (
