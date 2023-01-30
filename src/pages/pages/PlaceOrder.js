@@ -16,11 +16,13 @@ import {
 
 import $ from "jquery";
 import { ColorRing } from "react-loader-spinner";
+import { getUniqueByKey } from "./utils/findUniqueBykey";
 
 const PlaceOrder = (props) => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const containerRef = useRef(null);
+	const inputRef1 = useRef(null);
 
 	const userProfile = useSelector((state) => state.userProfile);
 	const orderFilter = useSelector((state) => state.placeOrder.orderFilter);
@@ -34,6 +36,7 @@ const PlaceOrder = (props) => {
 	const { order_grid_details } = orderDetails;
 
 	let cartTotal = 0;
+	let cartTotalQty = 0;
 	const [input, setInput] = useState([]);
 	const productData = [
 		{
@@ -432,29 +435,21 @@ const PlaceOrder = (props) => {
 	};
 
 	useEffect(() => {
-		// setOrderData(productData);
-		// {
-		// 	order_grid_details && setOrderData(order_grid_details);
-		// }
 		$("table > tbody > tr").hide().slice(0, 10).show();
 		$(".show-all").on("click", function () {
 			$("tbody > tr", $(this).prev()).show();
 		});
 	}, [disableFilter]);
-
 	const showFilterData = async (e) => {
 		e.preventDefault();
-		setOrderData(order_grid_details);
-		console.log(
-			selectedBrand.brand_desc,
-			selectedProductLine.product_line_desc,
-			selectedFlavour.flavour_desc,
-			selectedPackType.pack_type_desc
+		const key = "portal_item_code";
+		const order_grid_details_UniqueByKey = getUniqueByKey(
+			order_grid_details,
+			key
 		);
-		console.log(order_grid_details);
 		setLoading(true);
-		setOrderData((order_grid_details) =>
-			order_grid_details.filter(function (el) {
+		setOrderData(() =>
+			order_grid_details_UniqueByKey.filter(function (el) {
 				return (
 					el.brand === selectedBrand.brand_desc &&
 					el.product_line === selectedProductLine.product_line_desc &&
@@ -468,7 +463,6 @@ const PlaceOrder = (props) => {
 
 	useEffect(() => {
 		if (userProfile.usertype !== "null") {
-			// setDisableFilter(false);
 			getOrderFilters();
 		} else {
 			navigate("/");
@@ -480,7 +474,7 @@ const PlaceOrder = (props) => {
 	};
 
 	const handleQty = (e, id) => {
-		console.log("orderData -- ", orderData);
+		inputRef1.current.value = e.target.value;
 		setOrderData((orderData) =>
 			orderData.map((item) =>
 				id === item.portal_item_code
@@ -780,7 +774,7 @@ const PlaceOrder = (props) => {
 							</div>
 							<div className="card border-0 rounded-0 mb-3">
 								<div className="card-body">
-									<div className="table-responsive d-sm-block">
+									<div className="table-responsive d-none d-sm-block">
 										<table
 											className="table table-bordered"
 											id="dataTable1"
@@ -819,6 +813,8 @@ const PlaceOrder = (props) => {
 													<>
 														{orderData.map(
 															(item, index) => (
+																(cartTotalQty =
+																	cartTotalQty + item.sit_inventory_qty),
 																(cartTotal +=
 																	item.portal_mrp * item.sit_inventory_qty),
 																(
@@ -831,6 +827,7 @@ const PlaceOrder = (props) => {
 																		<td>{item.uom}</td>
 																		<td>
 																			<input
+																				ref={inputRef1}
 																				min={1}
 																				max={10}
 																				type="number"
@@ -852,264 +849,88 @@ const PlaceOrder = (props) => {
 													</>
 												)}
 											</tbody>
-											{/* <tbody>
-												<tr>
-													<td>Data 22</td>
-													<td>Data</td>
-													<td>Data</td>
-													<td>Data</td>
-													<td>Data</td>
-													<td>Data</td>
-													<td>
-														<input
-															type="number"
-															className="qty-ctl"
-															step="1"
-															defaultValue=""
-														/>
-													</td>
-													<td>Data</td>
-												</tr>
-												<tr>
-													<td>Data</td>
-													<td>Data</td>
-													<td>Data</td>
-													<td>Data</td>
-													<td>Data</td>
-													<td>Data</td>
-													<td>
-														<input
-															type="number"
-															className="qty-ctl"
-															step="1"
-															defaultValue=""
-														/>
-													</td>
-													<td>Data</td>
-												</tr>
-												<tr>
-													<td>Data</td>
-													<td>Data</td>
-													<td>Data</td>
-													<td>Data</td>
-													<td>Data</td>
-													<td>Data</td>
-													<td>
-														<input
-															type="number"
-															className="qty-ctl"
-															step="1"
-															defaultValue=""
-														/>
-													</td>
-													<td>Data</td>
-												</tr>
-												<tr>
-													<td>Data</td>
-													<td>Data</td>
-													<td>Data</td>
-													<td>Data</td>
-													<td>Data</td>
-													<td>Data</td>
-													<td>
-														<input
-															type="number"
-															className="qty-ctl"
-															step="1"
-															defaultValue=""
-														/>
-													</td>
-													<td>Data</td>
-												</tr>
-												<tr>
-													<td>Data</td>
-													<td>Data</td>
-													<td>Data</td>
-													<td>Data</td>
-													<td>Data</td>
-													<td>Data</td>
-													<td>
-														<input
-															type="number"
-															className="qty-ctl"
-															step="1"
-															defaultValue=""
-														/>
-													</td>
-													<td>Data</td>
-												</tr>
-											</tbody> */}
 										</table>
 									</div>
 									<div className="cart-prod-list d-block d-sm-none">
-										<div className="cart-prod-div">
-											<div className="cart-prod-title">
-												Macaroni - FG -8114044
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-val">
-													CHEF'S BASKET-PASTA-MACARONI-POUCH-60X180gm
-												</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">
-													Physical Inventory:{" "}
-												</span>
-												<span className="cart-prod-val">20</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Allocate Qty: </span>
-												<span className="cart-prod-val">5</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Price: </span>
-												<span className="cart-prod-val">2222.5</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">UOM: </span>
-												<span className="cart-prod-val">Case</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Schemes: </span>
-												<span className="cart-prod-val">
-													Buy 5 case Get 1 Case Free
-												</span>
-											</div>
-											<div className="cart-prod-qty">
-												<input
-													type="number"
-													className="qty-ctl"
-													step="1"
-													defaultValue="3"
-												/>
-											</div>
-										</div>
-										<div className="cart-prod-div">
-											<div className="cart-prod-title">
-												Macaroni - FG -8114044
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-val">
-													CHEF'S BASKET-PASTA-MACARONI-POUCH-60X180gm
-												</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">
-													Physical Inventory:{" "}
-												</span>
-												<span className="cart-prod-val">20</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Allocate Qty: </span>
-												<span className="cart-prod-val">5</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Price: </span>
-												<span className="cart-prod-val">2222.5</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">UOM: </span>
-												<span className="cart-prod-val">Case</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Schemes: </span>
-												<span className="cart-prod-val">
-													Buy 5 case Get 1 Case Free
-												</span>
-											</div>
-											<div className="cart-prod-qty">
-												<input
-													type="number"
-													className="qty-ctl"
-													step="1"
-													defaultValue="3"
-												/>
-											</div>
-										</div>
-										<div className="cart-prod-div">
-											<div className="cart-prod-title">
-												Macaroni - FG -8114044
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-val">
-													CHEF'S BASKET-PASTA-MACARONI-POUCH-60X180gm
-												</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">
-													Physical Inventory:{" "}
-												</span>
-												<span className="cart-prod-val">20</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Allocate Qty: </span>
-												<span className="cart-prod-val">5</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Price: </span>
-												<span className="cart-prod-val">2222.5</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">UOM: </span>
-												<span className="cart-prod-val">Case</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Schemes: </span>
-												<span className="cart-prod-val">
-													Buy 5 case Get 1 Case Free
-												</span>
-											</div>
-											<div className="cart-prod-qty">
-												<input
-													type="number"
-													className="qty-ctl"
-													step="1"
-													defaultValue="3"
-												/>
-											</div>
-										</div>
-										<div className="cart-prod-div">
-											<div className="cart-prod-title">
-												Macaroni - FG -8114044
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-val">
-													CHEF'S BASKET-PASTA-MACARONI-POUCH-60X180gm
-												</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">
-													Physical Inventory:{" "}
-												</span>
-												<span className="cart-prod-val">20</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Allocate Qty: </span>
-												<span className="cart-prod-val">5</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Price: </span>
-												<span className="cart-prod-val">2222.5</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">UOM: </span>
-												<span className="cart-prod-val">Case</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Schemes: </span>
-												<span className="cart-prod-val">
-													Buy 5 case Get 1 Case Free
-												</span>
-											</div>
-											<div className="cart-prod-qty">
-												<input
-													type="number"
-													className="qty-ctl"
-													step="1"
-													defaultValue="3"
-												/>
-											</div>
-										</div>
+										{loading ? (
+											<ColorRing
+												visible={true}
+												height="80"
+												width="100%"
+												ariaLabel="blocks-loading"
+												wrapperStyle={{ textAlign: "center" }}
+												wrapperClass="blocks-wrapper"
+												colors={[
+													"#e15b64",
+													"#f47e60",
+													"#f8b26a",
+													"#abbd81",
+													"#849b87",
+												]}
+											/>
+										) : (
+											<>
+												{orderData.map((item, index) => (
+													// (cartTotal +=
+													// 	item.portal_mrp * item.sit_inventory_qty),
+													<div className="cart-prod-div">
+														<div className="cart-prod-title">{item.brand}</div>
+														<div className="cart-prod-desc">
+															<span className="cart-prod-val">
+																{item.portal_item_desc}
+															</span>
+														</div>
+														<div className="cart-prod-desc">
+															<span className="cart-prod-lbl">
+																Physical Inventory:{" "}
+															</span>
+															<span className="cart-prod-val">
+																{item.physical_inventory_qty}
+															</span>
+														</div>
+														<div className="cart-prod-desc">
+															<span className="cart-prod-lbl">
+																Allocate Qty:{" "}
+															</span>
+															<span className="cart-prod-val">
+																{item.erp_commited_qty}
+															</span>
+														</div>
+														<div className="cart-prod-desc">
+															<span className="cart-prod-lbl">Price: </span>
+															<span className="cart-prod-val">
+																{item.portal_mrp}
+															</span>
+														</div>
+														<div className="cart-prod-desc">
+															<span className="cart-prod-lbl">UOM: </span>
+															<span className="cart-prod-val">{item.uom}</span>
+														</div>
+														<div className="cart-prod-desc">
+															<span className="cart-prod-lbl">Schemes: </span>
+															<span className="cart-prod-val">
+																Buy 5 case Get 1 Case Free
+															</span>
+														</div>
+														<div className="cart-prod-qty">
+															<input
+																min={1}
+																max={10}
+																ref={inputRef1}
+																type="number"
+																className="qty-ctl"
+																step="1"
+																defaultValue={item.sit_inventory_qty}
+																onChange={(e) =>
+																	handleQty(e, item.portal_item_code)
+																}
+															/>
+														</div>
+													</div>
+												))}
+											</>
+										)}
+										;
 									</div>
 								</div>
 								<div className="card-footer bg-white">
@@ -1347,8 +1168,10 @@ const PlaceOrder = (props) => {
 							<i className="fas fa-cart-shopping mr-2"></i>
 						</span>
 						<span className="atcm-text">
-							<span className="atc-unit">Unit: 5</span>
-							<span className="atc-total">₹599.00</span>
+							<span className="atc-unit">
+								Unit: {parseInt(cartTotalQty, 10)}
+							</span>
+							<span className="atc-total">{cartTotal}</span>
 						</span>
 					</a>{" "}
 					<a href="#" className="atcm-place-order">
@@ -1544,7 +1367,7 @@ const PlaceOrder = (props) => {
 									</span>
 									<span className="atcm-text">
 										<span className="atc-unit">Unit: 5</span>
-										<span className="atc-total">₹599.00</span>
+										<span className="atc-total">{cartTotal}</span>
 									</span>
 								</a>{" "}
 								<a href="#" className="atcm-place-order">
