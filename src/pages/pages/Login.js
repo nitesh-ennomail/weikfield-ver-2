@@ -1,6 +1,6 @@
 import React, { useEffect, useLayoutEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import AuthService from "../../axios/services/api/auth";
 import {
 	setToken,
@@ -14,13 +14,6 @@ const Login = () => {
 	const navigate = useNavigate();
 
 	const userProfile = useSelector((state) => state.userProfile);
-
-	// const submitForm = (event) => {
-	// 	let id = event.target[0].value;
-	// 	let password = event.target[1].value;
-	// 	let userType = "ADMIN";
-	// 	dispatch(setUser({ id, password, userType }));
-	// };
 
 	const authUser = async (data) => {
 		//AXIOS WRAPPER FOR API CALL
@@ -111,10 +104,12 @@ const Login = () => {
 								/>
 							</form>
 							<div className="text-center mt-4 mb-2">
-								{" "}
+								{/* {" "}
 								<a className="d-block" href="ForgotPassword.html">
 									Forgot Password?
-								</a>{" "}
+								</a>{" "} */}
+
+								<Link to="/forgotpassword">Forgot Password?</Link>
 							</div>
 						</div>
 					</div>

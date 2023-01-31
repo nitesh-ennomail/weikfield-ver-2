@@ -11,6 +11,8 @@ import PlaceOrder from "./pages/pages/PlaceOrder";
 import ViewOrder from "./pages/pages/ViewOrder";
 import MyProfile from "./pages/pages/MyProfile";
 import Logout from "./pages/pages/Logout";
+import PageNotFound from "./pages/pages/PageNotFound";
+import ForgotPassword from "./pages/pages/ForgotPassword";
 
 function App() {
 	useLayoutEffect(() => {
@@ -30,6 +32,7 @@ function App() {
 
 				<Routes>
 					<Route path="/" element={<Login />} />
+					<Route path="/forgotpassword" element={<ForgotPassword />} />
 
 					<Route
 						path="/product"
@@ -100,7 +103,7 @@ function App() {
 						}
 					/>
 
-					<Route path="*" element={<h1>Not found</h1>} />
+					<Route path="*" element={<PageNotFound />} />
 				</Routes>
 				{/* </HashRouter> */}
 			</BrowserRouter>
