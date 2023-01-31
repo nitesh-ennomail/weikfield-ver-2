@@ -14,6 +14,7 @@ import { ColorRing } from "react-loader-spinner";
 import DashboardService from "../../axios/services/api/dashboard";
 import { setDashboard } from "../../redux/actions/dashboardAction";
 import { setMenu } from "../../redux/actions/menuAction";
+import { userType } from "../pages/constants/constants";
 
 const Dashboard = () => {
 	const navigate = useNavigate();
@@ -75,13 +76,7 @@ const Dashboard = () => {
 		//AXIOS WRAPPER FOR API CALL
 		setLoading(true);
 		await DashboardService.getDashboardDetails(userProfile).then((response) => {
-			// dispatch(setProducts(response.data.order_details));
-			// dispatch(setMenu(response));
-
 			dispatch(setDashboard(response.data));
-
-			// setData(response);
-			console.log("response response ", response.data.order_details);
 			setLoading(false);
 		});
 		//AXIOS WRAPPER FOR API CALL
@@ -128,28 +123,27 @@ const Dashboard = () => {
 			</div> */}
 
 			<div className="content-wrapper">
-				{/* <button onClick={addOrder}>click</button> */}
-
 				<div className="container-fluid">
 					<div className="row">
 						<div className="col-md-12">
 							<ol className="breadcrumb">
 								<li className="breadcrumb-item">Dashboard</li>
 							</ol>
-							<div className="alert alert-success" role="alert">
-								<button
-									type="button"
-									className="close btn"
-									data-dismiss="alert"
-									aria-label="Close">
-									<span aria-hidden="true">&times;</span>
-								</button>
-								<h4 className="alert-heading">Alert message heading!</h4>
-								<p className="mb-0">
-									{alert_details && alert_details.alert_message}
-									Alert message description text will come here
-								</p>
-							</div>
+							{alert_details && alert_details.length > 0 && (
+								<div className="alert alert-success" role="alert">
+									<button
+										type="button"
+										className="close btn"
+										data-dismiss="alert"
+										aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+									<h4 className="alert-heading">Alert message heading!</h4>
+									<p className="mb-0">
+										{alert_details && alert_details.alert_message}
+									</p>
+								</div>
+							)}
 							<div className="row mb-4 dashboard-blocks">
 								<div className="col-md-4">
 									<div className="card bg-info pull-up rounded-0">
@@ -246,7 +240,7 @@ const Dashboard = () => {
 																<th>Invoice Qty</th>
 																<th>Invoice Amount</th>
 																<th style={{ minWidth: "120px" }}>Status</th>
-																<th>ERP Ref No.</th>
+																{/* <th>ERP Ref No.</th> */}
 															</tr>
 														</thead>
 														<tfoot>
@@ -259,7 +253,7 @@ const Dashboard = () => {
 																<th>Invoice Qty</th>
 																<th>Invoice Amount</th>
 																<th>Status</th>
-																<th>ERP Ref No.</th>
+																{/* <th>ERP Ref No.</th> */}
 															</tr>
 														</tfoot>
 														<tbody>
@@ -281,8 +275,39 @@ const Dashboard = () => {
 																		<td>{item.order_amount}</td>
 																		<td>5</td>
 																		<td>25257.25</td>
-																		<td>Waiting for approval</td>
-																		<td>11021</td>
+																		<td>
+																			{userProfile &&
+																			userProfile.usertype ===
+																				userType.APPROVER ? (
+																				<div>
+																					<button
+																						type="submit"
+																						className="btn btn-primary btn-sm mr-2">
+																						<i className="fa-solid fa-check"></i>
+																					</button>
+																					<button
+																						type="reset"
+																						className="btn btn-danger btn-sm mr-2">
+																						<i className="fa-solid fa-xmark"></i>
+																					</button>
+																					<button
+																						data-dismiss="modal"
+																						aria-label="Close"
+																						className="btn btn-primary btn-sm mr-1"
+																						onClick={() =>
+																							navigate("/placeorder")
+																						}>
+																						<i
+																							className="fa-solid fa-pen"
+																							aria-hidden="true"></i>
+																					</button>
+																				</div>
+																			) : (
+																				`${item.ui_status}`
+																			)}
+																		</td>
+
+																		{/* <td>11021</td> */}
 																	</tr>
 																))}
 														</tbody>
