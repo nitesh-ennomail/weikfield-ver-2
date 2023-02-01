@@ -27,3 +27,12 @@ export const setFlavour = (data) => {
 		payload: data,
 	};
 };
+
+export const setAddToCart = (product) => {
+	localStorage.setItem("cartItem", JSON.stringify(product));
+
+	return {
+		type: ActionTypes.ADD_TO_CART,
+		payload: product,
+	};
+};

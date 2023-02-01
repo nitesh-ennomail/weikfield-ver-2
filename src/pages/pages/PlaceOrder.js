@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { json, useNavigate } from "react-router-dom";
 import PlaceOrderService from "../../axios/services/api/placeOrder";
 import {
+	setAddToCart,
 	setFlavour,
 	setOrderDetails,
 	setOrderFilter,
@@ -29,348 +30,80 @@ const PlaceOrder = (props) => {
 	const orderDetails = useSelector((state) => state.placeOrder.orderDetails);
 	const productLine = useSelector((state) => state.placeOrder.productLine);
 	const flavour = useSelector((state) => state.placeOrder.flavour);
+	const placeOrder = useSelector((state) => state.placeOrder);
 
 	const { flavour_details } = flavour;
 	const { product_line_details } = productLine;
 	const { distributor_details, brand_details, pack_type_details } = orderFilter;
 	const { order_grid_details } = orderDetails;
+	const { addTocart } = placeOrder;
 
 	let cartTotal = 0;
 	let cartTotalQty = 0;
+	let addToCartTotal = 0;
+	let addToCartQty = 0;
 	const [input, setInput] = useState([]);
-	const productData = [
-		{
-			customer_type: "Consumer",
-			item_promo_flag: "Y",
-			flavour: "Chocolate",
-			sit_inventory_qty: "0",
-			erp_commited_qty: "0",
-			portal_reg_promo_flag: "Y",
-			product_line: "Cooker Cake Mix",
-			uom: "Case",
-			portal_mrp: "3300.0",
-			portal_item_desc: "WEIKFIELD-COOKER CAKE MIX-CHOCOLATE-PKT-30X150gm",
-			units_per_case: "30",
-			parent_code: "FG-8113021",
-			physical_inventory_qty: "89",
-			portal_billing_price: "2504.55",
-			portal_item_code: "PFG-8113021",
-			sap_block_flag: "0",
-			brand: "Weikfield",
-		},
-		{
-			customer_type: "Consumer",
-			item_promo_flag: "N",
-			flavour: "Penne",
-			sit_inventory_qty: "0",
-			erp_commited_qty: "5",
-			portal_reg_promo_flag: "N",
-			product_line: "Pasta",
-			uom: "Case",
-			portal_mrp: "3360.0",
-			portal_item_desc: "WEIKFIELD-PASTA-PENNE-POUCH-48X200gm",
-			units_per_case: "48",
-			parent_code: "FG-8111002",
-			physical_inventory_qty: "87",
-			portal_billing_price: "2550.09",
-			portal_item_code: "RFG-8111002",
-			sap_block_flag: "0",
-			brand: "Weikfield",
-		},
-		{
-			customer_type: "Consumer",
-			item_promo_flag: "Y",
-			flavour: "Penne",
-			sit_inventory_qty: "0",
-			erp_commited_qty: "0",
-			portal_reg_promo_flag: "N",
-			product_line: "Pasta",
-			uom: "Case",
-			portal_mrp: "3600.0",
-			portal_item_desc: "WEIKFIELD-PASTA-PENNE-POUCH-24X400gm",
-			units_per_case: "24",
-			parent_code: "FG-8111003",
-			physical_inventory_qty: "99",
-			portal_billing_price: "2732.24",
-			portal_item_code: "RFG-8111003",
-			sap_block_flag: "0",
-			brand: "Weikfield",
-		},
-		{
-			customer_type: "Consumer",
-			item_promo_flag: "N",
-			flavour: "Elbow",
-			sit_inventory_qty: "0",
-			erp_commited_qty: "42",
-			portal_reg_promo_flag: "N",
-			product_line: "Pasta",
-			uom: "Case",
-			portal_mrp: "3360.0",
-			portal_item_desc: "WEIKFIELD-PASTA-ELBOW-POUCH-48X200gm",
-			units_per_case: "48",
-			parent_code: "FG-8111020",
-			physical_inventory_qty: "125",
-			portal_billing_price: "2550.09",
-			portal_item_code: "RFG-8111020",
-			sap_block_flag: "0",
-			brand: "Weikfield",
-		},
-
-		{
-			customer_type: "Consumer",
-			item_promo_flag: "Y",
-			flavour: "Elbow",
-			sit_inventory_qty: "0",
-			erp_commited_qty: "0",
-			portal_reg_promo_flag: "N",
-			product_line: "Pasta",
-			uom: "Case",
-			portal_mrp: "3600.0",
-			portal_item_desc: "WEIKFIELD-PASTA-ELBOW-POUCH-24X400gm",
-			units_per_case: "24",
-			parent_code: "FG-8111021",
-			physical_inventory_qty: "62",
-			portal_billing_price: "2732.24",
-			portal_item_code: "RFG-8111021",
-			sap_block_flag: "0",
-			brand: "Weikfield",
-		},
-		{
-			customer_type: "Consumer",
-			item_promo_flag: "N",
-			flavour: "Fusili",
-			sit_inventory_qty: "0",
-			erp_commited_qty: "13",
-			portal_reg_promo_flag: "N",
-			product_line: "Pasta",
-			uom: "Case",
-			portal_mrp: "3360.0",
-			portal_item_desc: "WEIKFIELD-PASTA-FUSILI-POUCH-48X200gm",
-			units_per_case: "48",
-			parent_code: "FG-8111033",
-			physical_inventory_qty: "57",
-			portal_billing_price: "2550.09",
-			portal_item_code: "RFG-8111033",
-			sap_block_flag: "0",
-			brand: "Weikfield",
-		},
-
-		{
-			customer_type: "Consumer",
-			item_promo_flag: "Y",
-			flavour: "Fusili",
-			sit_inventory_qty: "0",
-			erp_commited_qty: "0",
-			portal_reg_promo_flag: "N",
-			product_line: "Pasta",
-			uom: "Case",
-			portal_mrp: "3600.0",
-			portal_item_desc: "WEIKFIELD-PASTA-FUSILI-POUCH-24X400gm",
-			units_per_case: "24",
-			parent_code: "FG-8111034",
-			physical_inventory_qty: "47",
-			portal_billing_price: "2732.24",
-			portal_item_code: "RFG-8111034",
-			sap_block_flag: "0",
-			brand: "Weikfield",
-		},
-		{
-			customer_type: "Consumer",
-			item_promo_flag: "Y",
-			flavour: "Spaghetti",
-			sit_inventory_qty: "0",
-			erp_commited_qty: "0",
-			portal_reg_promo_flag: "N",
-			product_line: "Pasta",
-			uom: "Case",
-			portal_mrp: "4200.0",
-			portal_item_desc: "WEIKFIELD-PASTA-SPAGHETTI-PKT-24X400gm",
-			units_per_case: "24",
-			parent_code: "FG-8111044",
-			physical_inventory_qty: "11",
-			portal_billing_price: "3187.61",
-			portal_item_code: "RFG-8111044",
-			sap_block_flag: "0",
-			brand: "Weikfield",
-		},
-		{
-			customer_type: "Consumer",
-			item_promo_flag: "N",
-			flavour: "Shell",
-			sit_inventory_qty: "0",
-			erp_commited_qty: "0",
-			portal_reg_promo_flag: "N",
-			product_line: "Pasta",
-			uom: "Case",
-			portal_mrp: "3360.0",
-			portal_item_desc: "WEIKFIELD-PASTA-SHELL-POUCH-48X200gm",
-			units_per_case: "40",
-			parent_code: "FG-8111052",
-			physical_inventory_qty: "87",
-			portal_billing_price: "2550.09",
-			portal_item_code: "RFG-8111052",
-			sap_block_flag: "0",
-			brand: "Weikfield",
-		},
-
-		{
-			customer_type: "Consumer",
-			item_promo_flag: "Y",
-			flavour: "Cheesy Creamy",
-			sit_inventory_qty: "0",
-			erp_commited_qty: "0",
-			portal_reg_promo_flag: "N",
-			product_line: "Instant Pasta",
-			uom: "Case",
-			portal_mrp: "3360.0",
-			portal_item_desc: "WEIKFIELD-INSTANT PASTA-CHEEZY CREAMY-POUCH-120X77gm",
-			units_per_case: "120",
-			parent_code: "FG-8111058",
-			physical_inventory_qty: "25",
-			portal_billing_price: "2550.09",
-			portal_item_code: "RFG-8111058",
-			sap_block_flag: "0",
-			brand: "Weikfield",
-		},
-
-		{
-			customer_type: "Consumer",
-			item_promo_flag: "Y",
-			flavour: "Cheezy Mac",
-			sit_inventory_qty: "0",
-			erp_commited_qty: "0",
-			portal_reg_promo_flag: "N",
-			product_line: "Instant Pasta",
-			uom: "Case",
-			portal_mrp: "0.0",
-			portal_item_desc: "WEIKFIELD-INSTANT PASTA-CHEEZY MAC-POUCH-120X77gm",
-			units_per_case: "120",
-			parent_code: "FG-8111060",
-			physical_inventory_qty: "0",
-			portal_billing_price: "2550.09",
-			portal_item_code: "RFG-8111060",
-			sap_block_flag: "0",
-			brand: "Weikfield",
-		},
-		{
-			customer_type: "Consumer",
-			item_promo_flag: "Y",
-			flavour: "Creamy Mushroom",
-			sit_inventory_qty: "0",
-			erp_commited_qty: "0",
-			portal_reg_promo_flag: "N",
-			product_line: "Instant Pasta",
-			uom: "Case",
-			portal_mrp: "3000.0",
-			portal_item_desc:
-				"WEIKFIELD-INSTANT PASTA-CREAMY MUSHROOM-POUCH-120X77gm",
-			units_per_case: "120",
-			parent_code: "FG-8111061",
-			physical_inventory_qty: "16",
-			portal_billing_price: "2550.09",
-			portal_item_code: "RFG-8111061",
-			sap_block_flag: "0",
-			brand: "Weikfield",
-		},
-
-		{
-			customer_type: "Consumer",
-			item_promo_flag: "Y",
-			flavour: "Masala Twist",
-			sit_inventory_qty: "0",
-			erp_commited_qty: "0",
-			portal_reg_promo_flag: "N",
-			product_line: "Instant Pasta",
-			uom: "Case",
-			portal_mrp: "0.0",
-			portal_item_desc: "WEIKFIELD-INSTANT PASTA-MASALA TWIST-POUCH-120X77gm",
-			units_per_case: "120",
-			parent_code: "FG-8111062",
-			physical_inventory_qty: "0",
-			portal_billing_price: "2550.09",
-			portal_item_code: "RFG-8111062",
-			sap_block_flag: "0",
-			brand: "Weikfield",
-		},
-		{
-			customer_type: "Consumer",
-			item_promo_flag: "Y",
-			flavour: "Tomato Salsa",
-			sit_inventory_qty: "0",
-			erp_commited_qty: "0",
-			portal_reg_promo_flag: "N",
-			product_line: "Instant Pasta",
-			uom: "Case",
-			portal_mrp: "3000.0",
-			portal_item_desc: "WEIKFIELD-INSTANT PASTA-TOMATO SALSA-POUCH-120X77gm",
-			units_per_case: "120",
-			parent_code: "FG-8111064",
-			physical_inventory_qty: "27",
-			portal_billing_price: "2550.09",
-			portal_item_code: "RFG-8111064",
-			sap_block_flag: "0",
-			brand: "Weikfield",
-		},
-		{
-			customer_type: "Consumer",
-			item_promo_flag: "N",
-			flavour: "Macaroni",
-			sit_inventory_qty: "0",
-			erp_commited_qty: "20",
-			portal_reg_promo_flag: "N",
-			product_line: "Macaroni",
-			uom: "Case",
-			portal_mrp: "1800.0",
-			portal_item_desc: "WEIKFIELD-PASTA-MACARONI-POUCH-15X900gm",
-			units_per_case: "15",
-			parent_code: "FG-8111069",
-			physical_inventory_qty: "102",
-			portal_billing_price: "1366.12",
-			portal_item_code: "RFG-8111069",
-			sap_block_flag: "0",
-			brand: "Weikfield",
-		},
-		{
-			customer_type: "Consumer",
-			item_promo_flag: "Y",
-			flavour: "Red Tangy",
-			sit_inventory_qty: "0",
-			erp_commited_qty: "0",
-			portal_reg_promo_flag: "N",
-			product_line: "Pasta Sauce",
-			uom: "Case",
-			portal_mrp: "3240.0",
-			portal_item_desc:
-				"WEIKFIELD-PASTA SAUCE-RED-TANGY SALSA-POUCH-12X6X200gm",
-			units_per_case: "68",
-			parent_code: "FG-8111075",
-			physical_inventory_qty: "2",
-			portal_billing_price: "2459.02",
-			portal_item_code: "RFG-8111075",
-			sap_block_flag: "0",
-			brand: "Weikfield",
-		},
-		{
-			customer_type: "Consumer",
-			item_promo_flag: "N",
-			flavour: "Cheesy Creamy",
-			sit_inventory_qty: "0",
-			erp_commited_qty: "0",
-			portal_reg_promo_flag: "N",
-			product_line: "Pasta Sauce Mix",
-			uom: "Case",
-			portal_mrp: "3780.0",
-			portal_item_desc:
-				"WEIKFIELD-PASTA SAUCE-CHEESY CREAMY MIX-POUCH-126X30gm",
-			units_per_case: "126",
-			parent_code: "FG-8111078",
-			physical_inventory_qty: "18",
-			portal_billing_price: "2868.85",
-			portal_item_code: "RFG-8111078",
-			sap_block_flag: "0",
-			brand: "Weikfield",
-		},
-	];
+	const productData = {
+		order_grid_details: [
+			{
+				customer_type: "Consumer",
+				item_promo_flag: "Y",
+				flavour: "Chocolate",
+				sit_inventory_qty: "0",
+				erp_commited_qty: "0",
+				portal_reg_promo_flag: "Y",
+				product_line: "Cooker Cake Mix",
+				uom: "Case",
+				portal_mrp: "3300.0",
+				portal_item_desc: "WEIKFIELD-COOKER CAKE MIX-CHOCOLATE-PKT-30X150gm",
+				units_per_case: "30",
+				parent_code: "FG-8113021",
+				physical_inventory_qty: "89",
+				portal_billing_price: "2504.55",
+				portal_item_code: "PFG-8113021",
+				sap_block_flag: "0",
+				brand: "Weikfield",
+			},
+			{
+				customer_type: "Consumer",
+				item_promo_flag: "N",
+				flavour: "Creamy Mushroom",
+				sit_inventory_qty: "0",
+				erp_commited_qty: "5",
+				portal_reg_promo_flag: "N",
+				product_line: "Instant Pasta",
+				uom: "Case",
+				portal_mrp: "3360.0",
+				portal_item_desc: "WEIKFIELD-PASTA-PENNE-POUCH-48X200gm",
+				units_per_case: "48",
+				parent_code: "FG-8111002",
+				physical_inventory_qty: "87",
+				portal_billing_price: "2550.09",
+				portal_item_code: "RFG-8111002",
+				sap_block_flag: "0",
+				brand: "Weikfield",
+			},
+			{
+				customer_type: "Consumer",
+				item_promo_flag: "Y",
+				flavour: "Creamy Mushroom",
+				sit_inventory_qty: "0",
+				erp_commited_qty: "0",
+				portal_reg_promo_flag: "N",
+				product_line: "Instant Pasta",
+				uom: "Case",
+				portal_mrp: "3600.0",
+				portal_item_desc: "WEIKFIELD-PASTA-PENNE-POUCH-24X400gm",
+				units_per_case: "24",
+				parent_code: "FG-8111003",
+				physical_inventory_qty: "99",
+				portal_billing_price: "2732.24",
+				portal_item_code: "RFG-8111003",
+				sap_block_flag: "0",
+				brand: "Weikfield",
+			},
+		],
+	};
 
 	const [orderData, setOrderData] = useState([]);
 	const [loading, setLoading] = useState(false);
@@ -380,6 +113,7 @@ const PlaceOrder = (props) => {
 	const [selectedPackType, setSelectedPackType] = useState(null);
 
 	const [disableFilter, setDisableFilter] = useState(true);
+	const [disableAddToCart, setDisableAddToCart] = useState(true);
 
 	const getOrderFilters = async () => {
 		//AXIOS WRAPPER FOR API CALL
@@ -405,6 +139,10 @@ const PlaceOrder = (props) => {
 				<>{(setDisableFilter(true), alert("Not Applicable"))}</>
 			);
 		}
+
+		// dispatch(setOrderDetails(productData));
+		// setDisableFilter(false);
+
 		// AXIOS WRAPPER FOR API CALL
 	};
 
@@ -440,16 +178,32 @@ const PlaceOrder = (props) => {
 			$("tbody > tr", $(this).prev()).show();
 		});
 	}, [disableFilter]);
+
 	const showFilterData = async (e) => {
 		e.preventDefault();
-		const key = "portal_item_code";
-		const order_grid_details_UniqueByKey = getUniqueByKey(
-			order_grid_details,
-			key
-		);
+		// const key = "portal_item_code";
+		// const order_grid_details_UniqueByKey = getUniqueByKey(
+		// 	order_grid_details,
+		// 	key
+		// );
+
+		var result = addTocart.filter(function (o1) {
+			return order_grid_details.some(function (o2) {
+				return (
+					o1.portal_item_code !== o2.portal_item_code &&
+					o2.brand === selectedBrand.brand_desc &&
+					o2.product_line === selectedProductLine.product_line_desc &&
+					o2.flavour === selectedFlavour.flavour_desc
+				); // return the ones with equal id
+			});
+		});
+		console.log(addTocart);
+		console.log(order_grid_details);
+		console.log("result", result);
+
 		setLoading(true);
 		setOrderData(() =>
-			order_grid_details_UniqueByKey.filter(function (el) {
+			order_grid_details.filter(function (el) {
 				return (
 					el.brand === selectedBrand.brand_desc &&
 					el.product_line === selectedProductLine.product_line_desc &&
@@ -469,12 +223,47 @@ const PlaceOrder = (props) => {
 		}
 	}, []);
 
-	const addToCart = (product) => {
-		dispatch(addProduct(product));
+	const addToCart = () => {
+		dispatch(
+			setAddToCart(
+				orderData.filter(function (el) {
+					return el.sit_inventory_qty >= 1;
+				})
+			)
+		);
+		setOrderData(() =>
+			orderData.filter(function (el) {
+				return el.sit_inventory_qty == 0;
+			})
+		);
+	};
+
+	const removeFromCart = (e, id) => {
+		// setAddToCart((orderData) => {
+		id.sit_inventory_qty = 0;
+		dispatch(
+			setAddToCart(
+				addTocart.filter(
+					(item, i) => item.portal_item_code !== id.portal_item_code
+				)
+			)
+		);
+
+		setOrderData(() =>
+			order_grid_details.filter(function (el) {
+				return (
+					el.brand === selectedBrand.brand_desc &&
+					el.product_line === selectedProductLine.product_line_desc &&
+					el.flavour === selectedFlavour.flavour_desc
+				);
+			})
+		);
+
+		// });
 	};
 
 	const handleQty = (e, id) => {
-		inputRef1.current.value = e.target.value;
+		// inputRef1.current.value = e.target.value;
 		setOrderData((orderData) =>
 			orderData.map((item) =>
 				id === item.portal_item_code
@@ -482,7 +271,9 @@ const PlaceOrder = (props) => {
 					: item
 			)
 		);
+		setDisableAddToCart(false);
 	};
+
 	return (
 		<>
 			<div className="content-wrapper" ref={containerRef}>
@@ -871,9 +662,7 @@ const PlaceOrder = (props) => {
 										) : (
 											<>
 												{orderData.map((item, index) => (
-													// (cartTotal +=
-													// 	item.portal_mrp * item.sit_inventory_qty),
-													<div className="cart-prod-div">
+													<div className="cart-prod-div" key={index}>
 														<div className="cart-prod-title">{item.brand}</div>
 														<div className="cart-prod-desc">
 															<span className="cart-prod-val">
@@ -935,9 +724,11 @@ const PlaceOrder = (props) => {
 								</div>
 								<div className="card-footer bg-white">
 									<div className="row">
-										<div className="col-md-3 mb-3 d-none d-sm-block">
+										<div className="col-md-3 mb-3 d-sm-block">
 											<button
 												type="button"
+												onClick={addToCart}
+												disabled={disableAddToCart || orderData.length === 0}
 												className="btn btn-block btn-primary btn-md">
 												<i className="fas fa-cart-shopping mr-2"></i> Add to
 												Cart
@@ -967,191 +758,102 @@ const PlaceOrder = (props) => {
 								</div>
 							</div>
 						</div>
-						<div className="col-md-4 d-none d-sm-block">
+						{/* <div className="col-md-4 d-none d-sm-block"> */}
+						<div className="col-md-4 d-sm-block">
 							<div className="card card-primary border-0 rounded-0 mb-3">
 								<div className="card-header">Order Summary</div>
-								<div className="card-body">
-									<div className="cart-prod-list scroll">
-										<div className="cart-prod-div">
-											<div className="cart-prod-title">
-												Macaroni - FG -8114044
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-val">
-													CHEF'S BASKET-PASTA-MACARONI-POUCH-60X180gm
-												</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">
-													Physical Inventory:{" "}
-												</span>
-												<span className="cart-prod-val">20</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Allocate Qty: </span>
-												<span className="cart-prod-val">5</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Price: </span>
-												<span className="cart-prod-val">2222.5</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">UOM: </span>
-												<span className="cart-prod-val">Case</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Schemes: </span>
-												<span className="cart-prod-val">
-													Buy 5 case Get 1 Case Free
-												</span>
-											</div>
-											<div className="cart-prod-qty">
-												<input
-													type="number"
-													className="qty-ctl"
-													step="1"
-													defaultValue="3"
-												/>
-											</div>
+								{addTocart.length > 0 && (
+									<div className="card-body">
+										<div className="cart-prod-list scroll">
+											{addTocart != "null" &&
+												addTocart.map(
+													(item, index) => (
+														(addToCartQty =
+															addToCartQty + item.sit_inventory_qty),
+														(addToCartTotal +=
+															item.portal_mrp * item.sit_inventory_qty),
+														(
+															<div className="cart-prod-div" key={index}>
+																<div className="cart-prod-title">
+																	{item.brand} - {item.parent_code}
+																</div>
+																<div className="cart-prod-desc">
+																	<span className="cart-prod-val">
+																		{item.portal_item_desc}
+																	</span>
+																</div>
+																<div className="cart-prod-desc">
+																	<span className="cart-prod-lbl">
+																		Physical Inventory:{" "}
+																	</span>
+																	<span className="cart-prod-val">
+																		{item.physical_inventory_qty}
+																	</span>
+																</div>
+																<div className="cart-prod-desc">
+																	<span className="cart-prod-lbl">
+																		Allocate Qty:{" "}
+																	</span>
+																	<span className="cart-prod-val">5</span>
+																</div>
+																<div className="cart-prod-desc">
+																	<span className="cart-prod-lbl">Price: </span>
+																	<span className="cart-prod-val">
+																		{item.portal_mrp}
+																	</span>
+																</div>
+																<div className="cart-prod-desc">
+																	<span className="cart-prod-lbl">UOM: </span>
+																	<span className="cart-prod-val">
+																		{item.uom}
+																	</span>
+																</div>
+																<div className="cart-prod-desc">
+																	<span className="cart-prod-lbl">
+																		Schemes:{" "}
+																	</span>
+																	<span className="cart-prod-val">
+																		Buy 5 case Get 1 Case Free
+																	</span>
+																</div>
+																<div className="cart-prod-qty">
+																	<input
+																		// onChange={(e) =>
+																		// 	handleQty1(e, item.portal_item_code)
+																		// }
+																		disabled={true}
+																		type="number"
+																		className="qty-ctl"
+																		step="1"
+																		defaultValue={item.sit_inventory_qty}
+																	/>
+
+																	<i
+																		onClick={(e) => removeFromCart(e, item)}
+																		className="text-danger fa fa-trash ml-1"></i>
+																</div>
+															</div>
+														)
+													)
+												)}
 										</div>
-										<div className="cart-prod-div">
-											<div className="cart-prod-title">
-												Macaroni - FG -8114044
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-val">
-													CHEF'S BASKET-PASTA-MACARONI-POUCH-60X180gm
-												</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">
-													Physical Inventory:{" "}
-												</span>
-												<span className="cart-prod-val">20</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Allocate Qty: </span>
-												<span className="cart-prod-val">5</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Price: </span>
-												<span className="cart-prod-val">2222.5</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">UOM: </span>
-												<span className="cart-prod-val">Case</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Schemes: </span>
-												<span className="cart-prod-val">
-													Buy 5 case Get 1 Case Free
-												</span>
-											</div>
-											<div className="cart-prod-qty">
-												<input
-													type="number"
-													className="qty-ctl"
-													step="1"
-													defaultValue="3"
-												/>
-											</div>
-										</div>
-										<div className="cart-prod-div">
-											<div className="cart-prod-title">
-												Macaroni - FG -8114044
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-val">
-													CHEF'S BASKET-PASTA-MACARONI-POUCH-60X180gm
-												</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">
-													Physical Inventory:{" "}
-												</span>
-												<span className="cart-prod-val">20</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Allocate Qty: </span>
-												<span className="cart-prod-val">5</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Price: </span>
-												<span className="cart-prod-val">2222.5</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">UOM: </span>
-												<span className="cart-prod-val">Case</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Schemes: </span>
-												<span className="cart-prod-val">
-													Buy 5 case Get 1 Case Free
-												</span>
-											</div>
-											<div className="cart-prod-qty">
-												<input
-													type="number"
-													className="qty-ctl"
-													step="1"
-													defaultValue="3"
-												/>
-											</div>
-										</div>
-										<div className="cart-prod-div">
-											<div className="cart-prod-title">
-												Macaroni - FG -8114044
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-val">
-													CHEF'S BASKET-PASTA-MACARONI-POUCH-60X180gm
-												</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">
-													Physical Inventory:{" "}
-												</span>
-												<span className="cart-prod-val">20</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Allocate Qty: </span>
-												<span className="cart-prod-val">5</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Price: </span>
-												<span className="cart-prod-val">2222.5</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">UOM: </span>
-												<span className="cart-prod-val">Case</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Schemes: </span>
-												<span className="cart-prod-val">
-													Buy 5 case Get 1 Case Free
-												</span>
-											</div>
-											<div className="cart-prod-qty">
-												<input
-													type="number"
-													className="qty-ctl"
-													step="1"
-													defaultValue="3"
-												/>
-											</div>
-										</div>
+										<p className="text-center m-0 font-weight-bold">
+											Total Unit:{" "}
+											<span className="text-danger">
+												{parseInt(addToCartQty, 10)}
+											</span>
+										</p>
+										<h1 className="text-center text-success">
+											{addToCartTotal}
+										</h1>
+										<button
+											type="button"
+											className="btn btn-primary btn-block btn-lg my-3">
+											Place Order{" "}
+											<i className="fa-solid fa-circle-arrow-right"></i>
+										</button>
 									</div>
-									<p className="text-center m-0 font-weight-bold">
-										Total Unit: <span className="text-danger">12</span>
-									</p>
-									<h1 className="text-center text-success">₹599.00</h1>
-									<button
-										type="button"
-										className="btn btn-primary btn-block btn-lg my-3">
-										Place Order{" "}
-										<i className="fa-solid fa-circle-arrow-right"></i>
-									</button>
-								</div>
+								)}
 							</div>
 						</div>
 					</div>
