@@ -9,8 +9,10 @@ export const setUser = (userData) => {
 };
 
 export const removeUser = () => {
-	localStorage.removeItem("token");
-	localStorage.removeItem("usertype");
+	// localStorage.removeItem("token");
+	// localStorage.removeItem("usertype");
+	// localStorage.removeItem("dashboard");
+	localStorage.clear();
 
 	return {
 		type: ActionTypes.REMOVE_USER_AUTH,

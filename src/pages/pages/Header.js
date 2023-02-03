@@ -1,5 +1,5 @@
 import { click } from "@testing-library/user-event/dist/click";
-import React, { Component, useEffect, useState } from "react";
+import React, { Component, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { sortMenuFunction } from "./utils/sortMenu";
@@ -8,10 +8,19 @@ import { setMenu } from "../../redux/actions/menuAction";
 
 const Header = (props) => {
 	const dispatch = useDispatch();
+	const ref = useRef(null);
 
 	const dashboard = useSelector((state) => state.dashboard.dashboard);
 
 	const { menu_details, profile_details } = dashboard;
+
+	const toggleClass = () => {
+		if (ref.current.classList.contains("show")) {
+			ref.current.classList.remove("show");
+		} else {
+			console.log();
+		}
+	};
 
 	return (
 		<nav
@@ -30,7 +39,7 @@ const Header = (props) => {
 				aria-label="Toggle navigation">
 				<i className="fa fa-fw fa-bars"></i>
 			</button>
-			<div className="collapse navbar-collapse" id="navbarResponsive">
+			<div className="collapse navbar-collapse" ref={ref} id="navbarResponsive">
 				<ul className="navbar-nav sidenav-toggler">
 					<li className="nav-item">
 						<a className="nav-link" id="sidenavToggler">
@@ -43,6 +52,7 @@ const Header = (props) => {
 					{menu_details &&
 						menu_details.map((item, index) => (
 							<li
+								onClick={toggleClass}
 								key={index}
 								className={`nav-item ${
 									window.location.pathname === `${item.menu_href}`
@@ -62,7 +72,7 @@ const Header = (props) => {
 							</li>
 						))}
 				</ul>
-				<ul className="navbar-nav ml-auto">
+				<ul className="navbar-nav ml-auto" onClick={toggleClass}>
 					<li className="nav-item dropdown profile_details_drop">
 						<a
 							href="#"

@@ -1,4 +1,10 @@
-import React, { Component, useEffect, useRef, useState } from "react";
+import React, {
+	Component,
+	useEffect,
+	useLayoutEffect,
+	useRef,
+	useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { json, useNavigate } from "react-router-dom";
 import PlaceOrderService from "../../axios/services/api/placeOrder";
@@ -158,6 +164,14 @@ const PlaceOrder = (props) => {
 		);
 		// AXIOS WRAPPER FOR API CALL
 	};
+	useLayoutEffect(() => {
+		document.body.classList.remove("loginBG");
+		document.body.classList.add(
+			"fixed-nav",
+			"sticky-footer",
+			"sidenav-toggled"
+		);
+	}, []);
 
 	const getFlavour = async (productLine) => {
 		// AXIOS WRAPPER FOR API CALL
@@ -187,30 +201,21 @@ const PlaceOrder = (props) => {
 		// 	key
 		// );
 
-		var result = addTocart.filter(function (o1) {
-			return order_grid_details.some(function (o2) {
-				return (
-					o1.portal_item_code !== o2.portal_item_code &&
-					o2.brand === selectedBrand.brand_desc &&
-					o2.product_line === selectedProductLine.product_line_desc &&
-					o2.flavour === selectedFlavour.flavour_desc
-				); // return the ones with equal id
-			});
+		let filterData = order_grid_details.filter(function (el) {
+			return (
+				el.brand === selectedBrand.brand_desc &&
+				el.product_line === selectedProductLine.product_line_desc &&
+				el.flavour === selectedFlavour.flavour_desc
+			);
 		});
-		console.log(addTocart);
-		console.log(order_grid_details);
-		console.log("result", result);
-
+		if (addTocart.length > 0) {
+			filterData = filterData.filter(
+				({ portal_item_code: id1 }) =>
+					!addTocart.some(({ portal_item_code: id2 }) => id2 === id1)
+			);
+		}
 		setLoading(true);
-		setOrderData(() =>
-			order_grid_details.filter(function (el) {
-				return (
-					el.brand === selectedBrand.brand_desc &&
-					el.product_line === selectedProductLine.product_line_desc &&
-					el.flavour === selectedFlavour.flavour_desc
-				);
-			})
-		);
+		setOrderData(() => filterData);
 		setDisableFilter(true);
 		setLoading(false);
 	};
@@ -224,13 +229,20 @@ const PlaceOrder = (props) => {
 	}, []);
 
 	const addToCart = () => {
-		dispatch(
-			setAddToCart(
-				orderData.filter(function (el) {
-					return el.sit_inventory_qty >= 1;
-				})
-			)
-		);
+		let currItemList = orderData.filter(function (el) {
+			return el.sit_inventory_qty >= 1;
+		});
+
+		if (addTocart.length > 0) {
+			let res = Array.prototype.push.apply(addTocart, currItemList);
+
+			console.log("res", res);
+			// console.log("currItemList", currItemList);
+			// console.log("addTocart", addTocart);
+		}
+
+		dispatch(setAddToCart(currItemList));
+
 		setOrderData(() =>
 			orderData.filter(function (el) {
 				return el.sit_inventory_qty == 0;
@@ -249,20 +261,37 @@ const PlaceOrder = (props) => {
 			)
 		);
 
-		setOrderData(() =>
-			order_grid_details.filter(function (el) {
-				return (
-					el.brand === selectedBrand.brand_desc &&
-					el.product_line === selectedProductLine.product_line_desc &&
-					el.flavour === selectedFlavour.flavour_desc
+		{
+			selectedBrand &&
+				selectedProductLine &&
+				selectedFlavour &&
+				setOrderData(() =>
+					order_grid_details.filter(function (el) {
+						return (
+							el.brand === selectedBrand.brand_desc &&
+							el.product_line === selectedProductLine.product_line_desc &&
+							el.flavour === selectedFlavour.flavour_desc
+						);
+					})
 				);
-			})
-		);
+		}
 
 		// });
 	};
 
 	const handleQty = (e, id) => {
+		// inputRef1.current.value = e.target.value;
+		setOrderData((orderData) =>
+			orderData.map((item) =>
+				id === item.portal_item_code
+					? { ...item, sit_inventory_qty: e.target.value }
+					: item
+			)
+		);
+		setDisableAddToCart(false);
+	};
+
+	const handleQtyInCart = (e, id) => {
 		// inputRef1.current.value = e.target.value;
 		setOrderData((orderData) =>
 			orderData.map((item) =>
@@ -290,7 +319,11 @@ const PlaceOrder = (props) => {
 						</div>
 					</div>
 					<div className="row">
-						<div className="col-md-8">
+						<div
+							className="col-md-8 collapse show"
+							id="collapseAll"
+							aria-expanded="true">
+							{/* <div className="col-md-8"> */}
 							<div className="row mb-3">
 								<div className="col-lg-12">
 									<div className="card card-primary border-0">
@@ -618,6 +651,7 @@ const PlaceOrder = (props) => {
 																		<td>{item.uom}</td>
 																		<td>
 																			<input
+																				style={{ textAlign: "right" }}
 																				ref={inputRef1}
 																				min={1}
 																				max={10}
@@ -703,6 +737,7 @@ const PlaceOrder = (props) => {
 														</div>
 														<div className="cart-prod-qty">
 															<input
+																style={{ textAlign: "right" }}
 																min={1}
 																max={10}
 																ref={inputRef1}
@@ -719,7 +754,6 @@ const PlaceOrder = (props) => {
 												))}
 											</>
 										)}
-										;
 									</div>
 								</div>
 								<div className="card-footer bg-white">
@@ -761,9 +795,18 @@ const PlaceOrder = (props) => {
 						{/* <div className="col-md-4 d-none d-sm-block"> */}
 						<div className="col-md-4 d-sm-block">
 							<div className="card card-primary border-0 rounded-0 mb-3">
-								<div className="card-header">Order Summary</div>
+								<div
+									className="card-header collapsepanel"
+									data-toggle="collapse"
+									data-target="#collapseTwo"
+									aria-expanded="true">
+									Order Summary
+								</div>
 								{addTocart.length > 0 && (
-									<div className="card-body">
+									<div
+										className="card-body collapse show"
+										id="collapseTwo"
+										aria-expanded="true">
 										<div className="cart-prod-list scroll">
 											{addTocart != "null" &&
 												addTocart.map(
@@ -774,87 +817,113 @@ const PlaceOrder = (props) => {
 															item.portal_mrp * item.sit_inventory_qty),
 														(
 															<div className="cart-prod-div" key={index}>
-																<div className="cart-prod-title">
-																	{item.brand} - {item.parent_code}
+																<div
+																	className="cart-prod-title collapsepanel-danger"
+																	data-toggle="collapse"
+																	data-target={`#${item.parent_code}`}
+																	aria-expanded="true">
+																	{item.brand}
 																</div>
-																<div className="cart-prod-desc">
-																	<span className="cart-prod-val">
-																		{item.portal_item_desc}
-																	</span>
-																</div>
-																<div className="cart-prod-desc">
-																	<span className="cart-prod-lbl">
-																		Physical Inventory:{" "}
-																	</span>
-																	<span className="cart-prod-val">
-																		{item.physical_inventory_qty}
-																	</span>
-																</div>
-																<div className="cart-prod-desc">
-																	<span className="cart-prod-lbl">
-																		Allocate Qty:{" "}
-																	</span>
-																	<span className="cart-prod-val">5</span>
-																</div>
-																<div className="cart-prod-desc">
-																	<span className="cart-prod-lbl">Price: </span>
-																	<span className="cart-prod-val">
-																		{item.portal_mrp}
-																	</span>
-																</div>
-																<div className="cart-prod-desc">
-																	<span className="cart-prod-lbl">UOM: </span>
-																	<span className="cart-prod-val">
-																		{item.uom}
-																	</span>
-																</div>
-																<div className="cart-prod-desc">
-																	<span className="cart-prod-lbl">
-																		Schemes:{" "}
-																	</span>
-																	<span className="cart-prod-val">
-																		Buy 5 case Get 1 Case Free
-																	</span>
-																</div>
-																<div className="cart-prod-qty">
-																	<input
-																		// onChange={(e) =>
-																		// 	handleQty1(e, item.portal_item_code)
-																		// }
-																		disabled={true}
-																		type="number"
-																		className="qty-ctl"
-																		step="1"
-																		defaultValue={item.sit_inventory_qty}
-																	/>
+																<div
+																	className="collapse"
+																	id={item.parent_code}
+																	aria-expanded="true">
+																	<div className="cart-prod-desc">
+																		<span className="cart-prod-val">
+																			{item.portal_item_desc}
+																		</span>
+																	</div>
+																	<div className="cart-prod-desc">
+																		<span className="cart-prod-lbl">
+																			Physical Inventory:{" "}
+																		</span>
+																		<span className="cart-prod-val">
+																			{item.physical_inventory_qty}
+																		</span>
+																	</div>
+																	<div className="cart-prod-desc">
+																		<span className="cart-prod-lbl">
+																			Allocate Qty:{" "}
+																		</span>
+																		<span className="cart-prod-val">5</span>
+																	</div>
+																	<div className="cart-prod-desc">
+																		<span className="cart-prod-lbl">
+																			Price:{" "}
+																		</span>
+																		<span className="cart-prod-val">
+																			{item.portal_mrp}
+																		</span>
+																	</div>
+																	<div className="cart-prod-desc">
+																		<span className="cart-prod-lbl">UOM: </span>
+																		<span className="cart-prod-val">
+																			{item.uom}
+																		</span>
+																	</div>
+																	<div className="cart-prod-desc">
+																		<span className="cart-prod-lbl">
+																			Schemes:{" "}
+																		</span>
+																		<span className="cart-prod-val">
+																			Buy 5 case Get 1 Case Free
+																		</span>
+																	</div>
+																	<div className="cart-prod-qty">
+																		<input
+																			style={{ textAlign: "right" }}
+																			onChange={(e) =>
+																				handleQty(e, item.portal_item_code)
+																			}
+																			// disabled={true}
+																			type="number"
+																			className="qty-ctl"
+																			step="1"
+																			defaultValue={item.sit_inventory_qty}
+																		/>
 
-																	<i
-																		onClick={(e) => removeFromCart(e, item)}
-																		className="text-danger fa fa-trash ml-1"></i>
+																		<i
+																			onClick={(e) => removeFromCart(e, item)}
+																			className="text-danger fa fa-trash ml-1"></i>
+																	</div>
 																</div>
 															</div>
 														)
 													)
 												)}
 										</div>
-										<p className="text-center m-0 font-weight-bold">
+
+										<p className="text-center d-none d-sm-block m-0 font-weight-bold">
 											Total Unit:{" "}
 											<span className="text-danger">
-												{parseInt(addToCartQty, 10)}
+												{/* {parseInt(addToCartQty, 10)} */}
+
+												{orderData.length + 1}
 											</span>
 										</p>
-										<h1 className="text-center text-success">
+										<h1 className="text-center text-success d-none d-sm-block">
 											{addToCartTotal}
 										</h1>
+
 										<button
 											type="button"
-											className="btn btn-primary btn-block btn-lg my-3">
+											className="btn btn-primary btn-block btn-lg my-3 d-sm-block d-none">
 											Place Order{" "}
 											<i className="fa-solid fa-circle-arrow-right"></i>
 										</button>
 									</div>
 								)}
 							</div>
+						</div>
+						<div className="col-12 d-sm-none d-sm-none">
+							<button
+								type="button"
+								className="collapsepanel btn btn-primary btn-block btn-lg my-3"
+								data-toggle="collapse"
+								data-target="#collapseAll"
+								aria-expanded="true">
+								Add More Line <i className="fa-solid fa-circle-arrow-right"></i>
+							</button>
 						</div>
 					</div>
 				</div>
@@ -871,9 +940,10 @@ const PlaceOrder = (props) => {
 						</span>
 						<span className="atcm-text">
 							<span className="atc-unit">
-								Unit: {parseInt(cartTotalQty, 10)}
+								Unit: {addToCart.length + 1}
+								{/* {parseInt(cartTotalQty, 10)} */}
 							</span>
-							<span className="atc-total">{cartTotal}</span>
+							<span className="atc-total">{addToCartTotal}</span>
 						</span>
 					</a>{" "}
 					<a href="#" className="atcm-place-order">
@@ -937,6 +1007,7 @@ const PlaceOrder = (props) => {
 									</div>
 									<div className="cart-prod-qty">
 										<input
+											style={{ textAlign: "right" }}
 											type="number"
 											className="qty-ctl"
 											step="1"
@@ -975,6 +1046,7 @@ const PlaceOrder = (props) => {
 									</div>
 									<div className="cart-prod-qty">
 										<input
+											style={{ textAlign: "right" }}
 											type="number"
 											className="qty-ctl"
 											step="1"
@@ -1013,6 +1085,7 @@ const PlaceOrder = (props) => {
 									</div>
 									<div className="cart-prod-qty">
 										<input
+											style={{ textAlign: "right" }}
 											type="number"
 											className="qty-ctl"
 											step="1"
@@ -1051,6 +1124,7 @@ const PlaceOrder = (props) => {
 									</div>
 									<div className="cart-prod-qty">
 										<input
+											style={{ textAlign: "right" }}
 											type="number"
 											className="qty-ctl"
 											step="1"

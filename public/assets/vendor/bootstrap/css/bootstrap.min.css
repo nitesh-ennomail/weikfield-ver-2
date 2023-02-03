@@ -80,8 +80,13 @@
 .panel-danger>.panel-heading .badge { color:#f2dede; background-color:#a94442 }
 .panel-danger>.panel-footer+.panel-collapse>.panel-body { border-bottom-color:#ebccd1 }
 
-.collapsepanel:after {font: normal normal normal 14px/1 FontAwesome;  content: "\f077" !important; float: right; color: #fff;margin-top: 6px; }
+.collapsepanel:after {font: normal normal normal 14px/1 FontAwesome;  content: "\f077" !important; float: right; color: #eee;margin-top: 6px; }
 .collapsepanel.collapsed:after {font: normal normal normal 14px/1 FontAwesome;  content: "\f078" !important; float: right; color: #fff; margin-top: 6px; }
+
+
+.collapsepanel-danger:after {font: normal normal normal 14px/1 FontAwesome;  content: "\f077" !important; float: right; color: red;margin-top: 6px; }
+.collapsepanel-danger.collapsed:after {font: normal normal normal 14px/1 FontAwesome;  content: "\f078" !important; float: right; color: red; margin-top: 6px; }
+
  
   /*-- panel end --*/
 /*# sourceMappingURL=bootstrap.min.css.map */
