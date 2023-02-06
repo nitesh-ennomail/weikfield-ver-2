@@ -20,7 +20,6 @@ const Login = () => {
 		await AuthService.addUser(data).then((response) => {
 			dispatch(setToken(response.token));
 			AuthService.getUserType(response.token).then((resp) => {
-				console.log("usertype", resp.data[0].usertype);
 				dispatch(setUserType(resp.data[0].usertype));
 			});
 		});

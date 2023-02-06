@@ -24,6 +24,7 @@ import {
 import $ from "jquery";
 import { ColorRing } from "react-loader-spinner";
 import { getUniqueByKey } from "./utils/findUniqueBykey";
+import Swal from "sweetalert2";
 
 const PlaceOrder = (props) => {
 	const dispatch = useDispatch();
@@ -142,7 +143,16 @@ const PlaceOrder = (props) => {
 					)}
 				</>
 			) : (
-				<>{(setDisableFilter(true), alert("Not Applicable"))}</>
+				<>
+					{
+						(setDisableFilter(true),
+						Swal.fire({
+							icon: "error",
+							title: "Not Applicable",
+							text: "Distributor has not added any product yet!",
+						}))
+					}
+				</>
 			);
 		}
 
@@ -232,19 +242,8 @@ const PlaceOrder = (props) => {
 		let currItemList = orderData.filter(function (el) {
 			return el.sit_inventory_qty >= 1;
 		});
-
-		if (addTocart.length > 0) {
-			let res = Array.prototype.push.apply(addTocart, currItemList);
-
-			console.log("res", res);
-			// console.log("currItemList", currItemList);
-			// console.log("addTocart", addTocart);
-		}
-
-		console.log("currItemList", currItemList);
-
-		dispatch(setAddToCart(currItemList));
-
+		let added_to_cart = [...addTocart, ...currItemList];
+		dispatch(setAddToCart(added_to_cart));
 		setOrderData(() =>
 			orderData.filter(function (el) {
 				return el.sit_inventory_qty == 0;
@@ -253,7 +252,6 @@ const PlaceOrder = (props) => {
 	};
 
 	const removeFromCart = (e, id) => {
-		// setAddToCart((orderData) => {
 		id.sit_inventory_qty = 0;
 		dispatch(
 			setAddToCart(
@@ -282,7 +280,6 @@ const PlaceOrder = (props) => {
 	};
 
 	const handleQty = (e, id) => {
-		// inputRef1.current.value = e.target.value;
 		setOrderData((orderData) =>
 			orderData.map((item) =>
 				id === item.portal_item_code
@@ -294,7 +291,6 @@ const PlaceOrder = (props) => {
 	};
 
 	const handleQtyInCart = (e, id) => {
-		// inputRef1.current.value = e.target.value;
 		dispatch(
 			setAddToCart(
 				addTocart.map((item) =>
@@ -581,10 +577,16 @@ const PlaceOrder = (props) => {
 														</div>
 													</div>
 													<div className="form-group row">
-														<div className="col-md-10"></div>
+														<div className="col-md-8"></div>
 														<div className="col-md-2">
-															{/* <button className="form-control"> */}
-
+															<button
+																type="button"
+																onClick={(e) => setDisableFilter(false)}
+																className="btn btn-block btn-danger btn-md d-none d-sm-block">
+																<i className="fas fa fa-gear mr-2"></i> Reset
+															</button>
+														</div>
+														<div className="col-md-2 col-5 col-offset-7">
 															<button
 																disabled={disableFilter}
 																type="button"
@@ -639,41 +641,53 @@ const PlaceOrder = (props) => {
 													/>
 												) : (
 													<>
-														{orderData.map(
-															(item, index) => (
-																(cartTotalQty =
-																	cartTotalQty + item.sit_inventory_qty),
-																(cartTotal +=
-																	item.portal_mrp * item.sit_inventory_qty),
-																(
-																	<tr key={index}>
-																		<td>{item.portal_item_code}</td>
-																		<td>{item.portal_item_desc}</td>
-																		<td>{item.erp_commited_qty}</td>
-																		<td>{item.physical_inventory_qty}</td>
-																		<td>{item.portal_mrp}</td>
-																		<td>{item.uom}</td>
-																		<td>
-																			<input
-																				style={{ textAlign: "right" }}
-																				ref={inputRef1}
-																				min={1}
-																				max={10}
-																				type="number"
-																				className="qty-ctl"
-																				step="1"
-																				defaultValue={item.sit_inventory_qty}
-																				onChange={(e) =>
-																					handleQty(e, item.portal_item_code)
-																				}
-																			/>
-																		</td>
-																		<td>
-																			{item.portal_mrp * item.sit_inventory_qty}
-																		</td>
-																	</tr>
-																)
-															)
+														{orderData.length > 0 ? (
+															<>
+																{orderData.map(
+																	(item, index) => (
+																		(cartTotalQty =
+																			cartTotalQty + item.sit_inventory_qty),
+																		(cartTotal +=
+																			item.portal_mrp * item.sit_inventory_qty),
+																		(
+																			<tr key={index}>
+																				<td>{item.portal_item_code}</td>
+																				<td>{item.portal_item_desc}</td>
+																				<td>{item.erp_commited_qty}</td>
+																				<td>{item.physical_inventory_qty}</td>
+																				<td>{item.portal_mrp}</td>
+																				<td>{item.uom}</td>
+																				<td>
+																					<input
+																						style={{ textAlign: "right" }}
+																						ref={inputRef1}
+																						min={1}
+																						max={10}
+																						type="number"
+																						className="qty-ctl"
+																						step="1"
+																						defaultValue={
+																							item.sit_inventory_qty
+																						}
+																						onChange={(e) =>
+																							handleQty(
+																								e,
+																								item.portal_item_code
+																							)
+																						}
+																					/>
+																				</td>
+																				<td>
+																					{item.portal_mrp *
+																						item.sit_inventory_qty}
+																				</td>
+																			</tr>
+																		)
+																	)
+																)}
+															</>
+														) : (
+															"No data found!"
 														)}
 													</>
 												)}
@@ -875,7 +889,7 @@ const PlaceOrder = (props) => {
 											<span className="text-danger">
 												{/* {parseInt(addToCartQty, 10)} */}
 
-												{orderData.length + 1}
+												{addTocart.length}
 											</span>
 										</p>
 										<h1 className="text-center text-success d-none d-sm-block">
@@ -918,8 +932,8 @@ const PlaceOrder = (props) => {
 						</span>
 						<span className="atcm-text">
 							<span className="atc-unit">
-								Unit: {addToCart.length + 1}
-								{/* {parseInt(cartTotalQty, 10)} */}
+								Unit:
+								{addTocart.length}
 							</span>
 							<span className="atc-total">{addToCartTotal}</span>
 						</span>
