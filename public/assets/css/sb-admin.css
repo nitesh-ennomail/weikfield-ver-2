@@ -28,10 +28,33 @@ span.cart-prod-lbl {
     font-weight: 500;
     color: #000;
 }
+.cart-prod-absqty {
+    position: absolute;
+    right: 20px;
+    bottom: 50px;
+}
+
+.cart-prod-price {
+    position: absolute;
+    right: 20px;
+    bottom: 33px;
+}
+.cart-prod-qty1 {
+    position: absolute;
+    right: 20px;
+    bottom: 8px;
+}
+
+.cart-prod-trash{
+	position: absolute;
+    right: 5px;
+    bottom: 75px;
+}
+
 .cart-prod-qty {
     position: absolute;
     right: 20px;
-    bottom: 40px;
+    bottom: 20px;
 }
 
 .lbl-radio-btn {

@@ -241,6 +241,8 @@ const PlaceOrder = (props) => {
 			// console.log("addTocart", addTocart);
 		}
 
+		console.log("currItemList", currItemList);
+
 		dispatch(setAddToCart(currItemList));
 
 		setOrderData(() =>
@@ -293,14 +295,16 @@ const PlaceOrder = (props) => {
 
 	const handleQtyInCart = (e, id) => {
 		// inputRef1.current.value = e.target.value;
-		setOrderData((orderData) =>
-			orderData.map((item) =>
-				id === item.portal_item_code
-					? { ...item, sit_inventory_qty: e.target.value }
-					: item
+		dispatch(
+			setAddToCart(
+				addTocart.map((item) =>
+					id === item.portal_item_code
+						? { ...item, sit_inventory_qty: e.target.value }
+						: item
+				)
 			)
 		);
-		setDisableAddToCart(false);
+		// setDisableAddToCart(false);
 	};
 
 	return (
@@ -472,7 +476,7 @@ const PlaceOrder = (props) => {
 																			))}
 																	</select>
 																	<div className="lbl-radio-group hrl-scrl-rdo d-block d-sm-none">
-																		{disableFilter ? (
+																		{loading ? (
 																			<label>show all</label>
 																		) : (
 																			<>
@@ -697,7 +701,9 @@ const PlaceOrder = (props) => {
 											<>
 												{orderData.map((item, index) => (
 													<div className="cart-prod-div" key={index}>
-														<div className="cart-prod-title">{item.brand}</div>
+														<div className="cart-prod-title">
+															{item.portal_item_code}
+														</div>
 														<div className="cart-prod-desc">
 															<span className="cart-prod-val">
 																{item.portal_item_desc}
@@ -711,7 +717,7 @@ const PlaceOrder = (props) => {
 																{item.physical_inventory_qty}
 															</span>
 														</div>
-														<div className="cart-prod-desc">
+														<div className="cart-prod-absqty">
 															<span className="cart-prod-lbl">
 																Allocate Qty:{" "}
 															</span>
@@ -719,7 +725,7 @@ const PlaceOrder = (props) => {
 																{item.erp_commited_qty}
 															</span>
 														</div>
-														<div className="cart-prod-desc">
+														<div className="cart-prod-price">
 															<span className="cart-prod-lbl">Price: </span>
 															<span className="cart-prod-val">
 																{item.portal_mrp}
@@ -729,13 +735,15 @@ const PlaceOrder = (props) => {
 															<span className="cart-prod-lbl">UOM: </span>
 															<span className="cart-prod-val">{item.uom}</span>
 														</div>
-														<div className="cart-prod-desc">
-															<span className="cart-prod-lbl">Schemes: </span>
-															<span className="cart-prod-val">
-																Buy 5 case Get 1 Case Free
-															</span>
-														</div>
-														<div className="cart-prod-qty">
+														{item.scheme && (
+															<div className="cart-prod-desc">
+																<span className="cart-prod-lbl">Schemes: </span>
+																<span className="cart-prod-val">
+																	Buy 5 case Get 1 Case Free
+																</span>
+															</div>
+														)}
+														<div className="cart-prod-qty1">
 															<input
 																style={{ textAlign: "right" }}
 																min={1}
@@ -817,75 +825,44 @@ const PlaceOrder = (props) => {
 															item.portal_mrp * item.sit_inventory_qty),
 														(
 															<div className="cart-prod-div" key={index}>
-																<div
-																	className="cart-prod-title collapsepanel-danger"
-																	data-toggle="collapse"
-																	data-target={`#${item.parent_code}`}
-																	aria-expanded="true">
-																	{item.brand}
+																<div className="cart-prod-trash">
+																	<i
+																		onClick={(e) => removeFromCart(e, item)}
+																		className="text-danger fa fa-trash mr-1"></i>
 																</div>
-																<div
-																	className="collapse"
-																	id={item.parent_code}
-																	aria-expanded="true">
-																	<div className="cart-prod-desc">
-																		<span className="cart-prod-val">
-																			{item.portal_item_desc}
-																		</span>
-																	</div>
-																	<div className="cart-prod-desc">
-																		<span className="cart-prod-lbl">
-																			Physical Inventory:{" "}
-																		</span>
-																		<span className="cart-prod-val">
-																			{item.physical_inventory_qty}
-																		</span>
-																	</div>
-																	<div className="cart-prod-desc">
-																		<span className="cart-prod-lbl">
-																			Allocate Qty:{" "}
-																		</span>
-																		<span className="cart-prod-val">5</span>
-																	</div>
-																	<div className="cart-prod-desc">
-																		<span className="cart-prod-lbl">
-																			Price:{" "}
-																		</span>
-																		<span className="cart-prod-val">
-																			{item.portal_mrp}
-																		</span>
-																	</div>
-																	<div className="cart-prod-desc">
-																		<span className="cart-prod-lbl">UOM: </span>
-																		<span className="cart-prod-val">
-																			{item.uom}
-																		</span>
-																	</div>
-																	<div className="cart-prod-desc">
-																		<span className="cart-prod-lbl">
-																			Schemes:{" "}
-																		</span>
-																		<span className="cart-prod-val">
-																			Buy 5 case Get 1 Case Free
-																		</span>
-																	</div>
-																	<div className="cart-prod-qty">
-																		<input
-																			style={{ textAlign: "right" }}
-																			onChange={(e) =>
-																				handleQty(e, item.portal_item_code)
-																			}
-																			// disabled={true}
-																			type="number"
-																			className="qty-ctl"
-																			step="1"
-																			defaultValue={item.sit_inventory_qty}
-																		/>
+																<div className="cart-prod-title">
+																	{item.portal_item_code}
+																</div>
+																<div className="cart-prod-desc">
+																	<span className="cart-prod-val">
+																		{item.portal_item_desc}
+																	</span>
+																</div>
 
-																		<i
-																			onClick={(e) => removeFromCart(e, item)}
-																			className="text-danger fa fa-trash ml-1"></i>
-																	</div>
+																<div className="cart-prod-desc">
+																	<span className="cart-prod-lbl">
+																		Quantity:{" "}
+																	</span>
+																	<input
+																		min={1}
+																		style={{ textAlign: "right" }}
+																		onChange={(e) =>
+																			handleQtyInCart(e, item.portal_item_code)
+																		}
+																		// disabled={true}
+																		type="number"
+																		className="qty-ctl"
+																		step="1"
+																		defaultValue={item.sit_inventory_qty}
+																	/>
+
+																	<span className="cart-prod-lbl ml-2">
+																		{item.sit_inventory_qty} * {item.portal_mrp}{" "}
+																		=
+																		<b>
+																			{item.sit_inventory_qty * item.portal_mrp}
+																		</b>
+																	</span>
 																</div>
 															</div>
 														)
@@ -917,6 +894,7 @@ const PlaceOrder = (props) => {
 						</div>
 						<div className="col-12 d-sm-none d-sm-none">
 							<button
+								onClick={() => setDisableFilter(false)}
 								type="button"
 								className="collapsepanel btn btn-primary btn-block btn-lg my-3"
 								data-toggle="collapse"
