@@ -586,7 +586,7 @@ const PlaceOrder = (props) => {
 																<i className="fas fa fa-gear mr-2"></i> Reset
 															</button>
 														</div>
-														<div className="col-md-2 col-5 col-offset-7">
+														<div className="col-md-2">
 															<button
 																disabled={disableFilter}
 																type="button"
@@ -602,321 +602,358 @@ const PlaceOrder = (props) => {
 									</div>
 								</div>
 							</div>
-							<div className="card border-0 rounded-0 mb-3">
-								<div className="card-body">
-									<div className="table-responsive d-none d-sm-block">
-										<table
-											className="table table-bordered"
-											id="dataTable1"
-											width="100%"
-											cellSpacing="0">
-											<thead>
-												<tr>
-													<th>Parent Code</th>
-													<th>Parent Code Desc</th>
-													<th>BO Qty</th>
-													<th>W/H Stock</th>
-													<th>Price</th>
-													<th>UOM</th>
-													<th>Qty</th>
-													<th>Total Amount</th>
-												</tr>
-											</thead>
-											<tbody>
-												{loading ? (
-													<ColorRing
-														visible={true}
-														height="80"
-														width="100%"
-														ariaLabel="blocks-loading"
-														wrapperStyle={{ textAlign: "center" }}
-														wrapperClass="blocks-wrapper"
-														colors={[
-															"#e15b64",
-															"#f47e60",
-															"#f8b26a",
-															"#abbd81",
-															"#849b87",
-														]}
-													/>
-												) : (
-													<>
-														{orderData.length > 0 ? (
-															<>
-																{orderData.map(
-																	(item, index) => (
-																		(cartTotalQty =
-																			cartTotalQty + item.sit_inventory_qty),
-																		(cartTotal +=
-																			item.portal_mrp * item.sit_inventory_qty),
-																		(
-																			<tr key={index}>
-																				<td>{item.portal_item_code}</td>
-																				<td>{item.portal_item_desc}</td>
-																				<td>{item.erp_commited_qty}</td>
-																				<td>{item.physical_inventory_qty}</td>
-																				<td>{item.portal_mrp}</td>
-																				<td>{item.uom}</td>
-																				<td>
-																					<input
-																						style={{ textAlign: "right" }}
-																						ref={inputRef1}
-																						min={1}
-																						max={10}
-																						type="number"
-																						className="qty-ctl"
-																						step="1"
-																						defaultValue={
-																							item.sit_inventory_qty
-																						}
-																						onChange={(e) =>
-																							handleQty(
-																								e,
-																								item.portal_item_code
-																							)
-																						}
-																					/>
-																				</td>
-																				<td>
-																					{item.portal_mrp *
-																						item.sit_inventory_qty}
-																				</td>
-																			</tr>
-																		)
-																	)
-																)}
-															</>
-														) : (
-															"No data found!"
-														)}
-													</>
-												)}
-											</tbody>
-										</table>
-									</div>
-									<div className="cart-prod-list d-block d-sm-none">
-										{loading ? (
-											<ColorRing
-												visible={true}
-												height="80"
+							{orderData.length > 0 && (
+								<div className="card border-0 rounded-0 mb-3">
+									<div className="card-body">
+										<div className="table-responsive d-none d-sm-block">
+											<table
+												className="table table-bordered"
+												id="dataTable1"
 												width="100%"
-												ariaLabel="blocks-loading"
-												wrapperStyle={{ textAlign: "center" }}
-												wrapperClass="blocks-wrapper"
-												colors={[
-													"#e15b64",
-													"#f47e60",
-													"#f8b26a",
-													"#abbd81",
-													"#849b87",
-												]}
-											/>
-										) : (
-											<>
-												{orderData.map((item, index) => (
-													<div className="cart-prod-div" key={index}>
-														<div className="cart-prod-title">
-															{item.portal_item_code}
-														</div>
-														<div className="cart-prod-desc">
-															<span className="cart-prod-val">
-																{item.portal_item_desc}
-															</span>
-														</div>
-														<div className="cart-prod-desc">
-															<span className="cart-prod-lbl">
-																Physical Inventory:{" "}
-															</span>
-															<span className="cart-prod-val">
-																{item.physical_inventory_qty}
-															</span>
-														</div>
-														<div className="cart-prod-absqty">
-															<span className="cart-prod-lbl">
-																Allocate Qty:{" "}
-															</span>
-															<span className="cart-prod-val">
-																{item.erp_commited_qty}
-															</span>
-														</div>
-														<div className="cart-prod-price">
-															<span className="cart-prod-lbl">Price: </span>
-															<span className="cart-prod-val">
-																{item.portal_mrp}
-															</span>
-														</div>
-														<div className="cart-prod-desc">
-															<span className="cart-prod-lbl">UOM: </span>
-															<span className="cart-prod-val">{item.uom}</span>
-														</div>
-														{item.scheme && (
+												cellSpacing="0">
+												<thead>
+													<tr>
+														<th>Parent Code</th>
+														<th>Parent Code Desc</th>
+														<th>BO Qty</th>
+														<th>W/H Stock</th>
+														<th>Price</th>
+														<th>UOM</th>
+														<th>Qty</th>
+														<th>Total Amount</th>
+													</tr>
+												</thead>
+												<tbody>
+													{loading ? (
+														<ColorRing
+															visible={true}
+															height="80"
+															width="100%"
+															ariaLabel="blocks-loading"
+															wrapperStyle={{ textAlign: "center" }}
+															wrapperClass="blocks-wrapper"
+															colors={[
+																"#e15b64",
+																"#f47e60",
+																"#f8b26a",
+																"#abbd81",
+																"#849b87",
+															]}
+														/>
+													) : (
+														<>
+															{orderData.length > 0 ? (
+																<>
+																	{orderData.map(
+																		(item, index) => (
+																			(cartTotalQty =
+																				cartTotalQty + item.sit_inventory_qty),
+																			(cartTotal +=
+																				item.portal_mrp *
+																				item.sit_inventory_qty),
+																			(
+																				<tr key={index}>
+																					<td>{item.portal_item_code}</td>
+																					<td>{item.portal_item_desc}</td>
+																					<td>{item.erp_commited_qty}</td>
+																					<td>{item.physical_inventory_qty}</td>
+																					<td>{item.portal_mrp}</td>
+																					<td>{item.uom}</td>
+																					<td>
+																						<input
+																							style={{ textAlign: "right" }}
+																							ref={inputRef1}
+																							min={1}
+																							max={10}
+																							type="number"
+																							className="qty-ctl"
+																							step="1"
+																							defaultValue={
+																								item.sit_inventory_qty
+																							}
+																							onChange={(e) =>
+																								handleQty(
+																									e,
+																									item.portal_item_code
+																								)
+																							}
+																						/>
+																					</td>
+																					<td>
+																						{item.portal_mrp *
+																							item.sit_inventory_qty}
+																					</td>
+																				</tr>
+																			)
+																		)
+																	)}
+																</>
+															) : (
+																"No data found!"
+															)}
+														</>
+													)}
+												</tbody>
+											</table>
+										</div>
+										<div className="cart-prod-list d-block d-sm-none">
+											{loading ? (
+												<ColorRing
+													visible={true}
+													height="80"
+													width="100%"
+													ariaLabel="blocks-loading"
+													wrapperStyle={{ textAlign: "center" }}
+													wrapperClass="blocks-wrapper"
+													colors={[
+														"#e15b64",
+														"#f47e60",
+														"#f8b26a",
+														"#abbd81",
+														"#849b87",
+													]}
+												/>
+											) : (
+												<>
+													{orderData.map((item, index) => (
+														<div className="cart-prod-div" key={index}>
+															<div className="cart-prod-title">
+																{item.portal_item_code}
+															</div>
 															<div className="cart-prod-desc">
-																<span className="cart-prod-lbl">Schemes: </span>
 																<span className="cart-prod-val">
-																	Buy 5 case Get 1 Case Free
+																	{item.portal_item_desc}
 																</span>
 															</div>
-														)}
-														<div className="cart-prod-qty1">
-															<input
-																style={{ textAlign: "right" }}
-																min={1}
-																max={10}
-																ref={inputRef1}
-																type="number"
-																className="qty-ctl"
-																step="1"
-																defaultValue={item.sit_inventory_qty}
-																onChange={(e) =>
-																	handleQty(e, item.portal_item_code)
-																}
-															/>
-														</div>
-													</div>
-												))}
-											</>
-										)}
-									</div>
-								</div>
-								<div className="card-footer bg-white">
-									<div className="row">
-										<div className="col-md-3 mb-3 d-sm-block">
-											<button
-												type="button"
-												onClick={addToCart}
-												disabled={disableAddToCart || orderData.length === 0}
-												className="btn btn-block btn-primary btn-md">
-												<i className="fas fa-cart-shopping mr-2"></i> Add to
-												Cart
-											</button>
-										</div>
-										<div className="col-md-6 text-center">
-											<div className="form-group mb-2">
-												{" "}
-												<span className="pr-4">
-													<i className="fas fa-flag text-success  mr-2"></i>New
-													Launch
-												</span>{" "}
-												<span className="pr-4">
-													<i className="fas fa-flag text-info mr-2"></i> Promo
-												</span>{" "}
-												<span className="pr-4">
-													<i className="fas fa-flag  mr-2"></i> Balance SKU's{" "}
-												</span>{" "}
-											</div>
-										</div>
-										<div className="col-md-3 d-none d-sm-block">
-											<h4 className="m-0 text-success  text-center">
-												Total: {cartTotal}
-											</h4>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						{/* <div className="col-md-4 d-none d-sm-block"> */}
-						<div className="col-md-4 d-sm-block">
-							<div className="card card-primary border-0 rounded-0 mb-3">
-								<div
-									className="card-header collapsepanel"
-									data-toggle="collapse"
-									data-target="#collapseTwo"
-									aria-expanded="true">
-									Order Summary
-								</div>
-								{addTocart.length > 0 && (
-									<div
-										className="card-body collapse show"
-										id="collapseTwo"
-										aria-expanded="true">
-										<div className="cart-prod-list scroll">
-											{addTocart != "null" &&
-												addTocart.map(
-													(item, index) => (
-														(addToCartQty =
-															addToCartQty + item.sit_inventory_qty),
-														(addToCartTotal +=
-															item.portal_mrp * item.sit_inventory_qty),
-														(
-															<div className="cart-prod-div" key={index}>
-																<div className="cart-prod-trash">
-																	<i
-																		onClick={(e) => removeFromCart(e, item)}
-																		className="text-danger fa fa-trash mr-1"></i>
-																</div>
-																<div className="cart-prod-title">
-																	{item.portal_item_code}
-																</div>
-																<div className="cart-prod-desc">
-																	<span className="cart-prod-val">
-																		{item.portal_item_desc}
-																	</span>
-																</div>
+															<div className="cart-prod-desc">
+																<span className="cart-prod-lbl">
+																	Physical Inventory:{" "}
+																</span>
+																<span className="cart-prod-val">
+																	{item.physical_inventory_qty}
+																</span>
 
-																<div className="cart-prod-desc">
+																<div
+																	className="cart-prod-desc"
+																	style={{ float: "right" }}>
 																	<span className="cart-prod-lbl">
-																		Quantity:{" "}
+																		Allocate Qty:{" "}
 																	</span>
+																	<span className="cart-prod-val">
+																		{item.erp_commited_qty}
+																	</span>
+																</div>
+															</div>
+
+															<div className="cart-prod-desc">
+																<span className="cart-prod-lbl">UOM: </span>
+																<span className="cart-prod-val">
+																	{item.uom}
+																</span>
+
+																<div
+																	className="cart-prod-desc"
+																	style={{ float: "right" }}>
+																	<span className="cart-prod-lbl">Price: </span>
+																	<span className="cart-prod-val">
+																		{item.portal_mrp}
+																	</span>
+																</div>
+															</div>
+
+															<div className="cart-prod-desc">
+																<span className="cart-prod-lbl">
+																	{item && item.scheme ? item.scheme : " "}
+																</span>
+
+																<div
+																	className="cart-prod-desc"
+																	style={{ float: "right" }}>
 																	<input
-																		min={1}
 																		style={{ textAlign: "right" }}
-																		onChange={(e) =>
-																			handleQtyInCart(e, item.portal_item_code)
-																		}
-																		// disabled={true}
+																		min={1}
+																		max={10}
+																		ref={inputRef1}
 																		type="number"
 																		className="qty-ctl"
 																		step="1"
 																		defaultValue={item.sit_inventory_qty}
+																		onChange={(e) =>
+																			handleQty(e, item.portal_item_code)
+																		}
 																	/>
-
-																	<span className="cart-prod-lbl ml-2">
-																		{item.sit_inventory_qty} * {item.portal_mrp}{" "}
-																		=
-																		<b>
-																			{item.sit_inventory_qty * item.portal_mrp}
-																		</b>
-																	</span>
 																</div>
 															</div>
-														)
-													)
-												)}
+														</div>
+													))}
+												</>
+											)}
+										</div>
+									</div>
+									{orderData.length > 0 && (
+										<div className="card-footer bg-white">
+											<div className="row">
+												<div className="col-md-3 mb-3 d-sm-block">
+													<button
+														type="button"
+														onClick={addToCart}
+														disabled={
+															disableAddToCart || orderData.length === 0
+														}
+														className="btn btn-block btn-primary btn-md">
+														<i className="fas fa-cart-shopping mr-2"></i> Add to
+														Cart
+													</button>
+												</div>
+												<div className="col-md-6 text-center">
+													<div className="form-group mb-2">
+														{" "}
+														<span className="pr-4">
+															<i className="fas fa-flag text-success  mr-2"></i>
+															New Launch
+														</span>{" "}
+														<span className="pr-4">
+															<i className="fas fa-flag text-info mr-2"></i>{" "}
+															Promo
+														</span>{" "}
+														<span className="pr-4">
+															<i className="fas fa-flag  mr-2"></i> Balance
+															SKU's{" "}
+														</span>{" "}
+													</div>
+												</div>
+												<div className="col-md-3 d-none d-sm-block">
+													<h4 className="m-0 text-success  text-center">
+														Total: {cartTotal}
+													</h4>
+												</div>
+											</div>
+										</div>
+									)}
+								</div>
+							)}
+						</div>
+						{/* <div className="col-md-4 d-none d-sm-block"> */}
+
+						{addTocart.length > 0 && (
+							<>
+								<div className="col-md-4 d-sm-block">
+									<div className="card card-primary border-0 rounded-0 mb-3">
+										<div
+											className="card-header collapsepanel"
+											data-toggle="collapse"
+											data-target="#collapseTwo"
+											aria-expanded="true">
+											Order Summary
 										</div>
 
-										<p className="text-center d-none d-sm-block m-0 font-weight-bold">
-											Total Unit:{" "}
-											<span className="text-danger">
-												{/* {parseInt(addToCartQty, 10)} */}
+										<div
+											className="card-body collapse show"
+											id="collapseTwo"
+											aria-expanded="true">
+											<div className="cart-prod-list scroll">
+												{addTocart != "null" &&
+													addTocart.map(
+														(item, index) => (
+															(addToCartQty =
+																addToCartQty + item.sit_inventory_qty),
+															(addToCartTotal +=
+																item.portal_mrp * item.sit_inventory_qty),
+															(
+																<div className="cart-prod-div" key={index}>
+																	<div className="cart-prod-trash">
+																		<i
+																			onClick={(e) => removeFromCart(e, item)}
+																			className="text-danger fa fa-trash mr-1"></i>
+																	</div>
+																	<div className="cart-prod-title">
+																		{item.portal_item_code}
+																	</div>
+																	<div className="cart-prod-desc">
+																		<span className="cart-prod-val">
+																			{item.portal_item_desc}
+																		</span>
+																	</div>
 
-												{addTocart.length}
-											</span>
-										</p>
-										<h1 className="text-center text-success d-none d-sm-block">
-											{addToCartTotal}
-										</h1>
+																	<div className="cart-prod-desc">
+																		<span className="cart-prod-lbl">
+																			Quantity:{" "}
+																		</span>
+																		<input
+																			min={1}
+																			style={{ textAlign: "right" }}
+																			onChange={(e) =>
+																				handleQtyInCart(
+																					e,
+																					item.portal_item_code
+																				)
+																			}
+																			// disabled={true}
+																			type="number"
+																			className="qty-ctl"
+																			step="1"
+																			defaultValue={item.sit_inventory_qty}
+																		/>
 
-										<button
-											type="button"
-											className="btn btn-primary btn-block btn-lg my-3 d-sm-block d-none">
-											Place Order{" "}
-											<i className="fa-solid fa-circle-arrow-right"></i>
-										</button>
+																		{/* <span className="cart-prod-lbl ml-2">
+																			{item.sit_inventory_qty} *{" "}
+																			{item.portal_mrp} =
+																			<b>
+																				{item.sit_inventory_qty *
+																					item.portal_mrp}
+																			</b>
+																		</span> */}
+																		<div
+																			className="cart-prod-desc"
+																			style={{ float: "right" }}>
+																			<span className="cart-prod-lbl">
+																				Value:{" "}
+																				{item.sit_inventory_qty *
+																					item.portal_mrp}
+																			</span>
+																		</div>
+																	</div>
+																</div>
+															)
+														)
+													)}
+											</div>
+
+											<p className="text-center d-none d-sm-block m-0 font-weight-bold">
+												Total Unit:{" "}
+												<span className="text-danger">
+													{/* {parseInt(addToCartQty, 10)} */}
+
+													{addTocart.length}
+												</span>
+											</p>
+											<h1 className="text-center text-success d-none d-sm-block">
+												{addToCartTotal}
+											</h1>
+
+											<button
+												type="button"
+												className="btn btn-primary btn-block btn-lg my-3 d-sm-block d-none">
+												Place Order{" "}
+												<i className="fa-solid fa-circle-arrow-right"></i>
+											</button>
+										</div>
 									</div>
-								)}
-							</div>
-						</div>
-						<div className="col-12 d-sm-none d-sm-none">
-							<button
-								onClick={() => setDisableFilter(false)}
-								type="button"
-								className="collapsepanel btn btn-primary btn-block btn-lg my-3"
-								data-toggle="collapse"
-								data-target="#collapseAll"
-								aria-expanded="true">
-								Add More Line <i className="fa-solid fa-circle-arrow-right"></i>
-							</button>
-						</div>
+								</div>
+								<div className="col-12 d-sm-none d-sm-none">
+									<button
+										onClick={() => setDisableFilter(false)}
+										type="button"
+										className="collapsepanel btn btn-primary btn-block btn-lg my-3"
+										data-toggle="collapse"
+										data-target="#collapseAll"
+										aria-expanded="true">
+										Add More Line{" "}
+										<i className="fa-solid fa-circle-arrow-right"></i>
+									</button>
+								</div>
+							</>
+						)}
 					</div>
 				</div>
 			</div>

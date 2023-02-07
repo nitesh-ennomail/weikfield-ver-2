@@ -29,9 +29,7 @@ span.cart-prod-lbl {
     color: #000;
 }
 .cart-prod-absqty {
-    position: absolute;
-    right: 20px;
-    bottom: 50px;
+    float: right;
 }
 
 .cart-prod-price {
@@ -45,10 +43,10 @@ span.cart-prod-lbl {
     bottom: 8px;
 }
 
-.cart-prod-trash{
-	position: absolute;
-    right: 5px;
-    bottom: 75px;
+.cart-prod-trash {
+    font-size: 1rem;
+	float: right;
+    font-weight: 500;
 }
 
 .cart-prod-qty {
@@ -1469,7 +1467,7 @@ table.table-bordered th, table.table-bordered td {
 }
 .hrl-scrl-rdo {
     white-space: nowrap;
-    overflow: scroll;
+    /* overflow: scroll; */
 }
 .hrl-scrl-rdo .lbl-radio-btn {
     display: table-cell;
