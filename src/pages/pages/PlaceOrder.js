@@ -201,6 +201,8 @@ const PlaceOrder = (props) => {
 		$(".show-all").on("click", function () {
 			$("tbody > tr", $(this).prev()).show();
 		});
+
+		window.scrollTo({ top: 0, behavior: "smooth" });
 	}, [disableFilter]);
 
 	const showFilterData = async (e) => {
@@ -243,12 +245,15 @@ const PlaceOrder = (props) => {
 			return el.sit_inventory_qty >= 1;
 		});
 		let added_to_cart = [...addTocart, ...currItemList];
-		dispatch(setAddToCart(added_to_cart));
+		const key = "portal_item_code";
+		const order_grid_details_UniqueByKey = getUniqueByKey(added_to_cart, key);
+		dispatch(setAddToCart(order_grid_details_UniqueByKey));
 		setOrderData(() =>
 			orderData.filter(function (el) {
 				return el.sit_inventory_qty == 0;
 			})
 		);
+		setDisableAddToCart(true);
 	};
 
 	const removeFromCart = (e, id) => {
@@ -260,20 +265,27 @@ const PlaceOrder = (props) => {
 				)
 			)
 		);
-
-		{
-			selectedBrand &&
-				selectedProductLine &&
-				selectedFlavour &&
-				setOrderData(() =>
-					order_grid_details.filter(function (el) {
-						return (
-							el.brand === selectedBrand.brand_desc &&
-							el.product_line === selectedProductLine.product_line_desc &&
-							el.flavour === selectedFlavour.flavour_desc
-						);
-					})
-				);
+		if (
+			id.brand === selectedBrand.brand_desc &&
+			id.product_line === selectedProductLine.product_line_desc &&
+			id.flavour === selectedFlavour.flavour_desc
+		) {
+			{
+				selectedBrand &&
+					selectedProductLine &&
+					selectedFlavour &&
+					setOrderData(() =>
+						order_grid_details.filter(function (el) {
+							return (
+								el.brand === selectedBrand.brand_desc &&
+								el.product_line === selectedProductLine.product_line_desc &&
+								el.flavour === selectedFlavour.flavour_desc
+							);
+						})
+					);
+			}
+		} else {
+			console.log(id);
 		}
 
 		// });
@@ -588,11 +600,15 @@ const PlaceOrder = (props) => {
 														</div>
 														<div className="col-md-2">
 															<button
-																disabled={disableFilter}
+																onClick={(e) => (
+																	showFilterData(e), setDisableFilter(false)
+																)}
 																type="button"
-																onClick={(e) => showFilterData(e)}
-																className="btn btn-block btn-primary btn-md">
-																<i className="fas fa fa-search mr-2"></i> Search
+																className="btn btn-block btn-primary btn-md"
+																data-toggle="collapse"
+																data-target="#collapseOne"
+																aria-expanded="false">
+																<i className="fas fa fa-search mr-2"></i> Go..
 															</button>
 														</div>
 													</div>
@@ -848,7 +864,7 @@ const PlaceOrder = (props) => {
 										</div>
 
 										<div
-											className="card-body collapse show"
+											className="card-body collapse"
 											id="collapseTwo"
 											aria-expanded="true">
 											<div className="cart-prod-list scroll">
@@ -860,7 +876,9 @@ const PlaceOrder = (props) => {
 															(addToCartTotal +=
 																item.portal_mrp * item.sit_inventory_qty),
 															(
-																<div className="cart-prod-div" key={index}>
+																<div
+																	className="cart-prod-div-order"
+																	key={index}>
 																	<div className="cart-prod-trash">
 																		<i
 																			onClick={(e) => removeFromCart(e, item)}
@@ -944,10 +962,12 @@ const PlaceOrder = (props) => {
 									<button
 										onClick={() => setDisableFilter(false)}
 										type="button"
-										className="collapsepanel btn btn-primary btn-block btn-lg my-3"
+										className="btn btn-primary btn-block btn-lg my-3"
+										// data-toggle="collapse"
+										// data-target="#collapseAll"
 										data-toggle="collapse"
-										data-target="#collapseAll"
-										aria-expanded="true">
+										data-target="#collapseOne"
+										aria-expanded="false">
 										Add More Line{" "}
 										<i className="fa-solid fa-circle-arrow-right"></i>
 									</button>

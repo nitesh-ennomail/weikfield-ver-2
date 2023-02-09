@@ -19,6 +19,13 @@
     font-size: .9rem;
 	position:relative
 }
+.cart-prod-div-order {
+    background: #d8ffcf;
+    padding: 5px 15px 10px;
+    margin-bottom: 15px;
+    font-size: .9rem;
+	position:relative
+} 
 .cart-prod-title {
     font-size: 1.05rem;
     font-weight: 500;
