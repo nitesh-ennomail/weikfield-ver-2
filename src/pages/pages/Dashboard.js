@@ -278,9 +278,13 @@ const Dashboard = () => {
 																		<td>
 																			{userProfile &&
 																			userProfile.usertype ===
-																				userType.APPROVER ? (
+																				// userType.APPROVER ? (
+																				userType.DISTRIBUTOR &&
+																			item.ui_status.toUpperCase() ===
+																				"Waiting for Approval".toUpperCase() ? (
 																				<div>
 																					<button
+																						onClick={() => alert(item.order_no)}
 																						type="submit"
 																						className="btn btn-primary btn-sm mr-2">
 																						<i className="fa-solid fa-check"></i>

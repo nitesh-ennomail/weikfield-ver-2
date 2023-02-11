@@ -58,11 +58,42 @@ function getFlavour({ userProfile, selectedBrand, productLine }) {
 	});
 }
 
+function saveOrder({
+	userProfile,
+	distributor_details,
+	profile_details,
+	addToCartTotal,
+	addTocart,
+}) {
+	return request({
+		url: `/placeOrder/saveOrder`,
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${userProfile.token}`,
+		},
+		data: JSON.stringify({
+			locationId: "6",
+			user_Id: `${profile_details[0].user_id}`,
+			Amount: addToCartTotal,
+			AmountBeforeTax: addToCartTotal,
+			customer_code: `${distributor_details[0].customer_code}`,
+			data: addTocart.map(({ parent_code, sit_inventory_qty, portal_mrp }) => ({
+				parent_code,
+				order_qty: sit_inventory_qty,
+				order_amount: sit_inventory_qty * portal_mrp,
+				order_amount_w_tax: sit_inventory_qty * portal_mrp,
+			})),
+		}),
+	});
+}
+
 const PlaceOrderService = {
 	getOrderFilters,
 	getOrderDetails,
 	getProductLine,
-	getFlavour, //, update, delete, etc. ...
+	getFlavour,
+	saveOrder,
 };
 
 export default PlaceOrderService;

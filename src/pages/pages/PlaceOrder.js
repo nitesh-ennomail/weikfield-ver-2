@@ -39,6 +39,9 @@ const PlaceOrder = (props) => {
 	const flavour = useSelector((state) => state.placeOrder.flavour);
 	const placeOrder = useSelector((state) => state.placeOrder);
 
+	const dashboard = useSelector((state) => state.dashboard.dashboard);
+	const { profile_details } = dashboard;
+
 	const { flavour_details } = flavour;
 	const { product_line_details } = productLine;
 	const { distributor_details, brand_details, pack_type_details } = orderFilter;
@@ -133,7 +136,7 @@ const PlaceOrder = (props) => {
 	const getOrderDetails = async (data) => {
 		// AXIOS WRAPPER FOR API CALL
 		{
-			data !== null && data.customer_block_flag === "YES" ? (
+			data !== null && data.customer_block_flag === "YES".toUpperCase() ? (
 				<>
 					{await PlaceOrderService.getOrderDetails({ userProfile, data }).then(
 						(response) => {
@@ -313,6 +316,26 @@ const PlaceOrder = (props) => {
 			)
 		);
 		// setDisableAddToCart(false);
+	};
+
+	const saveOrder = async () => {
+		addTocart.length > 0
+			? await PlaceOrderService.saveOrder({
+					userProfile,
+					distributor_details,
+					profile_details,
+					addToCartTotal,
+					addTocart,
+			  }).then((response) => {
+					Swal.fire({
+						icon: "success",
+						title: "Order Successfull!",
+						text: "Congrat's your order has been submited successfully",
+					});
+					dispatch(setAddToCart([]));
+					navigate("/dashboard");
+			  })
+			: console.log("Please add some item in cart!");
 	};
 
 	return (
@@ -950,6 +973,7 @@ const PlaceOrder = (props) => {
 											</h1>
 
 											<button
+												onClick={() => saveOrder()}
 												type="button"
 												className="btn btn-primary btn-block btn-lg my-3 d-sm-block d-none">
 												Place Order{" "}
@@ -981,7 +1005,8 @@ const PlaceOrder = (props) => {
 				<div className="atcm-button-group">
 					{" "}
 					<a
-						href="#modalshowcart"
+						href="#"
+						// href="#modalshowcart"
 						className="atcm-total-amount"
 						data-toggle="modal">
 						<span className="atcm-icon">
@@ -995,7 +1020,10 @@ const PlaceOrder = (props) => {
 							<span className="atc-total">{addToCartTotal}</span>
 						</span>
 					</a>{" "}
-					<a href="#" className="atcm-place-order">
+					<a
+						className="atcm-place-order"
+						style={{ color: "#fff" }}
+						onClick={() => saveOrder()}>
 						<span>Place Order</span>
 						<i className="fa-solid fa-circle-arrow-right"></i>
 					</a>{" "}
