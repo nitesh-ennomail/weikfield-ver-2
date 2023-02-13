@@ -14,6 +14,7 @@ const Login = () => {
 	const navigate = useNavigate();
 
 	const userProfile = useSelector((state) => state.userProfile);
+	const { usertype } = userProfile;
 
 	const authUser = async (data) => {
 		//AXIOS WRAPPER FOR API CALL
@@ -46,14 +47,26 @@ const Login = () => {
 	}, []);
 
 	useEffect(() => {
-		console.log("constants userType", userProfile.usertype);
+		console.log("constants userType", usertype);
 
-		if (userProfile.usertype === userType.ADMIN) {
-			navigate("/dashboard");
-		} else if (userProfile.usertype === userType.DISTRIBUTOR) {
-			// navigate("/placeOrder");
-			navigate("/dashboard");
+		{
+			usertype && usertype.toUpperCase() === userType.APPROVER
+				? navigate("/dashboard")
+				: usertype && usertype.toUpperCase() === userType.SALESOFFICER
+				? navigate("/dashboard")
+				: usertype && usertype.toUpperCase() === userType.DISTRIBUTOR
+				? navigate("/dashboard")
+				: console.log("");
 		}
+
+		// if (userProfile.usertype === userType.APPROVER) {
+		// 	navigate("/dashboard");
+		// }
+		// if (userProfile.usertype === userType.SALESOFFICER) {
+		// 	navigate("/dashboard");
+		// } else if (userProfile.usertype === userType.DISTRIBUTOR) {
+		// 	navigate("/dashboard");
+		// }
 	}, [userProfile]);
 
 	return (

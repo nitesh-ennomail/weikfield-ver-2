@@ -277,9 +277,9 @@ const Dashboard = () => {
 																		<td>25257.25</td>
 																		<td>
 																			{userProfile &&
-																			userProfile.usertype ===
-																				// userType.APPROVER ? (
-																				userType.DISTRIBUTOR &&
+																			userProfile.usertype.toUpperCase() ===
+																				userType.APPROVER &&
+																			// userType.DISTRIBUTOR &&
 																			item.ui_status.toUpperCase() ===
 																				"Waiting for Approval".toUpperCase() ? (
 																				<div>
