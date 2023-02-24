@@ -13,6 +13,7 @@ import MyProfile from "./pages/pages/MyProfile";
 import Logout from "./pages/pages/Logout";
 import PageNotFound from "./pages/pages/PageNotFound";
 import ForgotPassword from "./pages/pages/ForgotPassword";
+import ModifyOrder from "./pages/pages/ModifyOrder";
 
 function App() {
 	useLayoutEffect(() => {
@@ -27,8 +28,8 @@ function App() {
 
 	return (
 		<>
-			{/* <BrowserRouter basename={process.env.PUBLIC_URL}> */}
-			<BrowserRouter basename={"/partner"}>
+			<BrowserRouter basename={process.env.PUBLIC_URL}>
+				{/* <BrowserRouter basename={"/partner"}> */}
 				{/* <HashRouter> */}
 
 				<Routes>
@@ -36,7 +37,7 @@ function App() {
 					<Route path="/forgotpassword" element={<ForgotPassword />} />
 
 					<Route
-						path="/product"
+						path="/productmaster"
 						element={
 							<>
 								<Header />
@@ -71,6 +72,15 @@ function App() {
 							<>
 								<Header />
 								<PlaceOrder />
+							</>
+						}
+					/>
+					<Route
+						path="/modifyorder"
+						element={
+							<>
+								<Header />
+								<ModifyOrder />
 							</>
 						}
 					/>

@@ -8,9 +8,6 @@ function getOrderFilters(userProfile) {
 			"Content-Type": "application/json",
 			Authorization: `Bearer ${userProfile.token}`,
 		},
-		data: JSON.stringify({
-			usertype: userProfile.usertype,
-		}),
 	});
 }
 
@@ -60,7 +57,7 @@ function getFlavour({ userProfile, selectedBrand, productLine }) {
 
 function saveOrder({
 	userProfile,
-	distributor_details,
+	distributor,
 	profile_details,
 	addToCartTotal,
 	addTocart,
@@ -73,11 +70,12 @@ function saveOrder({
 			Authorization: `Bearer ${userProfile.token}`,
 		},
 		data: JSON.stringify({
-			locationId: "6",
-			user_Id: `${profile_details[0].user_id}`,
+			locationId: `${distributor.wh_location_code}`,
+			user_Id: `${distributor.mapped_so_id}`,
 			Amount: addToCartTotal,
 			AmountBeforeTax: addToCartTotal,
-			customer_code: `${distributor_details[0].customer_code}`,
+			customer_code: `${distributor.customer_code}`,
+			so_id: `${distributor.mapped_so_id}`,
 			data: addTocart.map(({ parent_code, sit_inventory_qty, portal_mrp }) => ({
 				parent_code,
 				order_qty: sit_inventory_qty,
