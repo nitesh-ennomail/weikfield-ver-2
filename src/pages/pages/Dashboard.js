@@ -279,7 +279,11 @@ const Dashboard = () => {
 															<tr>
 																<th>Order No</th>
 																<th>Order Date</th>
-																<th>Customer Name</th>
+																{userProfile &&
+																userProfile.usertype.toUpperCase() ===
+																	userType.DISTRIBUTOR ? null : (
+																	<th>Customer Name</th>
+																)}
 																{/* <th>Order Qty</th> */}
 																<th>Order Amount</th>
 																{/* <th>Invoice Qty</th> */}
@@ -307,7 +311,7 @@ const Dashboard = () => {
 																		{/* <td onClick={() => getProductDetails(item)}> */}
 																		<td>
 																			<a
-																				style={{ color: "red" }}
+																				className="text-danger"
 																				// href="#vieworderpop"
 																				// data-toggle="modal"
 																				data-tooltip="tooltip"
@@ -315,16 +319,20 @@ const Dashboard = () => {
 																				{item.order_no}
 																			</a>
 																		</td>
-																		<td style={{ whiteSpace: "nowrap" }}>
+																		<td className="text-nowrap">
 																			{item.order_date}
 																		</td>
-																		<td style={{ whiteSpace: "nowrap" }}>
-																			{item.customer_name}
+																		{userProfile &&
+																		userProfile.usertype.toUpperCase() ===
+																			userType.DISTRIBUTOR ? null : (
+																			<td className="text-nowrap">
+																				{item.customer_name}
+																			</td>
+																		)}
+
+																		<td style={{ textAlign: "center" }}>
+																			{item.order_amount}
 																		</td>
-																		{/* <td>11</td> */}
-																		<td>{item.order_amount}</td>
-																		{/* <td>5</td> */}
-																		{/* <td>25257.25</td> */}
 																		<td>
 																			{userProfile &&
 																			userProfile.usertype.toUpperCase() ===
@@ -360,7 +368,9 @@ const Dashboard = () => {
 																					</button>
 																				</div>
 																			) : (
-																				`${item.ui_status}`
+																				<span className="text-danger text-nowrap">
+																					{item.ui_status}
+																				</span>
 																			)}
 																		</td>
 
