@@ -1,4 +1,5 @@
 import React, { useEffect, useLayoutEffect } from "react";
+import { Toaster } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import AuthService from "../../axios/services/api/auth";
@@ -127,6 +128,7 @@ const Login = () => {
 					</div>
 				</div>
 			</div>
+			<Toaster position="bottom-center" reverseOrder={true} />
 		</div>
 	);
 };

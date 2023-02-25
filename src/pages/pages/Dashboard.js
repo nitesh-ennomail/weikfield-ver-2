@@ -261,6 +261,7 @@ const Dashboard = () => {
 											]}
 										/>
 									) : (
+										// <h1>Loading...</h1>
 										<>
 											<p className="font-weight-bold">
 												Approval pending:{" "}

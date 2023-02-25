@@ -7,6 +7,7 @@
 }
 .qty-ctl {
     width: 50px;
+	border:0.3px solid gray
 }
 .cart-prod-list.scroll {
     max-height: 57vh;
@@ -706,7 +707,7 @@ p.huText {
 .table td, .table th, table td, table th {
 	padding: 8px 5px;
 	border: 1px solid #dadada;
-	text-align: left !important;
+	text-align: left;
 }
 .curPntr {
 	cursor: pointer
@@ -1264,7 +1265,7 @@ div.table-responsive > div.dataTables_wrapper > div.row > div[class^="col-"]:las
 	padding: 0
 }
 }
-@charset "utf-8";
+/*@charset "utf-8";
 /* CSS Document */
 
 .phbg1 {
@@ -1488,4 +1489,11 @@ label {
     margin-bottom: 0;
 }
 .content-wrapper>.container-fluid {padding-top:0}
+}
+.text-danger{
+	color:red;
+	
+}
+.text-nowrap{
+	white-space: nowrap
 }

@@ -76,6 +76,9 @@ function saveOrder({
 			AmountBeforeTax: addToCartTotal,
 			customer_code: `${distributor.customer_code}`,
 			so_id: `${distributor.mapped_so_id}`,
+			orderStateFlag: "NEW",
+			previousOrderNo: "0",
+			exempt_order_flag: "N",
 			data: addTocart.map(({ parent_code, sit_inventory_qty, portal_mrp }) => ({
 				parent_code,
 				order_qty: sit_inventory_qty,
@@ -86,12 +89,32 @@ function saveOrder({
 	});
 }
 
+function getModifyOrderDetails({ userProfile }) {
+	let modOrderNo = "PP2300159";
+	let customerChannel = "GT";
+	console.log("distributor", userProfile);
+
+	return request({
+		url: `/placeOrder/getModifyOrderDetails`,
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${userProfile.token}`,
+		},
+		data: JSON.stringify({
+			modOrderNo: "PP2300159",
+			customerChannel: "GT",
+		}),
+	});
+}
+
 const PlaceOrderService = {
 	getOrderFilters,
 	getOrderDetails,
 	getProductLine,
 	getFlavour,
 	saveOrder,
+	getModifyOrderDetails,
 };
 
 export default PlaceOrderService;
