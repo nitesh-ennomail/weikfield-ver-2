@@ -183,9 +183,10 @@ const PlaceOrder = (props) => {
 	}, [disableFilter]);
 	const showFilterData = async (e) => {
 		e.preventDefault();
-		// Show filtered data based on selectedBrand, selectedProductLine and selectedFlavour
+		// Show filtered data based on packType, selectedBrand, selectedProductLine and selectedFlavour
 		let filterData = order_grid_details.filter(function (el) {
 			return (
+				el.customer_type === selectedPackType.pack_type_desc &&
 				el.brand === selectedBrand.brand_desc &&
 				el.product_line === selectedProductLine.product_line_desc &&
 				el.flavour === selectedFlavour.flavour_desc
@@ -197,6 +198,7 @@ const PlaceOrder = (props) => {
 					!addTocart.some(({ portal_item_code: id2 }) => id2 === id1)
 			);
 		}
+
 		setLoading(true);
 		setOrderData(() => filterData);
 		setDisableFilter(true);
@@ -315,13 +317,32 @@ const PlaceOrder = (props) => {
 					addToCartTotal,
 					addTocart,
 			  }).then((response) => {
+					console.log(response);
 					// Just show the static msg on success
-					Swal.fire({
-						icon: "success",
-						title: "Order Successfull!",
-						text: "Congrat's your order has been submited successfully",
-					});
-					// Empty the order summary grid after saving order
+					// Swal.fire({
+					// 	icon: "success",
+					// 	title: "Order Successfull!",
+					// 	text: "Congrat's your order has been submited successfully",
+					// });
+					{
+						response.status === "Success"
+							? toast.success("order booked")
+							: toast.error("found error while saving");
+					}
+
+					// toast.$`{response.status}`("Look at my styles.", {
+					// 	style: {
+					// 		border: "1px solid #713200",
+					// 		padding: "16px",
+					// 		color: "#713200",
+					// 	},
+					// 	iconTheme: {
+					// 		primary: "#713200",
+					// 		secondary: "#FFFAEE",
+					// 	},
+					// });
+
+					// // Empty the order summary grid after saving order
 					dispatch(setAddToCart([]));
 					navigate("/dashboard");
 			  })
@@ -701,7 +722,10 @@ const PlaceOrder = (props) => {
 																							type="number"
 																							className="qty-ctl"
 																							step="1"
-																							defaultValue={
+																							// defaultValue={
+																							// 	item.sit_inventory_qty
+																							// }
+																							placeholder={
 																								item.sit_inventory_qty
 																							}
 																							onChange={(e) =>
@@ -761,6 +785,7 @@ const PlaceOrder = (props) => {
 															</li>
 														</ol>
 													</div>
+
 													{orderData.map((item, index) => (
 														<div className="cart-prod-div" key={index}>
 															<div className="cart-prod-title">
@@ -836,7 +861,8 @@ const PlaceOrder = (props) => {
 																		type="number"
 																		className="qty-ctl"
 																		step="1"
-																		defaultValue={item.sit_inventory_qty}
+																		// defaultValue={item.sit_inventory_qty}
+																		placeholder={item.sit_inventory_qty}
 																		onChange={(e) =>
 																			handleQty(e, item.portal_item_code)
 																		}
@@ -964,7 +990,8 @@ const PlaceOrder = (props) => {
 																			type="number"
 																			className="qty-ctl"
 																			step="1"
-																			defaultValue={item.sit_inventory_qty}
+																			// defaultValue={item.sit_inventory_qty}
+																			placeholder={item.sit_inventory_qty}
 																		/>
 
 																		{/* <span className="cart-prod-lbl ml-2">
@@ -1016,7 +1043,6 @@ const PlaceOrder = (props) => {
 								<div className="col-12 d-sm-none d-sm-none">
 									<button
 										onClick={() => {
-											setShowOrderSummary(false);
 											setShowOrderSummary("d-none");
 											setShowSearchFilter("d-block");
 											setShowPlaceOrder(false);
@@ -1025,8 +1051,8 @@ const PlaceOrder = (props) => {
 										className={`btn btn-primary btn-block btn-lg my-3 ${showOrderSummary}`}
 										// data-toggle="collapse"
 										// data-target="#collapseAll"
-										data-toggle="collapse"
-										data-target="#collapseOne"
+										// data-toggle="collapse"
+										// data-target="#collapseOne"
 										aria-expanded="true">
 										Add More Line{" "}
 										<i className="fa-solid fa-circle-arrow-right"></i>

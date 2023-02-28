@@ -62,6 +62,16 @@ function saveOrder({
 	addToCartTotal,
 	addTocart,
 }) {
+	const allT = addTocart.every((item) => item.tax_flag === "T");
+	const allE = addTocart.every((item) => item.tax_flag === "E");
+
+	let exempt_order_flag = "";
+	if (allT || allE) {
+		exempt_order_flag = "N";
+	} else {
+		exempt_order_flag = "Y";
+	}
+
 	return request({
 		url: `/placeOrder/saveOrder`,
 		method: "POST",
@@ -78,7 +88,7 @@ function saveOrder({
 			so_id: `${distributor.mapped_so_id}`,
 			orderStateFlag: "NEW",
 			previousOrderNo: "0",
-			exempt_order_flag: "N",
+			exempt_order_flag,
 			data: addTocart.map(({ parent_code, sit_inventory_qty, portal_mrp }) => ({
 				parent_code,
 				order_qty: sit_inventory_qty,

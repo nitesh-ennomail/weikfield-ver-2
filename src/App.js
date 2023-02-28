@@ -28,8 +28,8 @@ function App() {
 
 	return (
 		<>
-			{/* <BrowserRouter basename={process.env.PUBLIC_URL}> */}
-			<BrowserRouter basename={"/partner"}>
+			<BrowserRouter basename={process.env.PUBLIC_URL}>
+				{/* <BrowserRouter basename={"/partner"}> */}
 				{/* <HashRouter> */}
 
 				<Routes>
