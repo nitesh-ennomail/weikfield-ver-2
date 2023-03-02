@@ -180,8 +180,12 @@ const PlaceOrder = (props) => {
 			$("tbody > tr", $(this).prev()).show();
 		});
 
+		if (addTocart.length === 0) {
+			setShowSearchFilter("d-block");
+		}
+
 		window.scrollTo({ top: 0, behavior: "smooth" });
-	}, [disableFilter]);
+	}, [disableFilter, addTocart]);
 	const showFilterData = async (e) => {
 		e.preventDefault();
 		// Show filtered data based on packType, selectedBrand, selectedProductLine and selectedFlavour
@@ -262,9 +266,7 @@ const PlaceOrder = (props) => {
 			)
 		);
 		console.log(addToCart.length);
-		// if (addTocart.length === 0) {
-		// 	setShowSearchFilter("d-block");
-		// }
+
 		if (
 			id.customer_type === selectedPackType.pack_type_desc &&
 			id.brand === selectedBrand.brand_desc &&
@@ -1099,6 +1101,7 @@ const PlaceOrder = (props) => {
 										setShowOrderSummary("d-block");
 										setShowSearchFilter("d-none");
 										setShowPlaceOrder(true);
+										setEmpty(false);
 									}
 								}}>
 								Order Summary
