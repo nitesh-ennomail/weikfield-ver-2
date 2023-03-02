@@ -60,6 +60,7 @@ const PlaceOrder = (props) => {
 	const [showSearchFilter, setShowSearchFilter] = useState("d-block");
 	const [showPlaceOrder, setShowPlaceOrder] = useState(false);
 	const [errorMsg, setErrorMsg] = useState("");
+	const [empty, setEmpty] = useState(false);
 
 	// Storing or Modifing data through react state Ends
 
@@ -192,6 +193,13 @@ const PlaceOrder = (props) => {
 				el.flavour === selectedFlavour.flavour_desc
 			);
 		});
+
+		if (filterData.length === 0) {
+			setEmpty(true);
+		} else {
+			setEmpty(false);
+		}
+
 		if (addTocart.length > 0) {
 			filterData = filterData.filter(
 				({ portal_item_code: id1 }) =>
@@ -916,6 +924,8 @@ const PlaceOrder = (props) => {
 									)}
 								</div>
 							)}
+
+							{empty && <h1 className="card-header">No Data found</h1>}
 						</div>
 						{addTocart.length > 0 && (
 							<>
