@@ -258,6 +258,7 @@ const PlaceOrder = (props) => {
 		// 	setShowSearchFilter("d-block");
 		// }
 		if (
+			id.customer_type === selectedPackType.pack_type_desc &&
 			id.brand === selectedBrand.brand_desc &&
 			id.product_line === selectedProductLine.product_line_desc &&
 			id.flavour === selectedFlavour.flavour_desc
@@ -278,7 +279,7 @@ const PlaceOrder = (props) => {
 			// }
 			setOrderData([]);
 		} else {
-			console.log(id);
+			console.log("id", id);
 		}
 	};
 
@@ -318,16 +319,10 @@ const PlaceOrder = (props) => {
 					addTocart,
 			  }).then((response) => {
 					console.log(response);
-					// Just show the static msg on success
-					// Swal.fire({
-					// 	icon: "success",
-					// 	title: "Order Successfull!",
-					// 	text: "Congrat's your order has been submited successfully",
-					// });
 					{
-						response.status === "Success"
-							? toast.success("order booked")
-							: toast.error("found error while saving");
+						response.data.error_code === "0"
+							? toast.success(response.data.message)
+							: toast.error(response.data.message);
 					}
 
 					// toast.$`{response.status}`("Look at my styles.", {
@@ -343,8 +338,8 @@ const PlaceOrder = (props) => {
 					// });
 
 					// // Empty the order summary grid after saving order
-					dispatch(setAddToCart([]));
-					navigate("/dashboard");
+					// dispatch(setAddToCart([]));
+					// navigate("/dashboard");
 			  })
 			: console.log("Please add some item in cart!");
 	};
