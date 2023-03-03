@@ -54,7 +54,7 @@ const PlaceOrder = (props) => {
 	const [selectedFlavour, setSelectedFlavour] = useState(null);
 	const [selectedProductLine, setSelectedProductLine] = useState(null);
 	const [selectedPackType, setSelectedPackType] = useState(null);
-	const [disableFilter, setDisableFilter] = useState(true);
+	const [disableFilter, setDisableFilter] = useState(false);
 	const [disableAddToCart, setDisableAddToCart] = useState(true);
 	const [showOrderSummary, setShowOrderSummary] = useState("d-none");
 	const [showSearchFilter, setShowSearchFilter] = useState("d-block");
@@ -62,6 +62,24 @@ const PlaceOrder = (props) => {
 	const [errorMsg, setErrorMsg] = useState("");
 	const [empty, setEmpty] = useState(false);
 
+	const handlePackType = (e) => {
+		{
+			setEmpty(false);
+		}
+		{
+			setOrderData([]);
+		}
+		{
+			setSelectedBrand(null);
+		}
+		{
+			dispatch(setFlavour("null"));
+		}
+		{
+			dispatch(setProductLine("null"));
+		}
+		setSelectedPackType(JSON.parse(e.target.value));
+	};
 	// Storing or Modifing data through react state Ends
 
 	const getOrderFilters = async () => {
@@ -197,7 +215,7 @@ const PlaceOrder = (props) => {
 				el.flavour === selectedFlavour.flavour_desc
 			);
 		});
-
+		setDisableAddToCart(true);
 		if (filterData.length === 0) {
 			setEmpty(true);
 		} else {
@@ -410,6 +428,9 @@ const PlaceOrder = (props) => {
 																		name="Distributor"
 																		className="form-control"
 																		data-live-search="true"
+																		disabled={
+																			disableFilter || !disableAddToCart
+																		}
 																		onChange={(e) =>
 																			getOrderDetails(
 																				JSON.parse(e.target.value)
@@ -469,18 +490,27 @@ const PlaceOrder = (props) => {
 																						className="lbl-radio-btn flex-fill"
 																						key={packType.pack_type_code}>
 																						<input
-																							disabled={disableFilter}
+																							disabled={
+																								disableFilter ||
+																								!disableAddToCart
+																							}
 																							type="radio"
 																							value={JSON.stringify(packType)}
 																							id={packType.pack_type_code}
 																							name="Pro-type"
 																							onChange={(e) =>
-																								setSelectedPackType(
-																									JSON.parse(e.target.value)
-																								)
+																								handlePackType(e)
 																							}
 																						/>
 																						<label
+																							onClick={() => {
+																								if (!disableAddToCart) {
+																									toast.error(
+																										"Please add item to cart or reset!"
+																									);
+																									// alert("plese order first");
+																								}
+																							}}
 																							htmlFor={packType.pack_type_code}>
 																							{packType.pack_type_desc}
 																						</label>
@@ -505,7 +535,9 @@ const PlaceOrder = (props) => {
 																		name="ProductFamily"
 																		className="form-control d-none d-sm-block"
 																		data-live-search="true"
-																		disabled={disableFilter}
+																		disabled={
+																			disableFilter || !disableAddToCart
+																		}
 																		onChange={(e) =>
 																			getProductLine(JSON.parse(e.target.value))
 																		}
@@ -532,7 +564,10 @@ const PlaceOrder = (props) => {
 																							className="lbl-radio-btn"
 																							key={brand.brand_code}>
 																							<input
-																								disabled={disableFilter}
+																								disabled={
+																									disableFilter ||
+																									!disableAddToCart
+																								}
 																								type="radio"
 																								value={JSON.stringify(brand)}
 																								id={brand.brand_code}
@@ -570,7 +605,9 @@ const PlaceOrder = (props) => {
 																		name="ProductClass"
 																		className="form-control"
 																		data-live-search="true"
-																		disabled={disableFilter}
+																		disabled={
+																			disableFilter || !disableAddToCart
+																		}
 																		onChange={(e) =>
 																			getFlavour(JSON.parse(e.target.value))
 																		}
@@ -605,7 +642,9 @@ const PlaceOrder = (props) => {
 																		name="ProductClass"
 																		className="form-control"
 																		data-live-search="true"
-																		disabled={disableFilter}
+																		disabled={
+																			disableFilter || !disableAddToCart
+																		}
 																		onChange={(e) =>
 																			setSelectedFlavour(
 																				JSON.parse(e.target.value)
@@ -626,23 +665,30 @@ const PlaceOrder = (props) => {
 															</div>
 														</div>
 													</div>
-													<div className="form-group row">
-														<div className="col-md-8"></div>
-														<div className="col-md-2">
+													<div className="row">
+														<div
+															className="col-md-12"
+															style={{ textAlign: "right" }}>
 															<button
 																type="button"
-																onClick={(e) => setDisableFilter(false)}
-																className="btn btn-block btn-danger btn-md d-none d-sm-block">
+																onClick={(e) => (
+																	setDisableFilter(false),
+																	setDisableAddToCart(true),
+																	setSelectedPackType("null"),
+																	dispatch(setFlavour("null")),
+																	dispatch(setProductLine("null")),
+																	setOrderData([])
+																)}
+																className="btn btn-danger btn-md">
 																<i className="fas fa fa-gear mr-2"></i> Reset
 															</button>
-														</div>
-														<div className="col-md-2">
+
 															<button
 																onClick={(e) => (
 																	showFilterData(e), setDisableFilter(false)
 																)}
 																type="button"
-																className="btn btn-block btn-primary btn-md"
+																className="btn btn-primary btn-md ml-2"
 																data-toggle="collapse"
 																data-target="#collapseOne"
 																aria-expanded="false">
@@ -927,7 +973,9 @@ const PlaceOrder = (props) => {
 								</div>
 							)}
 
-							{empty && <h1 className="card-header">No Data found</h1>}
+							{empty && (
+								<h1 className="text-center card-header">No Data found</h1>
+							)}
 						</div>
 						{addTocart.length > 0 && (
 							<>
@@ -1087,21 +1135,25 @@ const PlaceOrder = (props) => {
 					</Link>{" "}
 					<a
 						className="atcm-place-order"
-						data-toggle="collapse"
-						data-target="#collapseOne"
-						aria-expanded="false"
+						// data-toggle="collapse"
+						// data-target="#collapseOne"
+						// aria-expanded="false"
 						style={{ color: "#fff" }}>
 						{showPlaceOrder === false && (
 							<span
-								data-toggle="collapse"
-								data-target="#collapseTwo"
-								aria-expanded="true"
+								// data-toggle="collapse"
+								// data-target="#collapseTwo"
+								// aria-expanded="true"
 								onClick={() => {
-									if (addTocart.length > 0) {
+									if (!disableAddToCart) {
+										toast.error("Please add item to cart or reset!");
+										// alert("plese order first");
+									} else if (addTocart.length > 0) {
 										setShowOrderSummary("d-block");
 										setShowSearchFilter("d-none");
 										setShowPlaceOrder(true);
 										setEmpty(false);
+										setOrderData([]);
 									}
 								}}>
 								Order Summary
