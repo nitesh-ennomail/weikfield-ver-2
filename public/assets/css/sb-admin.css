@@ -147,6 +147,7 @@ html {
 body {
 	overflow-x: hidden;
 	font-size: 14px;
+	overscroll-behavior: contain;
 }
 body.fixed-nav {
 	padding-top: 68px;
@@ -1497,3 +1498,4 @@ label {
 .text-nowrap{
 	white-space: nowrap
 }
+

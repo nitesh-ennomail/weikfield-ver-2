@@ -110,11 +110,12 @@ const Login = () => {
 									/>
 								</div>
 
-								<input
+								<button
 									type="submit"
 									// onClick={submitForm}
-									className="btn btn-md btn-primary btn-block"
-								/>
+									className="btn btn-md btn-primary btn-block">
+									Sign in
+								</button>
 							</form>
 							<div className="text-center mt-4 mb-2">
 								{/* {" "}

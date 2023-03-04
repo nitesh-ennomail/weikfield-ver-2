@@ -350,24 +350,10 @@ const PlaceOrder = (props) => {
 					{
 						response.data.error_code === "0"
 							? toast.success(response.data.message)
-							: toast.error(response.data.message);
+							: toast.error(
+									<span>{`${response.data.message}-- ${response.data.add_message}`}</span>
+							  );
 					}
-
-					// toast.$`{response.status}`("Look at my styles.", {
-					// 	style: {
-					// 		border: "1px solid #713200",
-					// 		padding: "16px",
-					// 		color: "#713200",
-					// 	},
-					// 	iconTheme: {
-					// 		primary: "#713200",
-					// 		secondary: "#FFFAEE",
-					// 	},
-					// });
-
-					// // Empty the order summary grid after saving order
-					// dispatch(setAddToCart([]));
-					// navigate("/dashboard");
 			  })
 			: console.log("Please add some item in cart!");
 	};
@@ -578,6 +564,7 @@ const PlaceOrder = (props) => {
 																									)
 																								}
 																							/>
+																							{/* <label>{brand.brand_desc}</label> */}
 																							<label htmlFor={brand.brand_code}>
 																								{brand.brand_desc}
 																							</label>
@@ -674,9 +661,9 @@ const PlaceOrder = (props) => {
 																onClick={(e) => (
 																	setDisableFilter(false),
 																	setDisableAddToCart(true),
-																	setSelectedPackType("null"),
-																	dispatch(setFlavour("null")),
-																	dispatch(setProductLine("null")),
+																	// setSelectedPackType("null"),
+																	// dispatch(setFlavour("null")),
+																	// dispatch(setProductLine("null")),
 																	setOrderData([])
 																)}
 																className="btn btn-danger btn-md">
@@ -1154,6 +1141,8 @@ const PlaceOrder = (props) => {
 										setShowPlaceOrder(true);
 										setEmpty(false);
 										setOrderData([]);
+									} else {
+										toast.error("Order Summary is empty");
 									}
 								}}>
 								Order Summary
