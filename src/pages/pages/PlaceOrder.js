@@ -875,7 +875,13 @@ const PlaceOrder = (props) => {
 																	style={{ float: "right" }}>
 																	<span className="cart-prod-lbl">Price: </span>
 																	<span className="cart-prod-val">
-																		{item.portal_mrp}
+																		{item.portal_mrp > 0 ? (
+																			item.portal_mrp
+																		) : (
+																			<span className="text-danger">
+																				Price not found
+																			</span>
+																		)}
 																	</span>
 																</div>
 															</div>
