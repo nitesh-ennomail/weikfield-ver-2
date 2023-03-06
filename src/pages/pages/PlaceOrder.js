@@ -50,10 +50,10 @@ const PlaceOrder = (props) => {
 	const [loading, setLoading] = useState(false);
 	const [distributor, setDistributor] = useState(null);
 	const [salePerson, setSalePerson] = useState(null);
-	const [selectedBrand, setSelectedBrand] = useState(null);
+	const [selectedBrand, setSelectedBrand] = useState({});
 	const [selectedFlavour, setSelectedFlavour] = useState(null);
 	const [selectedProductLine, setSelectedProductLine] = useState(null);
-	const [selectedPackType, setSelectedPackType] = useState(null);
+	const [selectedPackType, setSelectedPackType] = useState({});
 	const [disableFilter, setDisableFilter] = useState(false);
 	const [disableAddToCart, setDisableAddToCart] = useState(true);
 	const [showOrderSummary, setShowOrderSummary] = useState("d-none");
@@ -61,7 +61,6 @@ const PlaceOrder = (props) => {
 	const [showPlaceOrder, setShowPlaceOrder] = useState(false);
 	const [errorMsg, setErrorMsg] = useState("");
 	const [empty, setEmpty] = useState(false);
-
 	const handlePackType = (e) => {
 		{
 			setEmpty(false);
@@ -70,7 +69,7 @@ const PlaceOrder = (props) => {
 			setOrderData([]);
 		}
 		{
-			setSelectedBrand(null);
+			setSelectedBrand({});
 		}
 		{
 			dispatch(setFlavour("null"));
@@ -92,7 +91,6 @@ const PlaceOrder = (props) => {
 	};
 	const getOrderDetails = async (data) => {
 		// AXIOS WRAPPER FOR API CALL
-		console.log("data ---", data);
 		/////////////////////////////////////////
 		if (
 			data.customer_block_flag === "YES" &&
@@ -103,6 +101,10 @@ const PlaceOrder = (props) => {
 			<>
 				{setSalePerson(data.mapped_so_name)}
 				{setDistributor(data)}
+				{setSelectedPackType({})}
+				{setSelectedBrand({})}
+				{dispatch(setFlavour("null"))}
+				{dispatch(setProductLine("null"))}
 				{await PlaceOrderService.getOrderDetails({ userProfile, data }).then(
 					(response) => {
 						dispatch(setOrderDetails(response.data));
@@ -193,15 +195,9 @@ const PlaceOrder = (props) => {
 	};
 
 	useEffect(() => {
-		$("table > tbody > tr").hide().slice(0, 10).show();
-		$(".show-all").on("click", function () {
-			$("tbody > tr", $(this).prev()).show();
-		});
-
 		if (addTocart.length === 0) {
 			setShowSearchFilter("d-block");
 		}
-
 		window.scrollTo({ top: 0, behavior: "smooth" });
 	}, [disableFilter, addTocart]);
 	const showFilterData = async (e) => {
@@ -244,7 +240,6 @@ const PlaceOrder = (props) => {
 	}, []);
 
 	useEffect(() => {
-		console.log("addTocart", addTocart);
 		if (addTocart.length === 0) {
 			setShowSearchFilter(true);
 			setShowOrderSummary("d-none");
@@ -283,7 +278,6 @@ const PlaceOrder = (props) => {
 				)
 			)
 		);
-		console.log(addToCart.length);
 
 		if (
 			id.customer_type === selectedPackType.pack_type_desc &&
@@ -346,12 +340,20 @@ const PlaceOrder = (props) => {
 					addToCartTotal,
 					addTocart,
 			  }).then((response) => {
-					console.log(response);
 					{
 						response.data.error_code === "0"
-							? toast.success(response.data.message) && navigate("dashboard")
+							? toast.success(
+									<span>
+										{`${response.data.message}-- ${response.data.order_no}`}
+									</span>,
+									{ duration: 4000 },
+									navigate("/dashboard"),
+									dispatch(setAddToCart([]))
+							  )
 							: toast.error(
-									<span>{`${response.data.message}-- ${response.data.add_message}`}</span>
+									<span>
+										{`${response.data.message}-- ${response.data.add_message}`}
+									</span>
 							  );
 					}
 			  })
@@ -480,6 +482,11 @@ const PlaceOrder = (props) => {
 																								disableFilter ||
 																								!disableAddToCart
 																							}
+																							checked={
+																								selectedPackType &&
+																								selectedPackType.pack_type_code ===
+																									packType.pack_type_code
+																							}
 																							type="radio"
 																							value={JSON.stringify(packType)}
 																							id={packType.pack_type_code}
@@ -558,12 +565,18 @@ const PlaceOrder = (props) => {
 																								value={JSON.stringify(brand)}
 																								id={brand.brand_code}
 																								name="brandRdoGrp"
+																								checked={
+																									selectedBrand &&
+																									selectedBrand.brand_code ===
+																										brand.brand_code
+																								}
 																								onChange={(e) =>
 																									getProductLine(
 																										JSON.parse(e.target.value)
 																									)
 																								}
 																							/>
+
 																							{/* <label>{brand.brand_desc}</label> */}
 																							<label htmlFor={brand.brand_code}>
 																								{brand.brand_desc}
@@ -1126,45 +1139,52 @@ const PlaceOrder = (props) => {
 							<span className="atc-unit">Amt    : {addToCartTotal}</span>
 						</span>
 					</Link>{" "}
-					<a
-						className="atcm-place-order"
-						// data-toggle="collapse"
-						// data-target="#collapseOne"
-						// aria-expanded="false"
-						style={{ color: "#fff" }}>
-						{showPlaceOrder === false && (
+					{showPlaceOrder === false && (
+						<a
+							className="atcm-place-order"
+							// data-toggle="collapse"
+							// data-target="#collapseOne"
+							// aria-expanded="false"
+							onClick={() => {
+								if (!disableAddToCart) {
+									toast.error("Please add item to cart or reset!");
+									// alert("plese order first");
+								} else if (addTocart.length > 0) {
+									setShowOrderSummary("d-block");
+									setShowSearchFilter("d-none");
+									setShowPlaceOrder(true);
+									setEmpty(false);
+									setOrderData([]);
+								} else {
+									toast.error("Order Summary is empty");
+								}
+							}}
+							style={{ color: "#fff" }}>
 							<span
-								// data-toggle="collapse"
-								// data-target="#collapseTwo"
-								// aria-expanded="true"
-								onClick={() => {
-									if (!disableAddToCart) {
-										toast.error("Please add item to cart or reset!");
-										// alert("plese order first");
-									} else if (addTocart.length > 0) {
-										setShowOrderSummary("d-block");
-										setShowSearchFilter("d-none");
-										setShowPlaceOrder(true);
-										setEmpty(false);
-										setOrderData([]);
-									} else {
-										toast.error("Order Summary is empty");
-									}
-								}}>
+							// data-toggle="collapse"
+							// data-target="#collapseTwo"
+							// aria-expanded="true"
+							>
 								Order Summary
 							</span>
-						)}
-
-						{showPlaceOrder === true && (
-							<span
-								onClick={() => {
-									saveOrder();
-								}}>
-								<span>Confirm Order</span>
-								<i className="fa-solid fa-circle-arrow-right"></i>
-							</span>
-						)}
-					</a>{" "}
+							<i className="fa-solid fa-circle-arrow-right"></i>
+						</a>
+					)}
+					{showPlaceOrder === true && (
+						<a
+							className="atcm-place-order"
+							// data-toggle="collapse"
+							// data-target="#collapseOne"
+							// aria-expanded="false"
+							onClick={() => {
+								saveOrder();
+							}}
+							style={{ color: "#fff" }}>
+							<span>Confirm Order</span>
+							<i className="fa-solid fa-circle-arrow-right"></i>
+						</a>
+					)}
+					{/* <i className="fa fa-spinner fa-spin">no spinner but why</i> */}
 				</div>
 			</div>
 			<div
@@ -1370,7 +1390,7 @@ const PlaceOrder = (props) => {
 					</div>
 				</div>
 			</div>
-			<Toaster position="bottom-center" reverseOrder={false} />
+			{/* <Toaster position="bottom-center" reverseOrder={false} /> */}
 		</>
 	);
 };

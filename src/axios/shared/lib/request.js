@@ -24,19 +24,21 @@ const client = axios.create({
 const request = function (options) {
 	const onSuccess = function (response) {
 		// toast.success("response.data.message");
-		console.debug("Request Successful!", response);
-		console.log("Request Successful! ---------");
+		// console.debug("Request Successful!", response);
 		return response.data;
 	};
 
 	const onError = function (error) {
 		console.log("Request Failed:", error.config);
-
 		if (error.response) {
 			// Request was made but server responded with something
 			// other than 2xx
-
-			toast.error(error.response.data.message);
+			if (error.response.data.status === 401) {
+				localStorage.clear();
+				window.location.replace("/");
+			} else {
+				toast.error(error.response.data.message);
+			}
 
 			// let timerInterval;
 			// Swal.fire({
