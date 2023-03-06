@@ -349,7 +349,7 @@ const PlaceOrder = (props) => {
 					console.log(response);
 					{
 						response.data.error_code === "0"
-							? toast.success(response.data.message)
+							? toast.success(response.data.message) && navigate("dashboard")
 							: toast.error(
 									<span>{`${response.data.message}-- ${response.data.add_message}`}</span>
 							  );
@@ -1082,7 +1082,7 @@ const PlaceOrder = (props) => {
 												onClick={() => saveOrder()}
 												type="button"
 												className="btn btn-primary btn-block btn-lg my-3 d-sm-block d-none">
-												Place Order{" "}
+												Confirm Order{" "}
 												<i className="fa-solid fa-circle-arrow-right"></i>
 											</button>
 										</div>
@@ -1158,14 +1158,12 @@ const PlaceOrder = (props) => {
 						{showPlaceOrder === true && (
 							<span
 								onClick={() => {
-									setShowPlaceOrder(false);
 									saveOrder();
 								}}>
-								Place Order
+								<span>Confirm Order</span>
+								<i className="fa-solid fa-circle-arrow-right"></i>
 							</span>
 						)}
-
-						<i className="fa-solid fa-circle-arrow-right"></i>
 					</a>{" "}
 				</div>
 			</div>
