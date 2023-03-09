@@ -370,7 +370,8 @@ const PlaceOrder = (props) => {
 		// setDisableAddToCart(false);
 	};
 
-	const saveOrder = async () => {
+	const saveOrder = async (e) => {
+		setShowPlaceOrder(false);
 		addTocart.length > 0
 			? await PlaceOrderService.saveOrder({
 					userProfile,
@@ -1131,7 +1132,7 @@ const PlaceOrder = (props) => {
 											</h1>
 
 											<button
-												onClick={() => saveOrder()}
+												onClick={(e) => saveOrder(e)}
 												type="button"
 												className="btn btn-primary btn-block btn-lg my-3 d-sm-block d-none">
 												Confirm Order{" "}
@@ -1179,7 +1180,7 @@ const PlaceOrder = (props) => {
 						</span>
 					</Link>{" "}
 					{showPlaceOrder === false && (
-						<a
+						<Link
 							className="atcm-place-order"
 							// data-toggle="collapse"
 							// data-target="#collapseOne"
@@ -1207,21 +1208,21 @@ const PlaceOrder = (props) => {
 								Order Summary
 							</span>
 							<i className="fa-solid fa-circle-arrow-right"></i>
-						</a>
+						</Link>
 					)}
 					{showPlaceOrder === true && (
-						<a
+						<Link
 							className="atcm-place-order"
 							// data-toggle="collapse"
 							// data-target="#collapseOne"
 							// aria-expanded="false"
-							onClick={() => {
-								saveOrder();
+							onClick={(e) => {
+								saveOrder(e);
 							}}
 							style={{ color: "#fff" }}>
 							<span>Confirm Order</span>
 							<i className="fa-solid fa-circle-arrow-right"></i>
-						</a>
+						</Link>
 					)}
 					{/* <i className="fa fa-spinner fa-spin">no spinner but why</i> */}
 				</div>
