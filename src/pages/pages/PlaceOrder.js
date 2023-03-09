@@ -53,8 +53,8 @@ const PlaceOrder = (props) => {
 	const [selectedBrand, setSelectedBrand] = useState({});
 	const [selectedFlavour, setSelectedFlavour] = useState(null);
 	const [selectedProductLine, setSelectedProductLine] = useState(null);
-	const [selectedPackType, setSelectedPackType] = useState({});
-	const [disableFilter, setDisableFilter] = useState(false);
+	const [selectedPackType, setSelectedPackType] = useState(null);
+	const [disableFilter, setDisableFilter] = useState(true);
 	const [disableAddToCart, setDisableAddToCart] = useState(true);
 	const [showOrderSummary, setShowOrderSummary] = useState("d-none");
 	const [showSearchFilter, setShowSearchFilter] = useState("d-block");
@@ -93,7 +93,7 @@ const PlaceOrder = (props) => {
 		// AXIOS WRAPPER FOR API CALL
 		/////////////////////////////////////////
 		if (
-			data.customer_block_flag === "YES" &&
+			data.customer_block_flag === "NO" &&
 			data.ndc_flag === "NO" &&
 			data.mssr_flag === "NO" &&
 			data.claim_flag === "NO"
@@ -101,7 +101,7 @@ const PlaceOrder = (props) => {
 			<>
 				{setSalePerson(data.mapped_so_name)}
 				{setDistributor(data)}
-				{setSelectedPackType({})}
+				{setSelectedPackType(null)}
 				{setSelectedBrand({})}
 				{dispatch(setFlavour("null"))}
 				{dispatch(setProductLine("null"))}
@@ -113,7 +113,8 @@ const PlaceOrder = (props) => {
 				)}
 			</>;
 		}
-		if (data.customer_block_flag === "NO") {
+		if (data.customer_block_flag === "YES") {
+			setDisableFilter(true);
 			toast.error("customer_block_flag blocked");
 		}
 		if (data.ndc_flag === "YES") {
@@ -202,6 +203,9 @@ const PlaceOrder = (props) => {
 	}, [disableFilter, addTocart]);
 	const showFilterData = async (e) => {
 		e.preventDefault();
+		if (selectedPackType === null) {
+			return toast.error("You missed selecting Pack type");
+		}
 		// Show filtered data based on packType, selectedBrand, selectedProductLine and selectedFlavour
 		let filterData = order_grid_details.filter(function (el) {
 			return (
@@ -305,13 +309,37 @@ const PlaceOrder = (props) => {
 		}
 	};
 
-	const handleQty = (e, id) => {
+	const handleQty = (e, item) => {
 		// Handle order grid quantity and store in react state.
+		console.log(item);
+
+		if (item.portal_reg_promo_flag === "N" && item.item_promo_flag === "N") {
+			Swal.fire({
+				title: "Do you want to save the changes?",
+				showDenyButton: true,
+				showCancelButton: true,
+				confirmButtonText: "Yes",
+				denyButtonText: "No",
+				customClass: {
+					actions: "my-actions",
+					cancelButton: "order-1 right-gap",
+					confirmButton: "order-2",
+					denyButton: "order-3",
+				},
+			}).then((result) => {
+				if (result.isConfirmed) {
+					Swal.fire("Saved!", "", "success");
+				} else if (result.isDenied) {
+					Swal.fire("Changes are not saved", "", "info");
+				}
+			});
+		}
+
 		setOrderData((orderData) =>
-			orderData.map((item) =>
-				id === item.portal_item_code
-					? { ...item, sit_inventory_qty: e.target.value }
-					: item
+			orderData.map((data) =>
+				item.portal_item_code === data.portal_item_code
+					? { ...data, sit_inventory_qty: 5 }
+					: data
 			)
 		);
 		setDisableAddToCart(false);
@@ -416,9 +444,9 @@ const PlaceOrder = (props) => {
 																		name="Distributor"
 																		className="form-control"
 																		data-live-search="true"
-																		disabled={
-																			disableFilter || !disableAddToCart
-																		}
+																		// disabled={
+																		// 	disableFilter || !disableAddToCart
+																		// }
 																		onChange={(e) =>
 																			getOrderDetails(
 																				JSON.parse(e.target.value)
@@ -780,10 +808,7 @@ const PlaceOrder = (props) => {
 																								item.sit_inventory_qty
 																							}
 																							onChange={(e) =>
-																								handleQty(
-																									e,
-																									item.portal_item_code
-																								)
+																								handleQty(e, item)
 																							}
 																						/>
 																					</td>
@@ -920,9 +945,10 @@ const PlaceOrder = (props) => {
 																		step="1"
 																		// defaultValue={item.sit_inventory_qty}
 																		placeholder={item.sit_inventory_qty}
-																		onChange={(e) =>
-																			handleQty(e, item.portal_item_code)
-																		}
+																		// onChange={(e) =>
+																		// 	handleQty(e, item.portal_item_code)
+																		// }
+																		onChange={(e) => handleQty(e, item)}
 																	/>
 																</div>
 															</div>

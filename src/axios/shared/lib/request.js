@@ -35,7 +35,7 @@ const request = function (options) {
 			// other than 2xx
 			if (error.response.data.status === 401) {
 				localStorage.clear();
-				window.location.replace("/");
+				window.location.replace("/partner");
 			} else {
 				toast.error(error.response.data.message);
 			}
