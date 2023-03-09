@@ -115,6 +115,14 @@ const PlaceOrder = (props) => {
 		}
 		if (data.customer_block_flag === "YES") {
 			setDisableFilter(true);
+			setSalePerson(null);
+			dispatch(setOrderDetails("null"));
+			dispatch(setAddToCart([]));
+			setSelectedPackType(null);
+			setSelectedBrand({});
+			dispatch(setProductLine("null"));
+			dispatch(setFlavour("null"));
+			setOrderData([]);
 			toast.error("customer_block_flag blocked");
 		}
 		if (data.ndc_flag === "YES") {
@@ -198,9 +206,13 @@ const PlaceOrder = (props) => {
 	useEffect(() => {
 		if (addTocart.length === 0) {
 			setShowSearchFilter("d-block");
+			setShowSearchFilter(true);
+			setShowOrderSummary("d-none");
+			setShowPlaceOrder(false);
 		}
 		window.scrollTo({ top: 0, behavior: "smooth" });
-	}, [disableFilter, addTocart]);
+	}, [disableFilter, addTocart, orderData]);
+
 	const showFilterData = async (e) => {
 		e.preventDefault();
 		if (selectedPackType === null) {
@@ -237,19 +249,18 @@ const PlaceOrder = (props) => {
 
 	useEffect(() => {
 		if (userProfile.usertype !== "null") {
+			dispatch(setOrderDetails("null"));
+			dispatch(setAddToCart([]));
+			setSelectedPackType(null);
+			setSelectedBrand({});
+			dispatch(setProductLine("null"));
+			dispatch(setFlavour("null"));
+			setOrderData([]);
 			getOrderFilters();
 		} else {
 			navigate("/");
 		}
 	}, []);
-
-	useEffect(() => {
-		if (addTocart.length === 0) {
-			setShowSearchFilter(true);
-			setShowOrderSummary("d-none");
-			setShowPlaceOrder(false);
-		}
-	}, [orderData]);
 
 	const addToCart = () => {
 		let currItemList = orderData.filter(function (el) {
@@ -313,32 +324,32 @@ const PlaceOrder = (props) => {
 		// Handle order grid quantity and store in react state.
 		console.log(item);
 
-		if (item.portal_reg_promo_flag === "N" && item.item_promo_flag === "N") {
-			Swal.fire({
-				title: "Do you want to save the changes?",
-				showDenyButton: true,
-				showCancelButton: true,
-				confirmButtonText: "Yes",
-				denyButtonText: "No",
-				customClass: {
-					actions: "my-actions",
-					cancelButton: "order-1 right-gap",
-					confirmButton: "order-2",
-					denyButton: "order-3",
-				},
-			}).then((result) => {
-				if (result.isConfirmed) {
-					Swal.fire("Saved!", "", "success");
-				} else if (result.isDenied) {
-					Swal.fire("Changes are not saved", "", "info");
-				}
-			});
-		}
+		// if (item.portal_reg_promo_flag === "N" && item.item_promo_flag === "N") {
+		// 	Swal.fire({
+		// 		title: "Do you want to save the changes?",
+		// 		showDenyButton: true,
+		// 		// showCancelButton: true,
+		// 		confirmButtonText: "Yes",
+		// 		denyButtonText: "Cancel",
+		// 		customClass: {
+		// 			actions: "my-actions",
+		// 			cancelButton: "order-1 right-gap",
+		// 			confirmButton: "order-2",
+		// 			denyButton: "order-3",
+		// 		},
+		// 	}).then((result) => {
+		// 		if (result.isConfirmed) {
+		// 			Swal.fire("Saved!", "", "success");
+		// 		} else if (result.isDenied) {
+		// 			Swal.fire("Changes are not saved", "", "info");
+		// 		}
+		// 	});
+		// }
 
 		setOrderData((orderData) =>
 			orderData.map((data) =>
 				item.portal_item_code === data.portal_item_code
-					? { ...data, sit_inventory_qty: 5 }
+					? { ...data, sit_inventory_qty: e.target.value }
 					: data
 			)
 		);
@@ -459,7 +470,8 @@ const PlaceOrder = (props) => {
 																				<option
 																					key={index}
 																					value={JSON.stringify(data)}>
-																					{data.customer_name}
+																					{data.customer_name} -{" "}
+																					{data.customer_code}
 																				</option>
 																			))}
 																	</select>
@@ -715,6 +727,7 @@ const PlaceOrder = (props) => {
 																onClick={(e) => (
 																	showFilterData(e), setDisableFilter(false)
 																)}
+																disabled={disableFilter || salePerson === null}
 																type="button"
 																className="btn btn-primary btn-md ml-2"
 																data-toggle="collapse"

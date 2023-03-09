@@ -4,6 +4,7 @@ import { authReducer } from "./authReducer";
 import { menuReducer } from "./menuReducer";
 import { dashboardReducer } from "./dashboardReducer";
 import { placeOrderReducer } from "./placeOrderReducer";
+// import { viewOrderReducer } from "./viewOrderReducer";
 
 const reducers = combineReducers({
 	allProducts: productReducer,
@@ -11,6 +12,13 @@ const reducers = combineReducers({
 	menuData: menuReducer,
 	dashboard: dashboardReducer,
 	placeOrder: placeOrderReducer,
+	// viewOrder: viewOrderReducer,
 });
 
-export default reducers;
+const rootReducer = (state, action) => {
+	if (action.type === "REMOVE_USER_AUTH") {
+		return reducers(undefined, action);
+	}
+	return reducers(state, action);
+};
+export default rootReducer;

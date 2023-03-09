@@ -13,7 +13,6 @@ export const removeUser = () => {
 	// localStorage.removeItem("usertype");
 	// localStorage.removeItem("dashboard");
 	localStorage.clear();
-
 	return {
 		type: ActionTypes.REMOVE_USER_AUTH,
 		payload: {},
