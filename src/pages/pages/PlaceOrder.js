@@ -264,7 +264,7 @@ const PlaceOrder = (props) => {
 
 	const addToCart = () => {
 		let currItemList = orderData.filter(function (el) {
-			return el.sit_inventory_qty >= 1;
+			return el.item_qty >= 1;
 		});
 		// Merge previous order and current order
 		let added_to_cart = [...addTocart, ...currItemList];
@@ -277,14 +277,14 @@ const PlaceOrder = (props) => {
 		setOrderData([]);
 		// setOrderData(() =>
 		// 	orderData.filter(function (el) {
-		// 		return el.sit_inventory_qty == 0;
+		// 		return el.item_qty == 0;
 		// 	})
 		// );
 		setDisableAddToCart(true);
 	};
 
 	const removeFromCart = (e, id) => {
-		id.sit_inventory_qty = 0;
+		id.item_qty = 0;
 		//Removing item from order summary based on selected portal_item_code
 		dispatch(
 			setAddToCart(
@@ -349,7 +349,7 @@ const PlaceOrder = (props) => {
 		setOrderData((orderData) =>
 			orderData.map((data) =>
 				item.portal_item_code === data.portal_item_code
-					? { ...data, sit_inventory_qty: e.target.value }
+					? { ...data, item_qty: e.target.value }
 					: data
 			)
 		);
@@ -362,7 +362,7 @@ const PlaceOrder = (props) => {
 			setAddToCart(
 				addTocart.map((item) =>
 					id === item.portal_item_code
-						? { ...item, sit_inventory_qty: e.target.value }
+						? { ...item, item_qty: e.target.value }
 						: item
 				)
 			)
@@ -789,10 +789,9 @@ const PlaceOrder = (props) => {
 																	{orderData.map(
 																		(item, index) => (
 																			(cartTotalQty =
-																				cartTotalQty + item.sit_inventory_qty),
+																				cartTotalQty + item.item_qty),
 																			(cartTotal +=
-																				item.portal_mrp *
-																				item.sit_inventory_qty),
+																				item.portal_mrp * item.item_qty),
 																			(
 																				<tr key={index}>
 																					<td>{item.portal_item_code}</td>
@@ -816,19 +815,16 @@ const PlaceOrder = (props) => {
 																							className="qty-ctl"
 																							step="1"
 																							// defaultValue={
-																							// 	item.sit_inventory_qty
+																							// 	item.item_qty
 																							// }
-																							placeholder={
-																								item.sit_inventory_qty
-																							}
+																							placeholder={item.item_qty}
 																							onChange={(e) =>
 																								handleQty(e, item)
 																							}
 																						/>
 																					</td>
 																					<td>
-																						{item.portal_mrp *
-																							item.sit_inventory_qty}
+																						{item.portal_mrp * item.item_qty}
 																					</td>
 																				</tr>
 																			)
@@ -957,8 +953,8 @@ const PlaceOrder = (props) => {
 																		type="number"
 																		className="qty-ctl"
 																		step="1"
-																		// defaultValue={item.sit_inventory_qty}
-																		placeholder={item.sit_inventory_qty}
+																		// defaultValue={item.item_qty}
+																		placeholder={item.item_qty}
 																		// onChange={(e) =>
 																		// 	handleQty(e, item.portal_item_code)
 																		// }
@@ -1052,10 +1048,9 @@ const PlaceOrder = (props) => {
 												{addTocart != "null" &&
 													addTocart.map(
 														(item, index) => (
-															(addToCartQty =
-																addToCartQty + item.sit_inventory_qty),
+															(addToCartQty = addToCartQty + item.item_qty),
 															(addToCartTotal +=
-																item.portal_mrp * item.sit_inventory_qty),
+																item.portal_mrp * item.item_qty),
 															(
 																<div
 																	className="cart-prod-div-order"
@@ -1091,15 +1086,15 @@ const PlaceOrder = (props) => {
 																			type="number"
 																			className="qty-ctl"
 																			step="1"
-																			// defaultValue={item.sit_inventory_qty}
-																			placeholder={item.sit_inventory_qty}
+																			// defaultValue={item.item_qty}
+																			placeholder={item.item_qty}
 																		/>
 
 																		{/* <span className="cart-prod-lbl ml-2">
-																			{item.sit_inventory_qty} *{" "}
+																			{item.item_qty} *{" "}
 																			{item.portal_mrp} =
 																			<b>
-																				{item.sit_inventory_qty *
+																				{item.item_qty *
 																					item.portal_mrp}
 																			</b>
 																		</span> */}
@@ -1107,9 +1102,7 @@ const PlaceOrder = (props) => {
 																			className="cart-prod-desc"
 																			style={{ float: "right" }}>
 																			<span className="cart-prod-lbl">
-																				Value:{" "}
-																				{item.sit_inventory_qty *
-																					item.portal_mrp}
+																				Value: {item.item_qty * item.portal_mrp}
 																			</span>
 																		</div>
 																	</div>
