@@ -14,7 +14,10 @@ import PlaceOrderService from "../../axios/services/api/placeOrder";
 
 import { ColorRing } from "react-loader-spinner";
 import DashboardService from "../../axios/services/api/dashboard";
-import { setDashboard } from "../../redux/actions/dashboardAction";
+import {
+	setDashboard,
+	setProductsLine,
+} from "../../redux/actions/dashboardAction";
 import { setMenu } from "../../redux/actions/menuAction";
 import { userType } from "../pages/constants/constants";
 import Swal from "sweetalert2";
@@ -28,6 +31,8 @@ const Dashboard = () => {
 	const menus = useSelector((state) => state.menuData.menuData);
 
 	const dashboard = useSelector((state) => state.dashboard.dashboard);
+	const productLine = useSelector((state) => state.dashboard.productLine);
+
 	const { alert_details, order_details } = dashboard;
 
 	const [data, setData] = useState([]);
@@ -58,11 +63,13 @@ const Dashboard = () => {
 		//AXIOS WRAPPER FOR API CALL
 	};
 
-	const getProductDetails = async (item) => {
+	const getProductLines = async (item) => {
+		dispatch(setProductsLine(item));
+		console.log("item", item);
 		//AXIOS WRAPPER FOR API CALL
-		await ProductService.getProductDetails(item).then((response) => {
-			dispatch(selectedProduct(response));
-		});
+		// await ProductService.getProductDetails(item).then((response) => {
+		// 	dispatch(selectedProduct(response));
+		// });
 		//AXIOS WRAPPER FOR API CALL
 	};
 
@@ -309,12 +316,12 @@ const Dashboard = () => {
 															{order_details &&
 																order_details.map((item, i) => (
 																	<tr key={i}>
-																		{/* <td onClick={() => getProductDetails(item)}> */}
-																		<td>
+																		<td onClick={() => getProductLines(item)}>
+																			{/* <td> */}
 																			<a
 																				className="text-danger"
-																				// href="#vieworderpop"
-																				// data-toggle="modal"
+																				href="#vieworderpop"
+																				data-toggle="modal"
 																				data-tooltip="tooltip"
 																				title="View Order">
 																				{item.order_no}
@@ -438,16 +445,16 @@ const Dashboard = () => {
 						<div className="modal-body">
 							<div className="row bg-info-light m-0">
 								<div className="col-md-4">
-									<label className="font-weight-bold my-2">Order No:</label>
-									202220000214 {productDetails.id}
+									<label className="font-weight-bold my-2">Order No : </label>{" "}
+									{productLine.order_no}
 								</div>
 								<div className="col-md-4">
-									<label className="font-weight-bold my-2">Order Date:</label>
-									08/02/2022
+									<label className="font-weight-bold my-2">Order Date : </label>{" "}
+									{productLine.order_date}
 								</div>
 								<div className="col-md-4">
-									<label className="font-weight-bold my-2">Distributor:</label>
-									Gautam Foods{productDetails.title}
+									<label className="font-weight-bold my-2">Distributor :</label>{" "}
+									{productLine.customer_name}
 								</div>
 							</div>
 							<div className="table-responsive">

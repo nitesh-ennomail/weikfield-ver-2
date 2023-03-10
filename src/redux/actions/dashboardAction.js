@@ -7,3 +7,10 @@ export const setDashboard = (data) => {
 		payload: data,
 	};
 };
+
+export const setProductsLine = (products) => {
+	return {
+		type: ActionTypes.SET_PRODUCTS_LINE,
+		payload: products,
+	};
+};

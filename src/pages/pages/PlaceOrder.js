@@ -609,7 +609,7 @@ const PlaceOrder = (props) => {
 																		disabled={
 																			disableFilter || !disableAddToCart
 																		}
-																		onChange={(e) =>
+																		onClick={(e) =>
 																			getProductLine(JSON.parse(e.target.value))
 																		}
 																		required>
