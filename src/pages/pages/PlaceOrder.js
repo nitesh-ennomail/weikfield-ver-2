@@ -51,9 +51,9 @@ const PlaceOrder = (props) => {
 	const [distributor, setDistributor] = useState(null);
 	const [salePerson, setSalePerson] = useState(null);
 	const [selectedBrand, setSelectedBrand] = useState({});
-	const [selectedFlavour, setSelectedFlavour] = useState(null);
-	const [selectedProductLine, setSelectedProductLine] = useState(null);
-	const [selectedPackType, setSelectedPackType] = useState(null);
+	const [selectedFlavour, setSelectedFlavour] = useState("");
+	const [selectedProductLine, setSelectedProductLine] = useState("");
+	const [selectedPackType, setSelectedPackType] = useState("");
 	const [disableFilter, setDisableFilter] = useState(true);
 	const [disableAddToCart, setDisableAddToCart] = useState(true);
 	const [showOrderSummary, setShowOrderSummary] = useState("d-none");
@@ -70,6 +70,9 @@ const PlaceOrder = (props) => {
 		}
 		{
 			setSelectedBrand({});
+		}
+		{
+			setSelectedFlavour("");
 		}
 		{
 			dispatch(setFlavour("null"));
@@ -101,7 +104,7 @@ const PlaceOrder = (props) => {
 			<>
 				{setSalePerson(data.mapped_so_name)}
 				{setDistributor(data)}
-				{setSelectedPackType(null)}
+				{setSelectedPackType("")}
 				{setSelectedBrand({})}
 				{dispatch(setFlavour("null"))}
 				{dispatch(setProductLine("null"))}
@@ -118,7 +121,7 @@ const PlaceOrder = (props) => {
 			setSalePerson(null);
 			dispatch(setOrderDetails("null"));
 			dispatch(setAddToCart([]));
-			setSelectedPackType(null);
+			setSelectedPackType("");
 			setSelectedBrand({});
 			dispatch(setProductLine("null"));
 			dispatch(setFlavour("null"));
@@ -168,6 +171,8 @@ const PlaceOrder = (props) => {
 	const getProductLine = async (brand) => {
 		// AXIOS WRAPPER FOR API CALL
 		setSelectedBrand(brand);
+		setSelectedProductLine("");
+		setSelectedFlavour("");
 		// Removing flavour and productline from redux store
 		dispatch(setFlavour("null"));
 		dispatch(setProductLine("null"));
@@ -215,17 +220,32 @@ const PlaceOrder = (props) => {
 
 	const showFilterData = async (e) => {
 		e.preventDefault();
-		if (selectedPackType === null) {
+		if (Object.keys(selectedPackType).length === 0) {
 			return toast.error("You missed selecting Pack type");
+		} else if (Object.keys(selectedBrand).length === 0) {
+			return toast.error("You missed selecting Brand");
 		}
+
 		// Show filtered data based on packType, selectedBrand, selectedProductLine and selectedFlavour
 		let filterData = order_grid_details.filter(function (el) {
-			return (
-				el.customer_type === selectedPackType.pack_type_desc &&
-				el.brand === selectedBrand.brand_desc &&
-				el.product_line === selectedProductLine.product_line_desc &&
-				el.flavour === selectedFlavour.flavour_desc
-			);
+			if (
+				selectedPackType &&
+				selectedBrand &&
+				selectedProductLine &&
+				selectedFlavour
+			) {
+				return (
+					el.customer_type === selectedPackType.pack_type_desc &&
+					el.brand === selectedBrand.brand_desc &&
+					el.product_line === selectedProductLine.product_line_desc &&
+					el.flavour === selectedFlavour.flavour_desc
+				);
+			} else if (selectedPackType && selectedBrand) {
+				return (
+					el.customer_type === selectedPackType.pack_type_desc &&
+					el.brand === selectedBrand.brand_desc
+				);
+			}
 		});
 		setDisableAddToCart(true);
 		if (filterData.length === 0) {
@@ -251,7 +271,7 @@ const PlaceOrder = (props) => {
 		if (userProfile.usertype !== "null") {
 			dispatch(setOrderDetails("null"));
 			dispatch(setAddToCart([]));
-			setSelectedPackType(null);
+			setSelectedPackType("");
 			setSelectedBrand({});
 			dispatch(setProductLine("null"));
 			dispatch(setFlavour("null"));
@@ -320,9 +340,24 @@ const PlaceOrder = (props) => {
 		}
 	};
 
+	const maxLengthCheck = (object) => {
+		if (object.target.value.length > object.target.maxLength) {
+			object.target.value = object.target.value.slice(
+				0,
+				object.target.maxLength
+			);
+		}
+	};
+
 	const handleQty = (e, item) => {
+		// alert("not a number");
+
 		// Handle order grid quantity and store in react state.
-		console.log(item);
+		// console.log(e);
+
+		// if (e.code === 'Minus') {
+		// 	e.preventDefault();
+		// }
 
 		// if (item.portal_reg_promo_flag === "N" && item.item_promo_flag === "N") {
 		// 	Swal.fire({
@@ -371,7 +406,7 @@ const PlaceOrder = (props) => {
 	};
 
 	const saveOrder = async (e) => {
-		setShowPlaceOrder(false);
+		// setShowPlaceOrder(false);
 		addTocart.length > 0
 			? await PlaceOrderService.saveOrder({
 					userProfile,
@@ -465,7 +500,9 @@ const PlaceOrder = (props) => {
 																			)
 																		}
 																		required>
-																		<option value="null">Show All</option>
+																		<option value={JSON.stringify("")}>
+																			Show All
+																		</option>
 																		{distributor_details &&
 																			distributor_details.map((data, index) => (
 																				<option
@@ -576,8 +613,6 @@ const PlaceOrder = (props) => {
 																			getProductLine(JSON.parse(e.target.value))
 																		}
 																		required>
-																		<option>Show All</option>
-
 																		{brand_details &&
 																			brand_details.map((brand, index) => (
 																				<option
@@ -588,44 +623,37 @@ const PlaceOrder = (props) => {
 																			))}
 																	</select>
 																	<div className="lbl-radio-group hrl-scrl-rdo d-block d-sm-none">
-																		{loading ? (
-																			<label>show all</label>
-																		) : (
-																			<>
-																				{brand_details &&
-																					brand_details.map((brand, index) => (
-																						<div
-																							className="lbl-radio-btn"
-																							key={brand.brand_code}>
-																							<input
-																								disabled={
-																									disableFilter ||
-																									!disableAddToCart
-																								}
-																								type="radio"
-																								value={JSON.stringify(brand)}
-																								id={brand.brand_code}
-																								name="brandRdoGrp"
-																								checked={
-																									selectedBrand &&
-																									selectedBrand.brand_code ===
-																										brand.brand_code
-																								}
-																								onChange={(e) =>
-																									getProductLine(
-																										JSON.parse(e.target.value)
-																									)
-																								}
-																							/>
+																		{brand_details &&
+																			brand_details.map((brand, index) => (
+																				<div
+																					className="lbl-radio-btn"
+																					key={brand.brand_code}>
+																					<input
+																						disabled={
+																							disableFilter || !disableAddToCart
+																						}
+																						type="radio"
+																						value={JSON.stringify(brand)}
+																						id={brand.brand_code}
+																						name="brandRdoGrp"
+																						checked={
+																							selectedBrand &&
+																							selectedBrand.brand_code ===
+																								brand.brand_code
+																						}
+																						onChange={(e) =>
+																							getProductLine(
+																								JSON.parse(e.target.value)
+																							)
+																						}
+																					/>
 
-																							{/* <label>{brand.brand_desc}</label> */}
-																							<label htmlFor={brand.brand_code}>
-																								{brand.brand_desc}
-																							</label>
-																						</div>
-																					))}
-																			</>
-																		)}
+																					{/* <label>{brand.brand_desc}</label> */}
+																					<label htmlFor={brand.brand_code}>
+																						{brand.brand_desc}
+																					</label>
+																				</div>
+																			))}
 																	</div>
 																</div>
 															</div>
@@ -653,7 +681,9 @@ const PlaceOrder = (props) => {
 																			getFlavour(JSON.parse(e.target.value))
 																		}
 																		required>
-																		<option>Show All</option>
+																		<option value={JSON.stringify("")}>
+																			Show All
+																		</option>
 
 																		{product_line_details &&
 																			product_line_details.map(
@@ -692,7 +722,9 @@ const PlaceOrder = (props) => {
 																			)
 																		}
 																		required>
-																		<option>Show All</option>
+																		<option value={JSON.stringify("")}>
+																			Show All
+																		</option>
 																		{flavour_details &&
 																			flavour_details.map((flavour, index) => (
 																				<option
@@ -798,7 +830,18 @@ const PlaceOrder = (props) => {
 																					<td>{item.portal_item_desc}</td>
 																					<td>{item.erp_commited_qty}</td>
 																					<td>{item.physical_inventory_qty}</td>
-																					<td>{item.portal_mrp}</td>
+																					<td>
+																						{/* {item.portal_mrp > 0
+																							? item.portal_mrp
+																							: "Price not found"} */}
+																						{item.portal_mrp > 0 ? (
+																							item.portal_mrp
+																						) : (
+																							<span className="text-danger">
+																								Price not found
+																							</span>
+																						)}
+																					</td>
 																					<td>{item.uom}</td>
 																					<td>
 																						<input
@@ -809,8 +852,9 @@ const PlaceOrder = (props) => {
 																							}
 																							style={{ textAlign: "right" }}
 																							ref={inputRef1}
-																							min={1}
-																							max={10}
+																							min={0}
+																							maxLength="3"
+																							onInput={maxLengthCheck}
 																							type="number"
 																							className="qty-ctl"
 																							step="1"
@@ -818,6 +862,11 @@ const PlaceOrder = (props) => {
 																							// 	item.item_qty
 																							// }
 																							placeholder={item.item_qty}
+																							onKeyPress={(event) => {
+																								if (event.charCode < 48) {
+																									event.preventDefault();
+																								}
+																							}}
 																							onChange={(e) =>
 																								handleQty(e, item)
 																							}
@@ -947,8 +996,10 @@ const PlaceOrder = (props) => {
 																			item.portal_mrp == 0 ? true : false
 																		}
 																		style={{ textAlign: "right" }}
-																		min={1}
-																		max={10}
+																		min={0}
+																		maxLength="3"
+																		onInput={maxLengthCheck}
+																		// max={10}
 																		ref={inputRef1}
 																		type="number"
 																		className="qty-ctl"
@@ -958,6 +1009,12 @@ const PlaceOrder = (props) => {
 																		// onChange={(e) =>
 																		// 	handleQty(e, item.portal_item_code)
 																		// }
+																		// onKeyPress={preventMinus}
+																		onKeyPress={(event) => {
+																			if (event.charCode < 48) {
+																				event.preventDefault();
+																			}
+																		}}
 																		onChange={(e) => handleQty(e, item)}
 																	/>
 																</div>
@@ -1075,6 +1132,8 @@ const PlaceOrder = (props) => {
 																		</span>
 																		<input
 																			min={1}
+																			maxLength="3"
+																			onInput={maxLengthCheck}
 																			style={{ textAlign: "right" }}
 																			onChange={(e) =>
 																				handleQtyInCart(
@@ -1082,6 +1141,11 @@ const PlaceOrder = (props) => {
 																					item.portal_item_code
 																				)
 																			}
+																			onKeyPress={(event) => {
+																				if (event.charCode < 48) {
+																					event.preventDefault();
+																				}
+																			}}
 																			// disabled={true}
 																			type="number"
 																			className="qty-ctl"
