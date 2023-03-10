@@ -240,6 +240,12 @@ const PlaceOrder = (props) => {
 					el.product_line === selectedProductLine.product_line_desc &&
 					el.flavour === selectedFlavour.flavour_desc
 				);
+			} else if (selectedPackType && selectedBrand && selectedProductLine) {
+				return (
+					el.customer_type === selectedPackType.pack_type_desc &&
+					el.brand === selectedBrand.brand_desc &&
+					el.product_line === selectedProductLine.product_line_desc
+				);
 			} else if (selectedPackType && selectedBrand) {
 				return (
 					el.customer_type === selectedPackType.pack_type_desc &&
