@@ -29,9 +29,24 @@ function setStatus(userProfile, order_no, id, remark) {
 		}),
 	});
 }
+
+function getOrderLines(userProfile, order_no) {
+	return request({
+		url: `/order/getOrderLines`,
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${userProfile.token}`,
+		},
+		data: JSON.stringify({
+			order_no,
+		}),
+	});
+}
 const DashboardService = {
 	getDashboardDetails,
-	setStatus, //, update, delete, etc. ...
+	setStatus,
+	getOrderLines, //, update, delete, etc. ...
 };
 
 export default DashboardService;

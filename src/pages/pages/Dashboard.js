@@ -16,7 +16,7 @@ import { ColorRing } from "react-loader-spinner";
 import DashboardService from "../../axios/services/api/dashboard";
 import {
 	setDashboard,
-	setProductsLine,
+	setOrderLine,
 } from "../../redux/actions/dashboardAction";
 import { setMenu } from "../../redux/actions/menuAction";
 import { userType } from "../pages/constants/constants";
@@ -31,7 +31,7 @@ const Dashboard = () => {
 	const menus = useSelector((state) => state.menuData.menuData);
 
 	const dashboard = useSelector((state) => state.dashboard.dashboard);
-	const productLine = useSelector((state) => state.dashboard.productLine);
+	const orderLine = useSelector((state) => state.dashboard.orderLine);
 
 	const { alert_details, order_details } = dashboard;
 
@@ -51,37 +51,34 @@ const Dashboard = () => {
 		);
 	}, []);
 
-	const getProduct = async () => {
-		//AXIOS WRAPPER FOR API CALL
-		setLoading(true);
-		await ProductService.getProduct().then((response) => {
-			dispatch(setProducts(response));
-			setData(response);
-			console.log(response);
-			setLoading(false);
-		});
-		//AXIOS WRAPPER FOR API CALL
+	// const getProduct = async () => {
+	// 	setLoading(true);
+	// 	await ProductService.getProduct().then((response) => {
+	// 		dispatch(setProducts(response));
+	// 		setData(response);
+	// 		console.log(response);
+	// 		setLoading(false);
+	// 	});
+	// };
+
+	const getOrderLines = async (order_no) => {
+		console.log("item ord_no", order_no);
+		// AXIOS WRAPPER FOR API CALL
+		await DashboardService.getOrderLines(userProfile, order_no).then(
+			(response) => {
+				dispatch(setOrderLine(response.data.order_line_details));
+			}
+		);
+		// AXIOS WRAPPER FOR API CALL
 	};
 
-	const getProductLines = async (item) => {
-		dispatch(setProductsLine(item));
-		console.log("item", item);
-		//AXIOS WRAPPER FOR API CALL
-		// await ProductService.getProductDetails(item).then((response) => {
-		// 	dispatch(selectedProduct(response));
-		// });
-		//AXIOS WRAPPER FOR API CALL
-	};
-
-	const addOrder = async (item) => {
-		//AXIOS WRAPPER FOR API CALL
-		await ProductService.addOrder(item).then((response) => {
-			alert(`New Message with id ${response.id} created!`);
-			console.log("submitted!", response);
-			// dispatch(selectedProduct(response));
-		});
-		//AXIOS WRAPPER FOR API CALL
-	};
+	// const addOrder = async (item) => {
+	// 	await ProductService.addOrder(item).then((response) => {
+	// 		alert(`New Message with id ${response.id} created!`);
+	// 		console.log("submitted!", response);
+	// 		// dispatch(selectedProduct(response));
+	// 	});
+	// };
 
 	const getDashboard = async () => {
 		//AXIOS WRAPPER FOR API CALL
@@ -316,7 +313,10 @@ const Dashboard = () => {
 															{order_details &&
 																order_details.map((item, i) => (
 																	<tr key={i}>
-																		<td onClick={() => getProductLines(item)}>
+																		<td
+																			onClick={() =>
+																				getOrderLines(item.order_no)
+																			}>
 																			{/* <td> */}
 																			<a
 																				className="text-danger"
@@ -443,21 +443,21 @@ const Dashboard = () => {
 							</button>
 						</div>
 						<div className="modal-body">
-							<div className="row bg-info-light m-0">
+							{/* <div className="row bg-info-light m-0">
 								<div className="col-md-4">
 									<label className="font-weight-bold my-2">Order No : </label>{" "}
-									{productLine.order_no}
+									RPF-123456
 								</div>
 								<div className="col-md-4">
 									<label className="font-weight-bold my-2">Order Date : </label>{" "}
-									{productLine.order_date}
+									12/03/2023
 								</div>
 								<div className="col-md-4">
 									<label className="font-weight-bold my-2">Distributor :</label>{" "}
-									{productLine.customer_name}
+									Name 
 								</div>
-							</div>
-							<div className="table-responsive">
+							</div> */}
+							<div className="table-responsive d-none d-sm-block">
 								<table
 									width="100%"
 									border="0"
@@ -472,13 +472,10 @@ const Dashboard = () => {
 											<th style={{ minWidth: "100px" }}>Item Desc</th>
 											<th>Item Price</th>
 											<th>Quantity</th>
-											<th>Unit</th>
 											<th>Order Amount</th>
-											<th>Invoice Qty</th>
-											<th>Invoice Amount</th>
 										</tr>
 									</thead>
-									<tfoot>
+									{/* <tfoot>
 										<tr>
 											<th>&nbsp;</th>
 											<th>&nbsp;</th>
@@ -487,88 +484,86 @@ const Dashboard = () => {
 											<th>&nbsp;</th>
 											<th className="text-danger font-weight-bold">Total</th>
 											<th className="text-danger font-weight-bold">555.00</th>
-											<th>&nbsp;</th>
-											<th>&nbsp;</th>
 										</tr>
-									</tfoot>
+									</tfoot> */}
 									<tbody>
-										<tr>
-											<td>PFG-8111007</td>
-											<td>FG-411228</td>
-											<td>Weikfield-Pasta-Penne-Pouch-24x500gm</td>
-											<td className="p-1">100.50</td>
-											<td>
-												<input
-													type="number"
-													className="qty-ctl"
-													step="1"
-													defaultValue="3"
-												/>
-											</td>
-											<td>Case</td>
-											<td>100.50</td>
-											<td>0.00</td>
-											<td>0.00</td>
-										</tr>
-										<tr>
-											<td>PFG-8111007</td>
-											<td>FG-411228</td>
-											<td>Weikfield Pasta Penne Pouch 24x400gm</td>
-											<td className="p-1">100.50</td>
-											<td>
-												<input
-													type="number"
-													className="qty-ctl"
-													step="1"
-													defaultValue="3"
-												/>
-											</td>
-											<td>Case</td>
-											<td>100.50</td>
-											<td>0.00</td>
-											<td>0.00</td>
-										</tr>
-										<tr>
-											<td>PFG-8111007</td>
-											<td>FG-411228</td>
-											<td>Weikfield Pasta Penne Pouch 24x200gm</td>
-											<td className="p-1">100.50</td>
-											<td>
-												<input
-													type="number"
-													className="qty-ctl"
-													step="1"
-													defaultValue="3"
-												/>
-											</td>
-											<td>Case</td>
-											<td>100.50</td>
-											<td>0.00</td>
-											<td>0.00</td>
-										</tr>
-										<tr>
-											<td>PFG-8111007</td>
-											<td>FG-411228</td>
-											<td>Weikfield Pasta Penne Pouch 24x100gm</td>
-											<td className="p-1">100.50</td>
-											<td>
-												<input
-													type="number"
-													className="qty-ctl"
-													step="1"
-													defaultValue="3"
-												/>
-											</td>
-											<td>Case</td>
-											<td>100.50</td>
-											<td>0.00</td>
-											<td>0.00</td>
-										</tr>
+										{console.log("orderLine", orderLine)}
+										{orderLine &&
+											orderLine.map((data, index) => (
+												<tr key={index}>
+													<td>{data.parent_item_code}</td>
+													<td>{data.item_code}</td>
+													<td>{data.item_desc}</td>
+													<td className="p-1">{data.item_price}</td>
+													<td>
+														<input
+															type="number"
+															className="qty-ctl"
+															step="1"
+															disabled={true}
+															placeholder={data.item_qty}
+														/>
+													</td>
+													<td>{data.item_price * data.item_qty}</td>
+												</tr>
+											))}
 									</tbody>
 								</table>
 							</div>
+							<div className="cart-prod-list d-block d-sm-none">
+								{orderLine &&
+									orderLine.map((data, index) => (
+										<div className="cart-prod-div" key={index}>
+											<div className="cart-prod-desc">
+												<span className="cart-prod-lbl">
+													Parent Item Code :{" "}
+												</span>
+												<span className="cart-prod-val">
+													{data.parent_item_code}
+												</span>
+											</div>
+											<div className="cart-prod-desc">
+												<span className="cart-prod-lbl">Item Code : </span>
+												<span className="cart-prod-val">{data.item_code}</span>
+											</div>
+											<div className="cart-prod-desc">
+												<span className="cart-prod-lbl">Item Desc : </span>
+												<span className="cart-prod-val">{data.item_desc}</span>
+											</div>
+
+											<div className="cart-prod-desc">
+												<span className="cart-prod-lbl">Price : </span>
+												<span className="cart-prod-val">{data.item_price}</span>
+												{/* <div
+													className="cart-prod-desc"
+													style={{ float: "right" }}>
+													<span className="cart-prod-lbl">Allocate Qty: </span>
+													<span className="cart-prod-val">cascad</span>
+												</div> */}
+											</div>
+
+											<div className="cart-prod-desc">
+												<span className="cart-prod-lbl">Quantity : </span>
+												<input
+													type="number"
+													className="qty-ctl"
+													step="1"
+													disabled={true}
+													placeholder={data.item_qty}
+												/>
+											</div>
+
+											<div className="cart-prod-desc">
+												<span className="cart-prod-lbl">Order Amount: </span>
+												<span className="cart-prod-val">
+													{data.item_price * data.item_qty}
+												</span>
+											</div>
+										</div>
+									))}
+							</div>
 						</div>
-						<div className="modal-footer text-center">
+						{/* <div className="modal-footer text-center">
 							<button type="submit" className="btn btn-primary btn-md">
 								<i className="fa-solid fa-check mr-2"></i> Accept
 							</button>
@@ -584,7 +579,7 @@ const Dashboard = () => {
 								<i className="fa-solid fa-pen mr-2" aria-hidden="true"></i> Edit
 								Order
 							</button>
-						</div>
+						</div> */}
 					</div>
 				</div>
 			</div>

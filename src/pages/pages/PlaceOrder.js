@@ -412,9 +412,10 @@ const PlaceOrder = (props) => {
 	};
 
 	const saveOrder = async (e) => {
-		// setShowPlaceOrder(false);
+		// setShowPlaceOrder(false)
+		// e.preventDefault();
 		addTocart.length > 0
-			? await PlaceOrderService.saveOrder({
+			? (await PlaceOrderService.saveOrder({
 					userProfile,
 					distributor,
 					profile_details,
@@ -437,7 +438,7 @@ const PlaceOrder = (props) => {
 									</span>
 							  );
 					}
-			  })
+			  })) && setShowPlaceOrder(false)
 			: console.log("Please add some item in cart!");
 	};
 

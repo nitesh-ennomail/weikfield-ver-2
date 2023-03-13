@@ -4,15 +4,15 @@ const dashboard = localStorage.getItem("dashboard");
 
 const initialState = {
 	dashboard: dashboard ? JSON.parse(dashboard) : "null",
-	productLine: "",
+	orderLine: "",
 };
 export const dashboardReducer = (state = initialState, { type, payload }) => {
 	switch (type) {
 		case ActionTypes.SET_DASHBOARD:
 			return { ...state, dashboard: payload };
 
-		case ActionTypes.SET_PRODUCTS_LINE:
-			return { ...state, productLine: payload };
+		case ActionTypes.SET_ORDER_LINE:
+			return { ...state, orderLine: payload };
 		default:
 			return state;
 	}

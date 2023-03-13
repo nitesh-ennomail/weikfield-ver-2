@@ -21,6 +21,19 @@ const client = axios.create({
 /**
  * Request Wrapper with default success/error actions
  */
+let token = localStorage.getItem("token");
+
+function updateAccessToken() {
+	return request({
+		url: `/refreshtoken`,
+		method: "POST",
+		headers: {
+			isTokenExpired: "true",
+			Authorization: `Bearer ${token}`,
+		},
+	});
+}
+
 const request = function (options) {
 	const onSuccess = function (response) {
 		// toast.success("response.data.message");
@@ -33,9 +46,19 @@ const request = function (options) {
 		if (error.response) {
 			// Request was made but server responded with something
 			// other than 2xx
-			if (error.response.data.status === 401) {
+			if (error.response.data.status === 500) {
+				toast.error("User ID or Password entered is wrong");
+			} else if (error.response.data.status === 501) {
+				// const newUserToken = updateAccessToken();
+				// console.log("newUserToken", newUserToken);
+				// localStorage.setItem("token1", newUserToken);
 				localStorage.clear();
 				window.location.replace("/partner");
+			} else if (error.response.data.status === 502) {
+				localStorage.clear();
+				window.location.replace("/partner");
+			} else if (error.response.data.status === 510) {
+				toast.error("You are not authorized to use this application");
 			} else {
 				toast.error(error.response.data.message);
 			}
