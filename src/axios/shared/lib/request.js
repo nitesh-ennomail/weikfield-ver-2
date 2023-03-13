@@ -11,6 +11,9 @@ import axios from "axios";
 import { baseURL } from "../../shared/constants";
 import Swal from "sweetalert2";
 import toast, { Toaster } from "react-hot-toast";
+import store from "../../../redux/store";
+import { ActionTypes } from "../../../redux/constants/action-type";
+
 /**
  * Create an Axios Client with defaults
  */
@@ -21,15 +24,15 @@ const client = axios.create({
 /**
  * Request Wrapper with default success/error actions
  */
-let token = localStorage.getItem("token");
+let token = JSON.parse(localStorage.getItem("token"));
 
-function updateAccessToken() {
+function updateAccessToken(token) {
 	return request({
-		url: `/refreshtoken`,
+		url: `/refreshToken`,
 		method: "POST",
 		headers: {
-			isTokenExpired: "true",
 			Authorization: `Bearer ${token}`,
+			isRefreshToken: "true",
 		},
 	});
 }
@@ -41,7 +44,7 @@ const request = function (options) {
 		return response.data;
 	};
 
-	const onError = function (error) {
+	const onError = async function (error) {
 		console.log("Request Failed:", error.config);
 		if (error.response) {
 			// Request was made but server responded with something
@@ -49,11 +52,11 @@ const request = function (options) {
 			if (error.response.data.status === 500) {
 				toast.error("User ID or Password entered is wrong");
 			} else if (error.response.data.status === 501) {
-				// const newUserToken = updateAccessToken();
-				// console.log("newUserToken", newUserToken);
-				// localStorage.setItem("token1", newUserToken);
-				localStorage.clear();
-				window.location.replace("/partner");
+				const newUserToken = await updateAccessToken(token);
+				store.dispatch({
+					type: ActionTypes.SET_TOKEN,
+					payload: newUserToken.token,
+				});
 			} else if (error.response.data.status === 502) {
 				localStorage.clear();
 				window.location.replace("/partner");

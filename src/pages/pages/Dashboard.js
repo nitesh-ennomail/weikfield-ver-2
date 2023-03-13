@@ -486,10 +486,10 @@ const Dashboard = () => {
 											<th className="text-danger font-weight-bold">555.00</th>
 										</tr>
 									</tfoot> */}
-									<tbody>
-										{console.log("orderLine", orderLine)}
-										{orderLine &&
-											orderLine.map((data, index) => (
+									{console.log("orderLine", orderLine)}
+									{orderLine &&
+										orderLine.map((data, index) => (
+											<tbody>
 												<tr key={index}>
 													<td>{data.parent_item_code}</td>
 													<td>{data.item_code}</td>
@@ -506,8 +506,8 @@ const Dashboard = () => {
 													</td>
 													<td>{data.item_price * data.item_qty}</td>
 												</tr>
-											))}
-									</tbody>
+											</tbody>
+										))}
 								</table>
 							</div>
 							<div className="cart-prod-list d-block d-sm-none">

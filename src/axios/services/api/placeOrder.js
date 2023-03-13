@@ -89,14 +89,12 @@ function saveOrder({
 			orderStateFlag: "NEW",
 			previousOrderNo: "0",
 			exempt_order_flag,
-			data: addTocart.map(
-				({ portal_item_code, sit_inventory_qty, portal_mrp }) => ({
-					parent_code: portal_item_code,
-					order_qty: sit_inventory_qty,
-					order_amount: sit_inventory_qty * portal_mrp,
-					order_amount_w_tax: sit_inventory_qty * portal_mrp,
-				})
-			),
+			data: addTocart.map(({ portal_item_code, item_qty, portal_mrp }) => ({
+				parent_code: portal_item_code,
+				order_qty: item_qty,
+				order_amount: item_qty * portal_mrp,
+				order_amount_w_tax: item_qty * portal_mrp,
+			})),
 		}),
 	});
 }
