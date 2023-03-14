@@ -61,6 +61,7 @@ const PlaceOrder = (props) => {
 	const [showPlaceOrder, setShowPlaceOrder] = useState(false);
 	const [errorMsg, setErrorMsg] = useState("");
 	const [empty, setEmpty] = useState(false);
+	const [disableConfirm, setDisableConfirm] = useState(false);
 	const handlePackType = (e) => {
 		{
 			setEmpty(false);
@@ -286,7 +287,7 @@ const PlaceOrder = (props) => {
 		} else {
 			navigate("/");
 		}
-	}, []);
+	}, [userProfile]);
 
 	const addToCart = () => {
 		let currItemList = orderData.filter(function (el) {
@@ -353,6 +354,11 @@ const PlaceOrder = (props) => {
 				object.target.maxLength
 			);
 		}
+
+		object.target.value =
+			!!object.target.value && Math.abs(object.target.value) >= 0
+				? Math.abs(object.target.value)
+				: null;
 	};
 
 	const handleQty = (e, item) => {
@@ -413,33 +419,61 @@ const PlaceOrder = (props) => {
 
 	const saveOrder = async (e) => {
 		// setShowPlaceOrder(false)
-		// e.preventDefault();
-		addTocart.length > 0
-			? (await PlaceOrderService.saveOrder({
-					userProfile,
-					distributor,
-					profile_details,
-					addToCartTotal,
-					addTocart,
-			  }).then((response) => {
-					{
-						response.data.error_code === "0"
-							? toast.success(
-									<span>
-										{`${response.data.message}-- ${response.data.order_no}`}
-									</span>,
-									{ duration: 4000 },
-									navigate("/dashboard"),
-									dispatch(setAddToCart([]))
-							  )
-							: toast.error(
-									<span>
-										{`${response.data.message}-- ${response.data.add_message}`}
-									</span>
-							  );
-					}
-			  })) && setShowPlaceOrder(false)
-			: console.log("Please add some item in cart!");
+		e.preventDefault();
+		// addTocart.length > 0
+		// 	? (await PlaceOrderService.saveOrder({
+		// 			userProfile,
+		// 			distributor,
+		// 			profile_details,
+		// 			addToCartTotal,
+		// 			addTocart,
+		// 	  }).then((response) => {
+		// 			{
+		// 				response.data.error_code === "0"
+		// 					? toast.success(
+		// 							<span>
+		// 								{`${response.data.message}-- ${response.data.order_no}`}
+		// 							</span>,
+		// 							{ duration: 4000 },
+		// 							navigate("/dashboard"),
+		// 							dispatch(setAddToCart([]))
+		// 					  )
+		// 					: toast.error(
+		// 							<span>
+		// 								{`${response.data.message}-- ${response.data.add_message}`}
+		// 							</span>
+		// 					  );
+		// 			}
+		// 	  }))
+		// 	: console.log("Please add some item in cart!");
+		setDisableConfirm(true);
+		if (addTocart.length > 0) {
+			await PlaceOrderService.saveOrder({
+				userProfile,
+				distributor,
+				profile_details,
+				addToCartTotal,
+				addTocart,
+			}).then((response) => {
+				{
+					response.data.error_code === "0"
+						? toast.success(
+								<span>
+									{`${response.data.message}-- ${response.data.order_no}`}
+								</span>,
+								{ duration: 4000 },
+								dispatch(setAddToCart([]), navigate("/dashboard"))
+						  )
+						: toast.error(
+								<span>
+									{`${response.data.message}-- ${response.data.add_message}`}
+								</span>
+						  );
+				}
+			});
+		} else {
+			setDisableConfirm(false);
+		}
 	};
 
 	return (
@@ -870,7 +904,10 @@ const PlaceOrder = (props) => {
 																							// }
 																							placeholder={item.item_qty}
 																							onKeyPress={(event) => {
-																								if (event.charCode < 48) {
+																								if (
+																									event.charCode < 48 ||
+																									event.charCode > 58
+																								) {
 																									event.preventDefault();
 																								}
 																							}}
@@ -1011,14 +1048,12 @@ const PlaceOrder = (props) => {
 																		type="number"
 																		className="qty-ctl"
 																		step="1"
-																		// defaultValue={item.item_qty}
 																		placeholder={item.item_qty}
-																		// onChange={(e) =>
-																		// 	handleQty(e, item.portal_item_code)
-																		// }
-																		// onKeyPress={preventMinus}
 																		onKeyPress={(event) => {
-																			if (event.charCode < 48) {
+																			if (
+																				event.charCode < 48 ||
+																				event.charCode > 58
+																			) {
 																				event.preventDefault();
 																			}
 																		}}
@@ -1198,6 +1233,7 @@ const PlaceOrder = (props) => {
 											<button
 												onClick={(e) => saveOrder(e)}
 												type="button"
+												disabled={disableConfirm}
 												className="btn btn-primary btn-block btn-lg my-3 d-sm-block d-none">
 												Confirm Order{" "}
 												<i className="fa-solid fa-circle-arrow-right"></i>
@@ -1275,18 +1311,14 @@ const PlaceOrder = (props) => {
 						</Link>
 					)}
 					{showPlaceOrder === true && (
-						<Link
+						<button
+							onClick={(e) => saveOrder(e)}
+							type="button"
 							className="atcm-place-order"
-							// data-toggle="collapse"
-							// data-target="#collapseOne"
-							// aria-expanded="false"
-							onClick={(e) => {
-								saveOrder(e);
-							}}
-							style={{ color: "#fff" }}>
-							<span>Confirm Order</span>
+							disabled={disableConfirm}>
+							<span>Confirm Order</span>{" "}
 							<i className="fa-solid fa-circle-arrow-right"></i>
-						</Link>
+						</button>
 					)}
 					{/* <i className="fa fa-spinner fa-spin">no spinner but why</i> */}
 				</div>

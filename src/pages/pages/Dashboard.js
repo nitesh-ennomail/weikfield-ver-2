@@ -22,6 +22,7 @@ import { setMenu } from "../../redux/actions/menuAction";
 import { userType } from "../pages/constants/constants";
 import Swal from "sweetalert2";
 import { setOrderDetails } from "../../redux/actions/placeOrderAction";
+import DashBoardModel from "../../components/DashBoard/DashBoardModel";
 
 const Dashboard = () => {
 	const navigate = useNavigate();
@@ -31,7 +32,8 @@ const Dashboard = () => {
 	const menus = useSelector((state) => state.menuData.menuData);
 
 	const dashboard = useSelector((state) => state.dashboard.dashboard);
-	const orderLine = useSelector((state) => state.dashboard.orderLine);
+	const orderLine = useSelector((state) => state.dashboard.orderLine.products);
+	const orderNo = useSelector((state) => state.dashboard.orderLine.ord);
 
 	const { alert_details, order_details } = dashboard;
 
@@ -66,7 +68,7 @@ const Dashboard = () => {
 		// AXIOS WRAPPER FOR API CALL
 		await DashboardService.getOrderLines(userProfile, order_no).then(
 			(response) => {
-				dispatch(setOrderLine(response.data.order_line_details));
+				dispatch(setOrderLine(response.data.order_line_details, order_no));
 			}
 		);
 		// AXIOS WRAPPER FOR API CALL
@@ -125,7 +127,7 @@ const Dashboard = () => {
 		} else {
 			navigate("/");
 		}
-	}, []);
+	}, [userProfile]);
 
 	return (
 		<>
@@ -319,7 +321,7 @@ const Dashboard = () => {
 																			}>
 																			{/* <td> */}
 																			<a
-																				className="text-danger"
+																				className="text-green"
 																				href="#vieworderpop"
 																				data-toggle="modal"
 																				data-tooltip="tooltip"
@@ -421,168 +423,8 @@ const Dashboard = () => {
 				</div>
 			</div>
 			{/* {console.log("public url: ", process.env.PUBLIC_URL)} */}
-			<div
-				className="modal bd-example-modal-lg fade"
-				id="vieworderpop"
-				tabIndex="-1"
-				role="dialog"
-				aria-labelledby="exampleModalLabel"
-				aria-hidden="true">
-				<div className="modal-dialog modal-lg" role="document">
-					<div className="modal-content">
-						<div className="modal-header">
-							<h5 className="modal-title" id="exampleModalLabel">
-								Line Items Details
-							</h5>
-							<button
-								className="close"
-								type="button"
-								data-dismiss="modal"
-								aria-label="Close">
-								<span aria-hidden="true">×</span>
-							</button>
-						</div>
-						<div className="modal-body">
-							{/* <div className="row bg-info-light m-0">
-								<div className="col-md-4">
-									<label className="font-weight-bold my-2">Order No : </label>{" "}
-									RPF-123456
-								</div>
-								<div className="col-md-4">
-									<label className="font-weight-bold my-2">Order Date : </label>{" "}
-									12/03/2023
-								</div>
-								<div className="col-md-4">
-									<label className="font-weight-bold my-2">Distributor :</label>{" "}
-									Name 
-								</div>
-							</div> */}
-							<div className="table-responsive d-none d-sm-block">
-								<table
-									width="100%"
-									border="0"
-									cellSpacing="0"
-									cellPadding="0"
-									className="table tableDash table-striped no-border linkUnd table-hover"
-									id="dataTables1">
-									<thead>
-										<tr>
-											<th style={{ minWidth: "100px" }}>Parent Item Code</th>
-											<th style={{ minWidth: "100px" }}>Item Code</th>
-											<th style={{ minWidth: "100px" }}>Item Desc</th>
-											<th>Item Price</th>
-											<th>Quantity</th>
-											<th>Order Amount</th>
-										</tr>
-									</thead>
-									{/* <tfoot>
-										<tr>
-											<th>&nbsp;</th>
-											<th>&nbsp;</th>
-											<th>&nbsp;</th>
-											<th>&nbsp;</th>
-											<th>&nbsp;</th>
-											<th className="text-danger font-weight-bold">Total</th>
-											<th className="text-danger font-weight-bold">555.00</th>
-										</tr>
-									</tfoot> */}
-									{console.log("orderLine", orderLine)}
-									{orderLine &&
-										orderLine.map((data, index) => (
-											<tbody>
-												<tr key={index}>
-													<td>{data.parent_item_code}</td>
-													<td>{data.item_code}</td>
-													<td>{data.item_desc}</td>
-													<td className="p-1">{data.item_price}</td>
-													<td>
-														<input
-															type="number"
-															className="qty-ctl"
-															step="1"
-															disabled={true}
-															placeholder={data.item_qty}
-														/>
-													</td>
-													<td>{data.item_price * data.item_qty}</td>
-												</tr>
-											</tbody>
-										))}
-								</table>
-							</div>
-							<div className="cart-prod-list d-block d-sm-none">
-								{orderLine &&
-									orderLine.map((data, index) => (
-										<div className="cart-prod-div" key={index}>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">
-													Parent Item Code :{" "}
-												</span>
-												<span className="cart-prod-val">
-													{data.parent_item_code}
-												</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Item Code : </span>
-												<span className="cart-prod-val">{data.item_code}</span>
-											</div>
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Item Desc : </span>
-												<span className="cart-prod-val">{data.item_desc}</span>
-											</div>
 
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Price : </span>
-												<span className="cart-prod-val">{data.item_price}</span>
-												{/* <div
-													className="cart-prod-desc"
-													style={{ float: "right" }}>
-													<span className="cart-prod-lbl">Allocate Qty: </span>
-													<span className="cart-prod-val">cascad</span>
-												</div> */}
-											</div>
-
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Quantity : </span>
-												<input
-													type="number"
-													className="qty-ctl"
-													step="1"
-													disabled={true}
-													placeholder={data.item_qty}
-												/>
-											</div>
-
-											<div className="cart-prod-desc">
-												<span className="cart-prod-lbl">Order Amount: </span>
-												<span className="cart-prod-val">
-													{data.item_price * data.item_qty}
-												</span>
-											</div>
-										</div>
-									))}
-							</div>
-						</div>
-						{/* <div className="modal-footer text-center">
-							<button type="submit" className="btn btn-primary btn-md">
-								<i className="fa-solid fa-check mr-2"></i> Accept
-							</button>
-							<button type="reset" className="btn btn-danger btn-md">
-								<i className="fa-solid fa-xmark mr-2"></i> Reject
-							</button>
-							<button
-								data-dismiss="modal"
-								aria-label="Close"
-								type="submit"
-								className="btn btn-primary btn-md"
-								onClick={() => navigate("/placeorder")}>
-								<i className="fa-solid fa-pen mr-2" aria-hidden="true"></i> Edit
-								Order
-							</button>
-						</div> */}
-					</div>
-				</div>
-			</div>
+			<DashBoardModel id="vieworderpop" />
 		</>
 	);
 };

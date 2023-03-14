@@ -117,37 +117,50 @@
 
 		<script>
 			$(document).ready(function () {
-				$("#dataTables1").dataTable({
-					ordering: false,
-					info: false,
-					searching: false,
-					lengthChange: false,
-					paging: false,
-				});
-
-				$(document).on("click", "#mainNav", function (o) {
-					$(".datepicker").datepicker({
-						changeMonth: true,
-						changeYear: true,
-					});
-				});
-				$(document).ready(function () {
-					$(".datepicker").datepicker({
-						changeMonth: true,
-						changeYear: true,
-					});
-				});
-				$(document).on("click", "#mainNav", function (o) {
-					var url = window.location.pathname,
-						urlRegExp = new RegExp(url.replace(/\/$/, "") + "$");
-					$(".nav-item a").each(function () {
-						if (urlRegExp.test(this.href.replace(/\/$/, ""))) {
-							$(this).parent("li").addClass("active");
-						}
-					});
-				});
+				// $("#dataTables1").DataTable();
+				// $("#dataTable").dataTable().destroy();
+				// $("#dataTable").dataTable({
+				// 	ordering: false,
+				// 	info: false,
+				// 	searching: true,
+				// 	lengthChange: false,
+				// 	paging: false,
+				// });
+				// $(document).on("click", "#mainNav", function (o) {
+				// 	$(".datepicker").datepicker({
+				// 		changeMonth: true,
+				// 		changeYear: true,
+				// 	});
+				// });
+				// $(document).ready(function () {
+				// 	$(".datepicker").datepicker({
+				// 		changeMonth: true,
+				// 		changeYear: true,
+				// 	});
+				// });
+				// $(document).on("click", "#mainNav", function (o) {
+				// 	var url = window.location.pathname,
+				// 		urlRegExp = new RegExp(url.replace(/\/$/, "") + "$");
+				// 	$(".nav-item a").each(function () {
+				// 		if (urlRegExp.test(this.href.replace(/\/$/, ""))) {
+				// 			$(this).parent("li").addClass("active");
+				// 		}
+				// 	});
+				// });
 			});
 		</script>
+
+		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/react/16.8.4/umd/react.production.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/16.8.4/umd/react-dom.production.min.js"></script>
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.css" />
+		<script
+			type="text/javascript"
+			charset="utf8"
+			src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script> -->
 
 		<!-- Code injected by live-server -->
 		<!-- <script type="text/javascript">

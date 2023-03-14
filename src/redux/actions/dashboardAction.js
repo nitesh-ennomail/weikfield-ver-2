@@ -8,9 +8,12 @@ export const setDashboard = (data) => {
 	};
 };
 
-export const setOrderLine = (products) => {
+export const setOrderLine = (products, ord) => {
+	let orderLine = { products, ord };
+	console.log("orderLine", orderLine);
+
 	return {
 		type: ActionTypes.SET_ORDER_LINE,
-		payload: products,
+		payload: orderLine,
 	};
 };

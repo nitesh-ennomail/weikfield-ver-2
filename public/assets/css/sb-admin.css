@@ -1452,14 +1452,36 @@ a.atcm-place-order {
     border-radius: 0 10px 10px 0;
     font-size: 1.33rem;
     align-items: center;
-    padding-right: 6px;
+    padding-right: 2px;
 }
+
 a.atcm-place-order span {margin-left:auto}
 a.atcm-place-order i {
     margin-left: auto;
     font-size: 2.3rem;
     width: 40px;
 }
+
+button.atcm-place-order {
+    background: #e42526;
+    color: #fff;
+    width: 50%;
+    display: flex;
+    border-radius: 0 10px 10px 0;
+    font-size: 1.33rem;
+    align-items: center;
+    padding-right: 6px;
+    height: 4rem;
+    border: none;
+}
+
+button.atcm-place-order span {margin-left:auto}
+button.atcm-place-order i {
+    margin-left: auto;
+    font-size: 2.3rem;
+    width: 40px;
+}
+
 div#modalshowcart .modal-dialog, div#modalshowcart .modal-content {
     height: calc(100% - .5rem);
 }
@@ -1495,7 +1517,22 @@ label {
 	color:red;
 	
 }
+.text-green{
+	color:#3dae2b;
+	
+}
 .text-nowrap{
 	white-space: nowrap
 }
 
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
