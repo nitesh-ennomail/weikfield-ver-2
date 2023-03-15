@@ -62,6 +62,7 @@ const PlaceOrder = (props) => {
 	const [errorMsg, setErrorMsg] = useState("");
 	const [empty, setEmpty] = useState(false);
 	const [disableConfirm, setDisableConfirm] = useState(false);
+	const [showPromoModel, setShowPromoModel] = useState(true);
 	const handlePackType = (e) => {
 		{
 			setEmpty(false);
@@ -216,7 +217,7 @@ const PlaceOrder = (props) => {
 			setShowOrderSummary("d-none");
 			setShowPlaceOrder(false);
 		}
-		window.scrollTo({ top: 0, behavior: "smooth" });
+		// window.scrollTo({ top: 0, behavior: "smooth" });
 	}, [disableFilter, addTocart, orderData]);
 
 	const showFilterData = async (e) => {
@@ -362,36 +363,53 @@ const PlaceOrder = (props) => {
 	};
 
 	const handleQty = (e, item) => {
-		// alert("not a number");
-
 		// Handle order grid quantity and store in react state.
-		// console.log(e);
-
-		// if (e.code === 'Minus') {
-		// 	e.preventDefault();
-		// }
-
-		// if (item.portal_reg_promo_flag === "N" && item.item_promo_flag === "N") {
-		// 	Swal.fire({
-		// 		title: "Do you want to save the changes?",
-		// 		showDenyButton: true,
-		// 		// showCancelButton: true,
-		// 		confirmButtonText: "Yes",
-		// 		denyButtonText: "Cancel",
-		// 		customClass: {
-		// 			actions: "my-actions",
-		// 			cancelButton: "order-1 right-gap",
-		// 			confirmButton: "order-2",
-		// 			denyButton: "order-3",
-		// 		},
-		// 	}).then((result) => {
-		// 		if (result.isConfirmed) {
-		// 			Swal.fire("Saved!", "", "success");
-		// 		} else if (result.isDenied) {
-		// 			Swal.fire("Changes are not saved", "", "info");
-		// 		}
-		// 	});
-		// }
+		const inputFieldQty = document.getElementById(
+			`quantityFieldId-${item.portal_item_code}`
+		);
+		const inputFieldQty1 = document.getElementById(
+			`quantityFieldId1-${item.portal_item_code}`
+		);
+		// console.log(inputFieldQty)
+		// console.log(inputFieldQty1);
+		// if (item.portal_reg_promo_flag === "N" && item.item_promo_flag === "Y") {
+		if (
+			item.portal_reg_promo_flag === "N" &&
+			item.item_promo_flag === "Y" &&
+			!showPromoModel
+		) {
+			Swal.fire({
+				title:
+					"You have a Promo Running item Code, please enter your Order in Promo Item Code",
+				showCancelButton: true,
+				confirmButtonText: "Yes",
+				customClass: {
+					actions: "my-actions",
+					confirmButton: "order-1 right-gap",
+					cancelButton: "order-2",
+				},
+			}).then((result) => {
+				if (result.isConfirmed) {
+					{
+						inputFieldQty.value = 0;
+					}
+					{
+						inputFieldQty1.value = 0;
+					}
+					setOrderData((orderData) =>
+						orderData.map((data) =>
+							item.portal_item_code === data.portal_item_code
+								? { ...data, item_qty: 0 }
+								: data
+						)
+					);
+					console.log("input value after click :", orderData);
+					Swal.fire("Saved!", "", "success");
+				} else if (result.isDenied) {
+					Swal.fire("Changes are not saved", "", "info");
+				}
+			});
+		}
 
 		setOrderData((orderData) =>
 			orderData.map((data) =>
@@ -898,6 +916,7 @@ const PlaceOrder = (props) => {
 																							onInput={maxLengthCheck}
 																							type="number"
 																							className="qty-ctl"
+																							id={`quantityFieldId1-${item.portal_item_code}`}
 																							step="1"
 																							// defaultValue={
 																							// 	item.item_qty
@@ -1047,6 +1066,7 @@ const PlaceOrder = (props) => {
 																		ref={inputRef1}
 																		type="number"
 																		className="qty-ctl"
+																		id={`quantityFieldId-${item.portal_item_code}`}
 																		step="1"
 																		placeholder={item.item_qty}
 																		onKeyPress={(event) => {

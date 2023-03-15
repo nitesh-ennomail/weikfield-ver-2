@@ -89,8 +89,8 @@ const Header = (props) => {
 									/>
 								</div>
 								<div className="user-name">
-									<p>{profile_details && profile_details.user_name}</p>
-									<span>{profile_details && profile_details.user_id}</span>
+									<p>{profile_details && profile_details[0].user_name}</p>
+									<span>{profile_details && profile_details[0].user_id}</span>
 								</div>
 							</div>
 						</a>

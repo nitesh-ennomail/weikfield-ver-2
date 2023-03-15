@@ -1,6 +1,38 @@
 import request from "../../shared/lib/request";
 
-function getViewOrderDetails(userProfile) {
+function getViewOrderChannelFilter(userProfile) {
+	return request({
+		url: `dashboard/getViewOrderChannelFilter`,
+		method: "GET",
+		headers: {
+			Authorization: `Bearer ${userProfile.token}`,
+		},
+	});
+}
+
+function getViewOrderFilter(userProfile, channel) {
+	return request({
+		url: `dashboard/getViewOrderFilter`,
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${userProfile.token}`,
+		},
+		data: JSON.stringify({
+			channel: channel,
+		}),
+	});
+}
+
+function getViewOrderDetails(
+	userProfile,
+	selectedChannel,
+	selectedDistributer,
+	fromData,
+	toDate,
+	selectedOrderStatus,
+	userId
+) {
 	return request({
 		url: `dashboard/getViewOrderDetails`,
 		method: "POST",
@@ -9,15 +41,15 @@ function getViewOrderDetails(userProfile) {
 			Authorization: `Bearer ${userProfile.token}`,
 		},
 		data: JSON.stringify({
-			userType: "distributor",
-			userID: "CF00121",
-			fromDate: "2023-01-01",
-			toDate: "2023-03-28",
+			userType: `${userProfile.usertype}`,
+			userID: userId,
+			fromDate: fromData,
+			toDate: toDate,
 			sortOn: "order_no",
 			orderBy: "ASC",
-			distCode: "0",
-			channel: "0",
-			orderStatus: "0",
+			distCode: selectedDistributer,
+			channel: selectedChannel,
+			orderStatus: selectedOrderStatus,
 			limitNo: 10,
 			offsetStart: 0,
 		}),
@@ -25,6 +57,8 @@ function getViewOrderDetails(userProfile) {
 }
 
 const ViewOrderService = {
+	getViewOrderChannelFilter,
+	getViewOrderFilter,
 	getViewOrderDetails,
 };
 

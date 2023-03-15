@@ -1,28 +1,37 @@
-import React, { Component, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import ViewOrderService from "../../axios/services/api/viewOrder";
 import SearchBar from "../../components/ViewOrder/SearchBar";
 import ViewOrderModel from "../../components/ViewOrder/ViewOrderModel";
 import ViewOrderTable from "../../components/ViewOrder/ViewOrderTable";
+import { setViewOrderFilter } from "../../redux/actions/viewOrderAction";
 const ViewOrder = () => {
+	const navigate = useNavigate();
+	const dispatch = useDispatch();
 	const userProfile = useSelector((state) => state.userProfile);
-	// const getOrderFilters = async () => {
-	// 	//AXIOS WRAPPER FOR API CALL
-	// 	await ViewOrderService.getViewOrderDetails(userProfile).then((response) => {
-	// 		//store response data in redux store
-	// 		console.log("asd");
-	// 		// dispatch(setOrderFilter(response.data));
-	// 	});
-	// 	//AXIOS WRAPPER FOR API CALL
-	// };
-	useEffect(() => {
-		// getOrderFilters();
 
-		return () => {
-			// second
-		};
-	}, []);
+	const [channel, setChannel] = useState(0);
+
+	const getViewOrderChannelFilter = async () => {
+		await ViewOrderService.getViewOrderChannelFilter(userProfile).then(
+			(response) => {
+				setChannel(response.data.channel_details);
+			}
+		);
+	};
+
+	useEffect(() => {
+		if (userProfile.usertype !== "null") {
+			getViewOrderChannelFilter();
+			dispatch(setViewOrderFilter([]));
+		} else {
+			navigate("/");
+		}
+		// getOrderFilters();
+	}, [userProfile]);
 
 	return (
 		<>
@@ -42,7 +51,7 @@ const ViewOrder = () => {
 									<h4>List of Oders</h4>
 								</div>
 							</div>
-							<SearchBar />
+							<SearchBar channel={channel} />
 							<ViewOrderTable />
 						</div>
 					</div>

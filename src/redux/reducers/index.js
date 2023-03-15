@@ -4,7 +4,7 @@ import { authReducer } from "./authReducer";
 import { menuReducer } from "./menuReducer";
 import { dashboardReducer } from "./dashboardReducer";
 import { placeOrderReducer } from "./placeOrderReducer";
-// import { viewOrderReducer } from "./viewOrderReducer";
+import { viewOrderReducer } from "./viewOrderReducer";
 
 const reducers = combineReducers({
 	allProducts: productReducer,
@@ -12,7 +12,7 @@ const reducers = combineReducers({
 	menuData: menuReducer,
 	dashboard: dashboardReducer,
 	placeOrder: placeOrderReducer,
-	// viewOrder: viewOrderReducer,
+	viewOrder: viewOrderReducer,
 });
 
 const rootReducer = (state, action) => {
