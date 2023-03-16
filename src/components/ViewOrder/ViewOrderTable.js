@@ -1,5 +1,4 @@
-import { isEmptyObject } from "jquery";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { userType } from "../../pages/pages/constants/constants";
 
@@ -9,12 +8,8 @@ function ViewOrderTable() {
 
 	return (
 		<>
-			{console.log(
-				viewOrder.viewOrderFilter,
-				isEmptyObject(viewOrder.viewOrderFilter)
-			)}
-
-			{viewOrder && !isEmptyObject(viewOrder.viewOrderFilter) && (
+			{/* {viewOrder && !isEmptyObject(viewOrder.viewOrderFilter) && ( */}
+			{viewOrder && viewOrder.viewOrderFilter.length > 0 && (
 				<div className="card border-0 rounded-0 mb-3">
 					<div className="card-body">
 						<div className="table-responsive">
@@ -59,7 +54,7 @@ function ViewOrderTable() {
 								<tbody>
 									{viewOrder &&
 										viewOrder.viewOrderFilter.map((order, index) => (
-											<tr>
+											<tr key={index}>
 												<td>
 													<a
 														className="text-green"
@@ -89,12 +84,20 @@ function ViewOrderTable() {
 												{/* <td>11021</td> */}
 											</tr>
 										))}
+
+									{viewOrder.viewOrderFilter.length === 0 && (
+										<tr>
+											<td>no data found</td>
+										</tr>
+									)}
 								</tbody>
 							</table>
 						</div>
 					</div>
 				</div>
 			)}
+
+			{viewOrder && viewOrder.viewOrderFilter.length === 0 && <h1>hello</h1>}
 		</>
 	);
 }
