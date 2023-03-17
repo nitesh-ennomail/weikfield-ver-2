@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 
-function DashBoardModel() {
+function DashBoardModel({ id }) {
 	const orderLine = useSelector((state) => state.dashboard.orderLine.products);
-	const orderNo = useSelector((state) => state.dashboard.orderLine.ord);
+	const orderDetail = useSelector((state) => state.dashboard.orderLine.ord);
 	return (
 		<div
 			className="modal bd-example-modal-lg fade"
-			id="vieworderpop"
+			id={id}
 			tabIndex="-1"
 			role="dialog"
 			aria-labelledby="exampleModalLabel"
@@ -17,7 +17,9 @@ function DashBoardModel() {
 					<div className="modal-header">
 						<h5 className="modal-title" id="exampleModalLabel">
 							Line Items Details{" - "}
-							<span className="text-green">{orderNo && orderNo}</span>
+							<span className="text-green">
+								{orderDetail && orderDetail.order_no}
+							</span>
 						</h5>
 						<button
 							className="close"
@@ -26,7 +28,49 @@ function DashBoardModel() {
 							aria-label="Close">
 							<span aria-hidden="true">×</span>
 						</button>
+
+						{console.log("OrderDetails", orderDetail)}
 					</div>
+
+					{id === "vieworderpop" && (
+						<div className="row ml-0 mt-2">
+							<div className="col-12 col-sm-3">
+								<div className="cart-prod-hddesc">
+									<span className="cart-prod-lbl">Order Date : </span>
+									<span className="cart-prod-val">
+										{orderDetail && orderDetail.order_date}
+									</span>
+								</div>
+							</div>
+
+							<div className="col-12 col-sm-3">
+								<div className="cart-prod-hddesc">
+									<span className="cart-prod-lbl">Order Amount : </span>
+									<span className="cart-prod-val">
+										{orderDetail && orderDetail.order_amount_w_tax}
+									</span>
+								</div>
+							</div>
+
+							<div className="col-12 col-sm-3">
+								<div className="cart-prod-hddesc">
+									<span className="cart-prod-lbl">Distributor Name : </span>
+									<span className="cart-prod-val">
+										{orderDetail && orderDetail.customer_name}
+									</span>
+								</div>
+							</div>
+
+							<div className="col-12 col-sm-3">
+								<div className="cart-prod-hddesc">
+									<span className="cart-prod-lbl">Status : </span>
+									<span className="cart-prod-val">
+										{orderDetail && orderDetail.ui_status}
+									</span>
+								</div>
+							</div>
+						</div>
+					)}
 					<div className="modal-body">
 						<div className="table-responsive d-none d-sm-block">
 							<table
@@ -44,6 +88,8 @@ function DashBoardModel() {
 										<th>Item Price</th>
 										<th>Quantity</th>
 										<th>Order Amount</th>
+										{id === "vieworderpop" && <th>Invoice Qty</th>}
+										{id === "vieworderpop" && <th>Invoice Amount</th>}
 									</tr>
 								</thead>
 								{/* <tfoot>
@@ -65,16 +111,20 @@ function DashBoardModel() {
 											<tr key={index}>
 												<td>{data.parent_item_code}</td>
 												<td>{data.item_code}</td>
-												<td style={{ minWidth: "650px" }}>{data.item_desc}</td>
+												<td style={{ minWidth: "150px" }}>{data.item_desc}</td>
 
-												<td className="p-1">
-													{Math.round(data.item_price * 100) / 100}
-												</td>
+												<td>{Math.round(data.item_price * 100) / 100}</td>
 												<td>{Math.round(data.item_qty)}</td>
 												<td>
 													{Math.round(data.item_price * data.item_qty * 100) /
 														100}
 												</td>
+												{id === "vieworderpop" && (
+													<td>{Math.round(data.inv_qty)}</td>
+												)}
+												{id === "vieworderpop" && (
+													<td>{Math.round(data.inv_amount * 100) / 100}</td>
+												)}
 											</tr>
 										))}
 								</tbody>
@@ -113,8 +163,21 @@ function DashBoardModel() {
 										</div>
 
 										<div className="cart-prod-desc">
-											<span className="cart-prod-lbl">Qty : </span>
-											{Math.round(data.item_qty)}
+											<span className="cart-prod-lbl">Order Qty : </span>
+											<span className="cart-prod-val">
+												{Math.round(data.item_qty)}
+											</span>
+
+											{id === "vieworderpop" && (
+												<div
+													className="cart-prod-desc"
+													style={{ float: "right" }}>
+													<span className="cart-prod-lbl">Inv Qty: </span>
+													<span className="cart-prod-val">
+														{Math.round(data.inv_qty)}
+													</span>
+												</div>
+											)}
 										</div>
 
 										<div className="cart-prod-desc">
@@ -122,15 +185,27 @@ function DashBoardModel() {
 											<span className="cart-prod-val">
 												{Math.round(data.item_price * data.item_qty * 100) /
 													100}
-												{/* {data.item_price * data.item_qty} */}
 											</span>
+
+											{id === "vieworderpop" && (
+												<div
+													className="cart-prod-desc"
+													style={{ float: "right" }}>
+													<span className="cart-prod-lbl">Inv Amt: </span>
+													<span className="cart-prod-val">
+														{Math.round(data.inv_amount * 100) / 100}
+													</span>
+												</div>
+											)}
 										</div>
 									</div>
 								))}
 						</div>
 					</div>
-					{/* <div className="modal-footer text-center">
-							<button type="submit" className="btn btn-primary btn-md">
+
+					{id === "vieworderpop" && (
+						<div className="modal-footer text-center">
+							<button type="btn" className="btn btn-primary btn-md">
 								<i className="fa-solid fa-check mr-2"></i> Accept
 							</button>
 							<button type="reset" className="btn btn-danger btn-md">
@@ -139,13 +214,15 @@ function DashBoardModel() {
 							<button
 								data-dismiss="modal"
 								aria-label="Close"
-								type="submit"
+								type="btn"
 								className="btn btn-primary btn-md"
-								onClick={() => navigate("/placeorder")}>
+								// onClick={() => navigate("/placeorder")}
+							>
 								<i className="fa-solid fa-pen mr-2" aria-hidden="true"></i> Edit
 								Order
 							</button>
-						</div> */}
+						</div>
+					)}
 				</div>
 			</div>
 		</div>

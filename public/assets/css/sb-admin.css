@@ -20,6 +20,20 @@
     font-size: .9rem;
 	position:relative
 }
+.cart-prod-header {
+    background: #fcfbf9;
+    padding: 5px 15px 10px;
+    margin: 15px;
+    font-size: .9rem;
+	position:relative;
+}
+span.cart-prod-hdlbl {
+    font-weight: 700;
+    color: #000;
+}
+.cart-prod-hddesc{
+	margin-bottom: 5px;
+}
 .cart-prod-div-order {
     background: #d8ffcf;
     padding: 5px 15px 10px;

@@ -372,11 +372,11 @@ const PlaceOrder = (props) => {
 		);
 		// console.log(inputFieldQty)
 		// console.log(inputFieldQty1);
-		// if (item.portal_reg_promo_flag === "N" && item.item_promo_flag === "Y") {
+		// if (item.portal_reg_promo_flag === "N" && item.item_promo_flag === "Y") { RFG-8113002
 		if (
-			item.portal_reg_promo_flag === "N" &&
-			item.item_promo_flag === "Y" &&
-			!showPromoModel
+			item.portal_reg_promo_flag === "Y" &&
+			item.item_promo_flag === "N"
+			//  && !showPromoModel
 		) {
 			Swal.fire({
 				title:
@@ -403,8 +403,8 @@ const PlaceOrder = (props) => {
 								: data
 						)
 					);
-					console.log("input value after click :", orderData);
-					Swal.fire("Saved!", "", "success");
+					// console.log("input value after click :", orderData);
+					// Swal.fire("Saved!", "", "success");
 				} else if (result.isDenied) {
 					Swal.fire("Changes are not saved", "", "info");
 				}
@@ -569,6 +569,12 @@ const PlaceOrder = (props) => {
 																					value={JSON.stringify(data)}>
 																					{data.customer_name} -{" "}
 																					{data.customer_code}
+																					{(data.customer_block_flag ||
+																						data.mssr_flag ||
+																						data.ndc_flag ||
+																						data.claim_flag) === "NO"
+																						? ""
+																						: "*"}
 																				</option>
 																			))}
 																	</select>
@@ -882,7 +888,8 @@ const PlaceOrder = (props) => {
 																			(cartTotalQty =
 																				cartTotalQty + item.item_qty),
 																			(cartTotal +=
-																				item.portal_mrp * item.item_qty),
+																				item.portal_billing_price *
+																				item.item_qty),
 																			(
 																				<tr key={index}>
 																					<td>{item.portal_item_code}</td>
@@ -890,11 +897,16 @@ const PlaceOrder = (props) => {
 																					<td>{item.erp_commited_qty}</td>
 																					<td>{item.physical_inventory_qty}</td>
 																					<td>
-																						{/* {item.portal_mrp > 0
-																							? item.portal_mrp
+																						{/* {item.portal_billing_price > 0
+																							? item.portal_billing_price
 																							: "Price not found"} */}
-																						{item.portal_mrp > 0 ? (
-																							item.portal_mrp
+																						{item.portal_billing_price > 0 ? (
+																							(
+																								Math.round(
+																									item.portal_billing_price *
+																										100
+																								) / 100
+																							).toFixed(2)
 																						) : (
 																							<span className="text-danger">
 																								Price not found
@@ -905,7 +917,7 @@ const PlaceOrder = (props) => {
 																					<td>
 																						<input
 																							disabled={
-																								item.portal_mrp == 0
+																								item.portal_billing_price == 0
 																									? true
 																									: false
 																							}
@@ -936,7 +948,14 @@ const PlaceOrder = (props) => {
 																						/>
 																					</td>
 																					<td>
-																						{item.portal_mrp * item.item_qty}
+																						{/* {item.portal_billing_price *
+																							item.item_qty} */}
+
+																						{Math.round(
+																							item.portal_billing_price *
+																								item.item_qty *
+																								100
+																						) / (100).toFixed(2)}
 																					</td>
 																				</tr>
 																			)
@@ -976,10 +995,14 @@ const PlaceOrder = (props) => {
 																{selectedBrand.brand_desc}
 															</li>
 															<li className="breadcrumb-item">
-																{selectedProductLine.product_line_desc}
+																{selectedProductLine.product_line_desc
+																	? selectedProductLine.product_line_desc
+																	: "All"}
 															</li>
 															<li className="breadcrumb-item active">
-																{selectedFlavour.flavour_desc}
+																{selectedFlavour.flavour_desc
+																	? selectedFlavour.flavour_desc
+																	: "All"}
 															</li>
 														</ol>
 													</div>
@@ -987,8 +1010,7 @@ const PlaceOrder = (props) => {
 													{orderData.map((item, index) => (
 														<div className="cart-prod-div" key={index}>
 															<div className="cart-prod-title">
-																{item.portal_item_code}
-
+																{item.portal_item_code} - ({item.portal_mrp})
 																<span className="pl-2">
 																	{item.flag_color === "R" ? (
 																		<i className="fas fa-flag text-danger mr-2"></i>
@@ -1035,8 +1057,10 @@ const PlaceOrder = (props) => {
 																	style={{ float: "right" }}>
 																	<span className="cart-prod-lbl">Price: </span>
 																	<span className="cart-prod-val">
-																		{item.portal_mrp > 0 ? (
-																			item.portal_mrp
+																		{item.portal_billing_price > 0 ? (
+																			Math.round(
+																				item.portal_billing_price * 100
+																			) / (100).toFixed(2)
 																		) : (
 																			<span className="text-danger">
 																				Price not found
@@ -1056,7 +1080,9 @@ const PlaceOrder = (props) => {
 																	style={{ float: "right" }}>
 																	<input
 																		disabled={
-																			item.portal_mrp == 0 ? true : false
+																			item.portal_billing_price == 0
+																				? true
+																				: false
 																		}
 																		style={{ textAlign: "right" }}
 																		min={0}
@@ -1169,7 +1195,7 @@ const PlaceOrder = (props) => {
 														(item, index) => (
 															(addToCartQty = addToCartQty + item.item_qty),
 															(addToCartTotal +=
-																item.portal_mrp * item.item_qty),
+																item.portal_billing_price * item.item_qty),
 															(
 																<div
 																	className="cart-prod-div-order"
@@ -1218,17 +1244,19 @@ const PlaceOrder = (props) => {
 
 																		{/* <span className="cart-prod-lbl ml-2">
 																			{item.item_qty} *{" "}
-																			{item.portal_mrp} =
+																			{item.portal_billing_price} =
 																			<b>
 																				{item.item_qty *
-																					item.portal_mrp}
+																					item.portal_billing_price}
 																			</b>
 																		</span> */}
 																		<div
 																			className="cart-prod-desc"
 																			style={{ float: "right" }}>
 																			<span className="cart-prod-lbl">
-																				Value: {item.item_qty * item.portal_mrp}
+																				Value:{" "}
+																				{item.item_qty *
+																					item.portal_billing_price}
 																			</span>
 																		</div>
 																	</div>

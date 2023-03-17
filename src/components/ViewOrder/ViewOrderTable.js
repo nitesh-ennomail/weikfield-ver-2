@@ -1,10 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import DashboardService from "../../axios/services/api/dashboard";
 import { userType } from "../../pages/pages/constants/constants";
+import { setOrderLine } from "../../redux/actions/dashboardAction";
 
 function ViewOrderTable() {
 	const userProfile = useSelector((state) => state.userProfile);
 	const viewOrder = useSelector((state) => state.viewOrder);
+	const dispatch = useDispatch();
+
+	const getOrderLines = async (order) => {
+		const { order_no } = order;
+		console.log("item ord_no", order_no);
+		// AXIOS WRAPPER FOR API CALL
+		await DashboardService.getOrderLines(userProfile, order_no).then(
+			(response) => {
+				dispatch(setOrderLine(response.data.order_line_details, order));
+			}
+		);
+		// AXIOS WRAPPER FOR API CALL
+	};
 
 	return (
 		<>
@@ -55,7 +70,7 @@ function ViewOrderTable() {
 									{viewOrder &&
 										viewOrder.viewOrderFilter.map((order, index) => (
 											<tr key={index}>
-												<td>
+												<td onClick={() => getOrderLines(order)}>
 													<a
 														className="text-green"
 														href="#vieworderpop"
@@ -78,9 +93,50 @@ function ViewOrderTable() {
 												</td>
 												{/* <td>5</td> */}
 												{/* <td>25257.25</td> */}
-												<td className="text-danger text-nowrap">
-													{order.ui_status}
+
+												<td>
+													{userProfile &&
+													userProfile.usertype.toUpperCase() ===
+														userType.APPROVER &&
+													// userType.DISTRIBUTOR &&
+													order.ui_status.toUpperCase() ===
+														"Waiting for Approval".toUpperCase() ? (
+														<div>
+															<button
+																// onClick={() => alert(order.order_no)}
+																// onClick={() => setStatus(item, 0)}
+																// type="submit"
+																className="btn btn-primary btn-sm mr-2">
+																<i className="fa-solid fa-check"></i>
+															</button>
+															<button
+																// type="reset"
+																// onClick={() => setStatus(order, 1)}
+																className="btn btn-danger btn-sm mr-2">
+																<i className="fa-solid fa-xmark"></i>
+															</button>
+															<button
+																data-dismiss="modal"
+																aria-label="Close"
+																className="btn btn-primary btn-sm mr-1"
+																// onClick={
+																// 	() => getModifyOrder(item)
+																// }
+															>
+																<i
+																	className="fa-solid fa-pen"
+																	aria-hidden="true"></i>
+															</button>
+														</div>
+													) : (
+														<span className="text-danger text-nowrap">
+															{order.ui_status}
+														</span>
+													)}
 												</td>
+												{/* <td className="text-danger text-nowrap">
+													{order.ui_status}
+												</td> */}
 												{/* <td>11021</td> */}
 											</tr>
 										))}
@@ -97,7 +153,7 @@ function ViewOrderTable() {
 				</div>
 			)}
 
-			{viewOrder && viewOrder.viewOrderFilter.length === 0 && <h1>hello</h1>}
+			{/* {viewOrder && viewOrder.viewOrderFilter.length === 0 && <h1>hello</h1>} */}
 		</>
 	);
 }

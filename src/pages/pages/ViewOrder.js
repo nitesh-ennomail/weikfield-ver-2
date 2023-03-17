@@ -4,6 +4,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import ViewOrderService from "../../axios/services/api/viewOrder";
+import DashBoardModel from "../../components/DashBoard/DashBoardModel";
 import SearchBar from "../../components/ViewOrder/SearchBar";
 import ViewOrderModel from "../../components/ViewOrder/ViewOrderModel";
 import ViewOrderTable from "../../components/ViewOrder/ViewOrderTable";
@@ -57,7 +58,8 @@ const ViewOrder = () => {
 					</div>
 				</div>
 			</div>
-			<ViewOrderModel />
+			{/* <ViewOrderModel /> */}
+			<DashBoardModel id="vieworderpop" />
 		</>
 	);
 };

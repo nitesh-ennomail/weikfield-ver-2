@@ -63,12 +63,13 @@ const Dashboard = () => {
 	// 	});
 	// };
 
-	const getOrderLines = async (order_no) => {
+	const getOrderLines = async (item) => {
+		const { order_no } = item;
 		console.log("item ord_no", order_no);
 		// AXIOS WRAPPER FOR API CALL
 		await DashboardService.getOrderLines(userProfile, order_no).then(
 			(response) => {
-				dispatch(setOrderLine(response.data.order_line_details, order_no));
+				dispatch(setOrderLine(response.data.order_line_details, item));
 			}
 		);
 		// AXIOS WRAPPER FOR API CALL
@@ -315,14 +316,12 @@ const Dashboard = () => {
 															{order_details &&
 																order_details.map((item, i) => (
 																	<tr key={i}>
-																		<td
-																			onClick={() =>
-																				getOrderLines(item.order_no)
-																			}>
+																		<td onClick={() => getOrderLines(item)}>
 																			{/* <td> */}
 																			<a
 																				className="text-green"
-																				href="#vieworderpop"
+																				// href="#vieworderpop"
+																				href="#dashboardpop"
 																				data-toggle="modal"
 																				data-tooltip="tooltip"
 																				title="View Order">
@@ -424,7 +423,7 @@ const Dashboard = () => {
 			</div>
 			{/* {console.log("public url: ", process.env.PUBLIC_URL)} */}
 
-			<DashBoardModel id="vieworderpop" />
+			<DashBoardModel id="dashboardpop" />
 		</>
 	);
 };
