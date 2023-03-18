@@ -678,6 +678,7 @@ const PlaceOrder = (props) => {
 																			getProductLine(JSON.parse(e.target.value))
 																		}
 																		required>
+																		<option>Select Brand</option>
 																		{brand_details &&
 																			brand_details.map((brand, index) => (
 																				<option
@@ -892,11 +893,19 @@ const PlaceOrder = (props) => {
 																				item.item_qty),
 																			(
 																				<tr key={index}>
-																					<td>{item.portal_item_code}</td>
-																					<td>{item.portal_item_desc}</td>
-																					<td>{item.erp_commited_qty}</td>
-																					<td>{item.physical_inventory_qty}</td>
-																					<td>
+																					<td style={{ fontSize: "12px" }}>
+																						{item.portal_item_code}
+																					</td>
+																					<td style={{ fontSize: "12px" }}>
+																						{item.portal_item_desc}
+																					</td>
+																					<td style={{ fontSize: "12px" }}>
+																						{item.erp_commited_qty}
+																					</td>
+																					<td style={{ fontSize: "12px" }}>
+																						{item.physical_inventory_qty}
+																					</td>
+																					<td style={{ fontSize: "12px" }}>
 																						{/* {item.portal_billing_price > 0
 																							? item.portal_billing_price
 																							: "Price not found"} */}
@@ -913,8 +922,10 @@ const PlaceOrder = (props) => {
 																							</span>
 																						)}
 																					</td>
-																					<td>{item.uom}</td>
-																					<td>
+																					<td style={{ fontSize: "12px" }}>
+																						{item.uom}
+																					</td>
+																					<td style={{ fontSize: "12px" }}>
 																						<input
 																							disabled={
 																								item.portal_billing_price == 0
@@ -942,12 +953,13 @@ const PlaceOrder = (props) => {
 																									event.preventDefault();
 																								}
 																							}}
-																							onChange={(e) =>
-																								handleQty(e, item)
-																							}
+																							// onChange={(e) =>
+																							// 	handleQty(e, item)
+																							// }
+																							onBlur={(e) => handleQty(e, item)}
 																						/>
 																					</td>
-																					<td>
+																					<td style={{ fontSize: "12px" }}>
 																						{/* {item.portal_billing_price *
 																							item.item_qty} */}
 
@@ -1151,7 +1163,8 @@ const PlaceOrder = (props) => {
 												</div>
 												<div className="col-md-3 d-none d-sm-block">
 													<h4 className="m-0 text-success  text-center">
-														Total: {cartTotal}
+														Total:{" "}
+														{Math.round(cartTotal * 100) / (100).toFixed(2)}
 													</h4>
 												</div>
 											</div>
@@ -1255,8 +1268,12 @@ const PlaceOrder = (props) => {
 																			style={{ float: "right" }}>
 																			<span className="cart-prod-lbl">
 																				Value:{" "}
-																				{item.item_qty *
-																					item.portal_billing_price}
+																				{Math.round(
+																					(item.item_qty *
+																						item.portal_billing_price *
+																						100) /
+																						100
+																				).toFixed(2)}
 																			</span>
 																		</div>
 																	</div>
@@ -1275,7 +1292,7 @@ const PlaceOrder = (props) => {
 												</span>
 											</p>
 											<h1 className="text-center text-success d-none d-sm-block">
-												{addToCartTotal}
+												{Math.round(addToCartTotal * 100) / (100).toFixed(2)}
 											</h1>
 
 											<button
@@ -1324,7 +1341,10 @@ const PlaceOrder = (props) => {
 						</span>
 						<span className="atcm-text">
 							<span className="atc-unit">Count : {addTocart.length}</span>
-							<span className="atc-unit">Amt    : {addToCartTotal}</span>
+							<span className="atc-unit">
+								Amt    : 
+								{Math.round(addToCartTotal * 100) / (100).toFixed(2)}
+							</span>
 						</span>
 					</Link>{" "}
 					{showPlaceOrder === false && (
