@@ -339,8 +339,9 @@ const Dashboard = () => {
 																			</td>
 																		)}
 
-																		<td style={{ textAlign: "center" }}>
-																			{item.order_amount}
+																		<td>
+																			{Math.round(item.order_amount * 100) /
+																				(100).toFixed(2)}
 																		</td>
 																		<td>
 																			{userProfile &&
