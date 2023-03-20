@@ -893,19 +893,19 @@ const PlaceOrder = (props) => {
 																				item.item_qty),
 																			(
 																				<tr key={index}>
-																					<td style={{ fontSize: "12px" }}>
+																					<td className="font12">
 																						{item.portal_item_code}
 																					</td>
-																					<td style={{ fontSize: "12px" }}>
+																					<td className="font12">
 																						{item.portal_item_desc}
 																					</td>
-																					<td style={{ fontSize: "12px" }}>
+																					<td className="font12">
 																						{item.erp_commited_qty}
 																					</td>
-																					<td style={{ fontSize: "12px" }}>
+																					<td className="font12">
 																						{item.physical_inventory_qty}
 																					</td>
-																					<td style={{ fontSize: "12px" }}>
+																					<td className="font12">
 																						{/* {item.portal_billing_price > 0
 																							? item.portal_billing_price
 																							: "Price not found"} */}
@@ -922,10 +922,8 @@ const PlaceOrder = (props) => {
 																							</span>
 																						)}
 																					</td>
-																					<td style={{ fontSize: "12px" }}>
-																						{item.uom}
-																					</td>
-																					<td style={{ fontSize: "12px" }}>
+																					<td className="font12">{item.uom}</td>
+																					<td className="font12">
 																						<input
 																							disabled={
 																								item.portal_billing_price == 0
@@ -959,7 +957,7 @@ const PlaceOrder = (props) => {
 																							onBlur={(e) => handleQty(e, item)}
 																						/>
 																					</td>
-																					<td style={{ fontSize: "12px" }}>
+																					<td className="font12">
 																						{/* {item.portal_billing_price *
 																							item.item_qty} */}
 
@@ -1115,7 +1113,7 @@ const PlaceOrder = (props) => {
 																				event.preventDefault();
 																			}
 																		}}
-																		onChange={(e) => handleQty(e, item)}
+																		onBlur={(e) => handleQty(e, item)}
 																	/>
 																</div>
 															</div>

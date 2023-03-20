@@ -1550,3 +1550,8 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+.font12{
+	 font-size: 12px;
+	white-space: nowrap;
+
+}
