@@ -68,8 +68,6 @@ function DashBoardModel({ id }) {
 							aria-label="Close">
 							<span aria-hidden="true">×</span>
 						</button>
-
-						{console.log("OrderDetails", orderDetail)}
 					</div>
 
 					{id === "vieworderpop" && (
@@ -87,7 +85,9 @@ function DashBoardModel({ id }) {
 								<div className="cart-prod-hddesc">
 									<span className="cart-prod-lbl">Order Amount : </span>
 									<span className="cart-prod-val">
-										{orderDetail && orderDetail.order_amount_w_tax}
+										{orderDetail &&
+											Math.round(orderDetail.order_amount_w_tax * 100) /
+												(100).toFixed(2)}
 									</span>
 								</div>
 							</div>

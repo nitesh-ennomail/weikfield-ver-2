@@ -89,7 +89,8 @@ function ViewOrderTable() {
 												{/* <td>{order.customer_name}</td> */}
 												{/* <td>11</td> */}
 												<td style={{ textAlign: "center" }}>
-													{order.order_amount_w_tax}
+													{Math.round(order.order_amount_w_tax * 100) /
+														(100).toFixed(2)}
 												</td>
 												{/* <td>5</td> */}
 												{/* <td>25257.25</td> */}
