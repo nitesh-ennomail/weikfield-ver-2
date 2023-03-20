@@ -16,6 +16,24 @@ function DashBoardModel({ id }) {
 	const orderLine = useSelector((state) => state.dashboard.orderLine.products);
 	const orderDetail = useSelector((state) => state.dashboard.orderLine.ord);
 
+	// const setStatus = async (item, id) => {
+	// 	console.log(item.order_no);
+	// 	let order_no = item.order_no;
+	// 	const { value: remark } = await Swal.fire({
+	// 		input: "text",
+	// 		inputLabel: "Remark",
+	// 		inputPlaceholder: "Please Enter Remark",
+	// 	});
+	// 	if (remark) {
+	// 		await DashboardService.setStatus(userProfile, order_no, id, remark).then(
+	// 			(response) => {
+	// 				console.log("response setStatus", response);
+	// 				Swal.fire(response.status);
+	// 			}
+	// 		);
+	// 	}
+	// };
+
 	const setStatus = async (item, id) => {
 		console.log(item.order_no);
 		let order_no = item.order_no;
@@ -246,7 +264,7 @@ function DashBoardModel({ id }) {
 					{id === "vieworderpop" &&
 						userProfile &&
 						userProfile.usertype.toUpperCase() === userType.APPROVER &&
-						// userType.DISTRIBUTOR &&
+						orderDetail &&
 						orderDetail.ui_status.toUpperCase() ===
 							"Waiting for Approval".toUpperCase() && (
 							<div className="modal-footer text-center">

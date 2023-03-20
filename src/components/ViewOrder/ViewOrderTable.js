@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 import DashboardService from "../../axios/services/api/dashboard";
 import { userType } from "../../pages/pages/constants/constants";
 import { setOrderLine } from "../../redux/actions/dashboardAction";
@@ -8,6 +10,7 @@ function ViewOrderTable() {
 	const userProfile = useSelector((state) => state.userProfile);
 	const viewOrder = useSelector((state) => state.viewOrder);
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 
 	const getOrderLines = async (order) => {
 		const { order_no } = order;
@@ -20,7 +23,23 @@ function ViewOrderTable() {
 		);
 		// AXIOS WRAPPER FOR API CALL
 	};
-
+	const setStatus = async (item, id) => {
+		let order_no = item.order_no;
+		const { value: remark } = await Swal.fire({
+			input: "text",
+			inputLabel: "Remark",
+			inputPlaceholder: "Please Enter Remark",
+		});
+		if (remark) {
+			await DashboardService.setStatus(userProfile, order_no, id, remark).then(
+				(response) => {
+					console.log("response setStatus", response);
+					Swal.fire(response.status);
+				}
+			);
+			navigate("/vieworder");
+		}
+	};
 	return (
 		<>
 			{/* {viewOrder && !isEmptyObject(viewOrder.viewOrderFilter) && ( */}
@@ -104,15 +123,14 @@ function ViewOrderTable() {
 														"Waiting for Approval".toUpperCase() ? (
 														<div>
 															<button
-																// onClick={() => alert(order.order_no)}
-																// onClick={() => setStatus(item, 0)}
+																onClick={() => setStatus(order, 0)}
 																// type="submit"
 																className="btn btn-primary btn-sm mr-2">
 																<i className="fa-solid fa-check"></i>
 															</button>
 															<button
 																// type="reset"
-																// onClick={() => setStatus(order, 1)}
+																onClick={() => setStatus(order, 1)}
 																className="btn btn-danger btn-sm mr-2">
 																<i className="fa-solid fa-xmark"></i>
 															</button>

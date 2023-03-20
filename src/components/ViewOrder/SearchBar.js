@@ -21,6 +21,11 @@ function SearchBar({ channel }) {
 	const [selectedOrderStatus, setSelectedOrderStatus] = useState(0);
 	const [selectedDistributer, setSelectedDistributer] = useState(0);
 	const [loading, setLoading] = useState(true);
+
+	//  min date 90 days
+	const minimumDate = new Date();
+	minimumDate.setDate(minimumDate.getDate() - 90);
+
 	const resetSearch = () => {
 		setSelectedChannel(0);
 		setSelectedOrderStatus(0);
@@ -177,13 +182,25 @@ function SearchBar({ channel }) {
 												/> */}
 
 												<DatePicker
+													showIcon
+													className="form-control datepicker"
+													selected={startDate}
+													minDate={minimumDate}
+													onChange={(date) => setStartDate(date)}
+													selectsStart
+													maxDate={new Date()}
+													startDate={startDate}
+													endDate={endDate}
+												/>
+
+												{/* <DatePicker
 													className="form-control datepicker"
 													selected={startDate}
 													onChange={(date) => setStartDate(date)}
 													selectsStart
 													startDate={startDate}
 													endDate={endDate}
-												/>
+												/> */}
 											</div>
 										</div>
 									</div>
@@ -212,6 +229,18 @@ function SearchBar({ channel }) {
 												/> */}
 
 												<DatePicker
+													showIcon
+													className="form-control datepicker"
+													selected={endDate > startDate ? endDate : startDate}
+													onChange={(date) => setEndDate(date)}
+													selectsEnd
+													startDate={startDate}
+													endDate={endDate}
+													maxDate={new Date()}
+													minDate={startDate}
+												/>
+
+												{/* <DatePicker
 													className="form-control datepicker"
 													selected={endDate > startDate ? endDate : startDate}
 													onChange={(date) => setEndDate(date)}
@@ -219,7 +248,7 @@ function SearchBar({ channel }) {
 													startDate={startDate}
 													endDate={endDate}
 													minDate={startDate}
-												/>
+												/> */}
 											</div>
 										</div>
 									</div>
