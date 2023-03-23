@@ -21,8 +21,12 @@ import {
 import { setMenu } from "../../redux/actions/menuAction";
 import { userType } from "../pages/constants/constants";
 import Swal from "sweetalert2";
-import { setOrderDetails } from "../../redux/actions/placeOrderAction";
+import {
+	setOrderDetails,
+	setSelectedOrder,
+} from "../../redux/actions/placeOrderAction";
 import DashBoardModel from "../../components/DashBoard/DashBoardModel";
+import DashBoardTiles from "../../components/DashBoard/DashBoardTiles";
 
 const Dashboard = () => {
 	const navigate = useNavigate();
@@ -35,7 +39,7 @@ const Dashboard = () => {
 	const orderLine = useSelector((state) => state.dashboard.orderLine.products);
 	const orderNo = useSelector((state) => state.dashboard.orderLine.ord);
 
-	const { alert_details, order_details } = dashboard;
+	const { alert_details, order_details, dashboard_tiles } = dashboard;
 
 	const [data, setData] = useState([]);
 	const productDetails = useSelector(
@@ -112,13 +116,17 @@ const Dashboard = () => {
 		}
 	};
 
-	const getModifyOrder = async (distributor) => {
-		await PlaceOrderService.getModifyOrderDetails({
-			userProfile,
-		}).then((response) => {
-			dispatch(setOrderDetails(response.data.order_grid_details));
-			navigate("/modifyorder");
-		});
+	const getModifyOrder = async (item) => {
+		dispatch(setSelectedOrder(item));
+		console.log("item", item);
+		navigate("/modifyorder");
+
+		// await PlaceOrderService.getModifyOrderDetails({
+		// 	userProfile,
+		// }).then((response) => {
+		// 	dispatch(setOrderDetails(response.data.order_grid_details));
+		// 	navigate("/modifyorder");
+		// });
 	};
 
 	useEffect(() => {
@@ -183,65 +191,8 @@ const Dashboard = () => {
 									</p>
 								</div>
 							)}
-							<div className="row mb-4 dashboard-blocks">
-								<div className="col-md-4">
-									<div className="card bg-info pull-up rounded-0">
-										<div className="card-content">
-											<div className="card-header">Total Claims [INR]</div>
-											<div className="card-body pt-0 pb-2">
-												<div className="row">
-													<div className="col-8">
-														<p className="huText2">97,185</p>
-													</div>
-													<div className="col-4 text-right">
-														<p className="DashIcon">
-															<i className="fa-solid fa-tags"></i>
-														</p>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div className="col-md-4">
-									<div className="card bg-primary pull-up rounded-0">
-										<div className="card-content">
-											<div className="card-header">Sales MTD [INR]</div>
-											<div className="card-body pt-0 pb-2">
-												<div className="row">
-													<div className="col-8">
-														<p className="huText2">9,00,383</p>
-													</div>
-													<div className="col-4 text-right">
-														<p className="DashIcon">
-															<i className="fa-solid fa-tags"></i>
-														</p>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div className="col-md-4">
-									<div className="card bg-malive pull-up rounded-0">
-										<div className="card-content">
-											<div className="card-header">Sales YTD [INR]</div>
-											<div className="card-body pt-0 pb-2">
-												<div className="row">
-													<div className="col-8">
-														<p className="huText2">22,51,015</p>
-													</div>
-													<div className="col-4 text-right">
-														<p className="DashIcon">
-															<i className="fa-solid fa-tags"></i>
-														</p>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
+							<DashBoardTiles />
+
 							{/* <button
 								onClick={
 									() => getModifyOrder()

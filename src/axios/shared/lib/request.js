@@ -25,11 +25,13 @@ const client = axios.create({
  * Request Wrapper with default success/error actions
  */
 let token = JSON.parse(localStorage.getItem("token"));
+let username = localStorage.getItem("username");
+let password = localStorage.getItem("password");
 
 function updateAccessToken(token) {
 	return request({
-		url: `/refreshToken`,
-		method: "POST",
+		url: `/refreshToken/?username=${username}&password=${password}`,
+		method: "GET",
 		headers: {
 			Authorization: `Bearer ${token}`,
 			isRefreshToken: "true",

@@ -14,6 +14,7 @@ import Logout from "./pages/pages/Logout";
 import PageNotFound from "./pages/pages/PageNotFound";
 import ForgotPassword from "./pages/pages/ForgotPassword";
 import ModifyOrder from "./pages/pages/ModifyOrder";
+import ModifyOrders from "./pages/pages/ModifyOrders";
 
 function App() {
 	useLayoutEffect(() => {
@@ -80,7 +81,7 @@ function App() {
 						element={
 							<>
 								<Header />
-								<ModifyOrder />
+								<ModifyOrders />
 							</>
 						}
 					/>

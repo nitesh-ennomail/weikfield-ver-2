@@ -1,6 +1,8 @@
 import request from "../../shared/lib/request";
 
 function addUser(data) {
+	localStorage.setItem("username", data.username);
+	localStorage.setItem("password", data.password);
 	return request({
 		url: `/authenticate`,
 		method: "POST",

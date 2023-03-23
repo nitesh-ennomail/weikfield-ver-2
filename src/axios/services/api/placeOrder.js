@@ -99,8 +99,8 @@ function saveOrder({
 	});
 }
 
-function getModifyOrderDetails({ userProfile }) {
-	let modOrderNo = "PP2300159";
+function getModifyOrderDetails({ userProfile, selectedOrder }) {
+	let modOrderNo = selectedOrder.order_no;
 	let customerChannel = "GT";
 	console.log("distributor", userProfile);
 
@@ -112,8 +112,8 @@ function getModifyOrderDetails({ userProfile }) {
 			Authorization: `Bearer ${userProfile.token}`,
 		},
 		data: JSON.stringify({
-			modOrderNo: "PP2300159",
-			customerChannel: "GT",
+			modOrderNo: modOrderNo,
+			customerChannel: customerChannel,
 		}),
 	});
 }

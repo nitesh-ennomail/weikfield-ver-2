@@ -36,3 +36,11 @@ export const setAddToCart = (product) => {
 		payload: product,
 	};
 };
+
+export const setSelectedOrder = (item) => {
+	localStorage.setItem("selectedOrder", JSON.stringify(item));
+	return {
+		type: ActionTypes.SET_SELECTED_ORDER,
+		payload: item,
+	};
+};

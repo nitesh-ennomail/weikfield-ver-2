@@ -10,7 +10,7 @@ function SearchBar({ channel }) {
 	// Collecting data from Redux store
 	const userProfile = useSelector((state) => state.userProfile);
 	const userId = useSelector(
-		(state) => state.dashboard.dashboard.profile_details[0].user_id
+		(state) => state.dashboard.dashboard.profile_details.user_id
 	);
 
 	const [startDate, setStartDate] = useState(new Date());
