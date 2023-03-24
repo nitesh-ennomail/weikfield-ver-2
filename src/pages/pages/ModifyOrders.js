@@ -35,7 +35,7 @@ const ModifyOrders = (props) => {
 	const { flavour_details } = flavour;
 	const { product_line_details } = productLine;
 	const { distributor_details, brand_details, pack_type_details } = orderFilter;
-	const { order_grid_details } = orderDetails;
+	const { order_grid_details_UniqueByKey, order_details } = orderDetails;
 	const { addTocart, selectedOrder } = placeOrder;
 	// Collecting data from Redux store Ends
 
@@ -58,12 +58,34 @@ const ModifyOrders = (props) => {
 	const [disableFilter, setDisableFilter] = useState(false);
 	const [disableAddToCart, setDisableAddToCart] = useState(true);
 	const [showOrderSummary, setShowOrderSummary] = useState("d-none");
-	const [showSearchFilter, setShowSearchFilter] = useState("d-block");
+	const [showSearchFilter, setShowSearchFilter] = useState("d-none");
 	const [showPlaceOrder, setShowPlaceOrder] = useState(false);
 	const [errorMsg, setErrorMsg] = useState("");
 	const [empty, setEmpty] = useState(false);
 	const [disableConfirm, setDisableConfirm] = useState(false);
 	const [showPromoModel, setShowPromoModel] = useState(true);
+	const [cartLoading, setCartLoading] = useState(false);
+
+	useEffect(() => {
+		if (userProfile.usertype !== "null") {
+			dispatch(setOrderDetails("null"));
+			dispatch(setAddToCart([]));
+			setSelectedPackType("");
+			setSelectedBrand({});
+			dispatch(setProductLine("null"));
+			dispatch(setFlavour("null"));
+			setOrderData([]);
+			window.scrollTo({ top: 0, behavior: "smooth" });
+			getOrderFilters();
+
+			// setShowOrderSummary("d-block");
+			// // setShowSearchFilter("d-block");
+			// setShowPlaceOrder(true);
+		} else {
+			navigate("/");
+		}
+	}, [userProfile]);
+
 	const handlePackType = (e) => {
 		{
 			setEmpty(false);
@@ -87,7 +109,17 @@ const ModifyOrders = (props) => {
 	};
 	// Storing or Modifing data through react state Ends
 
+	const checkCartData = (cartCount) => {
+		setCartLoading(false);
+		if (cartCount.payload.length === 0) {
+			setShowSearchFilter("d-block");
+		} else {
+			setShowOrderSummary("d-block");
+			setShowPlaceOrder(true);
+		}
+	};
 	const getOrderFilters = async () => {
+		setCartLoading(true);
 		await PlaceOrderService.getModifyOrderDetails({
 			userProfile,
 			selectedOrder,
@@ -97,19 +129,28 @@ const ModifyOrders = (props) => {
 				response.data.order_grid_details,
 				key
 			);
-			// const order_grid_details_UniqueByKey = response.data.order_grid_details;
-			// dispatch( )
-			dispatch(setOrderDetails(order_grid_details_UniqueByKey));
-			setOrderData(
-				order_grid_details_UniqueByKey.filter(function (el) {
-					return el.pp_ordered_qty === "0.0";
-				})
+			let order_details = response.data.order_details;
+			let data = { order_grid_details_UniqueByKey, order_details };
+			dispatch(setOrderDetails(data));
+			let cartCount = dispatch(
+				setAddToCart(
+					order_grid_details_UniqueByKey.filter(function (el) {
+						return el.pp_ordered_qty > 0;
+					})
+				)
 			);
-			setAddToCart(
-				order_grid_details_UniqueByKey.filter(function (el) {
-					return el.pp_ordered_qty >= 0;
-				})
-			);
+
+			// setShowOrderSummary("d-block");
+			// // setShowSearchFilter("d-block");
+			// setShowPlaceOrder(true);
+			// setCartLoading(false);
+			checkCartData(cartCount);
+
+			// setOrderData(
+			// 	order_grid_details_UniqueByKey.filter(function (el) {
+			// 		return el.pp_ordered_qty === "0.0";
+			// 	})
+			// );
 		});
 
 		//AXIOS WRAPPER FOR API CALL
@@ -117,81 +158,6 @@ const ModifyOrders = (props) => {
 			dispatch(setOrderFilter(response.data));
 		});
 		//AXIOS WRAPPER FOR API CALL
-	};
-	const getOrderDetails = async (data) => {
-		// AXIOS WRAPPER FOR API CALL
-		/////////////////////////////////////////
-		if (
-			data.customer_block_flag === "NO" &&
-			data.ndc_flag === "NO" &&
-			data.mssr_flag === "NO" &&
-			data.claim_flag === "NO"
-		) {
-			<>
-				{setSalePerson(data.mapped_so_name)}
-				{setDistributor(data)}
-				{setSelectedPackType("")}
-				{setSelectedBrand({})}
-				{dispatch(setFlavour("null"))}
-				{dispatch(setProductLine("null"))}
-				{await PlaceOrderService.getOrderDetails({ userProfile, data }).then(
-					(response) => {
-						dispatch(setOrderDetails(response.data));
-						setDisableFilter(false);
-					}
-				)}
-			</>;
-		}
-		if (data.customer_block_flag === "YES") {
-			setDisableFilter(true);
-			setSalePerson(null);
-			dispatch(setOrderDetails("null"));
-			dispatch(setAddToCart([]));
-			setSelectedPackType("");
-			setSelectedBrand({});
-			dispatch(setProductLine("null"));
-			dispatch(setFlavour("null"));
-			setOrderData([]);
-			toast.error("customer_block_flag blocked");
-		}
-		if (data.ndc_flag === "YES") {
-			toast.error("ndc_flag blocked");
-		}
-		if (data.mssr_flag === "YES") {
-			toast.error("mssr_flag blocked");
-		}
-		if (data.claim_flag === "YES") {
-			toast.error("claim_flag blocked");
-		}
-
-		// {
-		// 	data !== null && data.customer_block_flag === "YES".toUpperCase() ? (
-		// 		<>
-		// 			{setSalePerson(data.mapped_so_name)}
-		// 			{setDistributor(data)}
-		// 			{await PlaceOrderService.getOrderDetails({ userProfile, data }).then(
-		// 				(response) => {
-		// 					dispatch(setOrderDetails(response.data));
-		// 					setDisableFilter(false);
-		// 				}
-		// 			)}
-		// 		</>
-		// 	) : (
-		// 		<>
-		// 			{
-		// 				(setDisableFilter(true),
-		// 				Swal.fire({
-		// 					icon: "error",
-		// 					title: "Not Applicable",
-		// 					text: "Distributor has not added any product yet!",
-		// 				}))
-		// 			}
-		// 		</>
-		// 	);
-		// }
-
-		////////////////////////////////
-		// AXIOS WRAPPER FOR API CALL
 	};
 
 	const getProductLine = async (brand) => {
@@ -234,15 +200,14 @@ const ModifyOrders = (props) => {
 		// AXIOS WRAPPER FOR API CALL
 	};
 
-	useEffect(() => {
-		if (addTocart.length === 0) {
-			setShowSearchFilter("d-block");
-			setShowSearchFilter(true);
-			setShowOrderSummary("d-none");
-			setShowPlaceOrder(false);
-		}
-		// window.scrollTo({ top: 0, behavior: "smooth" });
-	}, [disableFilter, addTocart, orderData]);
+	// useEffect(() => {
+	// 	if (addTocart.length === 0) {
+	// 		setShowSearchFilter("d-block");
+	// 		setShowSearchFilter(true);
+	// 		setShowOrderSummary("d-none");
+	// 		setShowPlaceOrder(false);
+	// 	}
+	// }, [disableFilter, addTocart, orderData]);
 
 	const showFilterData = async (e) => {
 		e.preventDefault();
@@ -253,7 +218,7 @@ const ModifyOrders = (props) => {
 		}
 
 		// Show filtered data based on packType, selectedBrand, selectedProductLine and selectedFlavour
-		let filterData = order_grid_details.filter(function (el) {
+		let filterData = order_grid_details_UniqueByKey.filter(function (el) {
 			if (
 				selectedPackType &&
 				selectedBrand &&
@@ -299,24 +264,9 @@ const ModifyOrders = (props) => {
 		setLoading(false);
 	};
 
-	useEffect(() => {
-		if (userProfile.usertype !== "null") {
-			dispatch(setOrderDetails("null"));
-			dispatch(setAddToCart([]));
-			setSelectedPackType("");
-			setSelectedBrand({});
-			dispatch(setProductLine("null"));
-			dispatch(setFlavour("null"));
-			setOrderData([]);
-			getOrderFilters();
-		} else {
-			navigate("/");
-		}
-	}, [userProfile]);
-
 	const addToCart = () => {
 		let currItemList = orderData.filter(function (el) {
-			return el.item_qty >= 1;
+			return el.pp_ordered_qty >= 1;
 		});
 		// Merge previous order and current order
 		let added_to_cart = [...addTocart, ...currItemList];
@@ -329,15 +279,19 @@ const ModifyOrders = (props) => {
 		setOrderData([]);
 		// setOrderData(() =>
 		// 	orderData.filter(function (el) {
-		// 		return el.item_qty == 0;
+		// 		return el.pp_ordered_qty == 0;
 		// 	})
 		// );
 		setDisableAddToCart(true);
 	};
 
 	const removeFromCart = (e, id) => {
-		id.item_qty = 0;
+		id.pp_ordered_qty = 0;
 		//Removing item from order summary based on selected portal_item_code
+		if (addTocart.length === 1) {
+			setShowSearchFilter("d-block");
+			setShowPlaceOrder(false);
+		}
 		dispatch(
 			setAddToCart(
 				addTocart.filter(
@@ -423,7 +377,7 @@ const ModifyOrders = (props) => {
 					setOrderData((orderData) =>
 						orderData.map((data) =>
 							item.portal_item_code === data.portal_item_code
-								? { ...data, item_qty: 0 }
+								? { ...data, pp_ordered_qty: 0 }
 								: data
 						)
 					);
@@ -438,7 +392,7 @@ const ModifyOrders = (props) => {
 		setOrderData((orderData) =>
 			orderData.map((data) =>
 				item.portal_item_code === data.portal_item_code
-					? { ...data, item_qty: e.target.value }
+					? { ...data, pp_ordered_qty: e.target.value }
 					: data
 			)
 		);
@@ -451,7 +405,7 @@ const ModifyOrders = (props) => {
 			setAddToCart(
 				addTocart.map((item) =>
 					id === item.portal_item_code
-						? { ...item, item_qty: e.target.value }
+						? { ...item, pp_ordered_qty: e.target.value }
 						: item
 				)
 			)
@@ -462,40 +416,16 @@ const ModifyOrders = (props) => {
 	const saveOrder = async (e) => {
 		// setShowPlaceOrder(false)
 		e.preventDefault();
-		// addTocart.length > 0
-		// 	? (await PlaceOrderService.saveOrder({
-		// 			userProfile,
-		// 			distributor,
-		// 			profile_details,
-		// 			addToCartTotal,
-		// 			addTocart,
-		// 	  }).then((response) => {
-		// 			{
-		// 				response.data.error_code === "0"
-		// 					? toast.success(
-		// 							<span>
-		// 								{`${response.data.message}-- ${response.data.order_no}`}
-		// 							</span>,
-		// 							{ duration: 4000 },
-		// 							navigate("/dashboard"),
-		// 							dispatch(setAddToCart([]))
-		// 					  )
-		// 					: toast.error(
-		// 							<span>
-		// 								{`${response.data.message}-- ${response.data.add_message}`}
-		// 							</span>
-		// 					  );
-		// 			}
-		// 	  }))
-		// 	: console.log("Please add some item in cart!");
 		setDisableConfirm(true);
 		if (addTocart.length > 0) {
-			await PlaceOrderService.saveOrder({
+			console.log("addToCartTotal", selectedOrder);
+			await PlaceOrderService.saveModifyOrder({
 				userProfile,
-				distributor,
+				order_details,
 				profile_details,
 				addToCartTotal,
 				addTocart,
+				selectedOrder,
 			}).then((response) => {
 				{
 					response.data.error_code === "0"
@@ -621,31 +551,11 @@ const ModifyOrders = (props) => {
 																		className="form-control"
 																		data-live-search="true"
 																		disabled={true}
-																		onChange={(e) =>
-																			getOrderDetails(
-																				JSON.parse(e.target.value)
-																			)
-																		}
 																		required>
-																		<option value={JSON.stringify("")}>
+																		<option>
 																			{selectedOrder &&
 																				selectedOrder.customer_name}
 																		</option>
-																		{/* {distributor_details &&
-																			distributor_details.map((data, index) => (
-																				<option
-																					key={index}
-																					value={JSON.stringify(data)}>
-																					{data.customer_name} -{" "}
-																					{data.customer_code}
-																					{(data.customer_block_flag ||
-																						data.mssr_flag ||
-																						data.ndc_flag ||
-																						data.claim_flag) === "NO"
-																						? ""
-																						: "*"}
-																				</option>
-																			))} */}
 																	</select>
 																</div>
 															</div>
@@ -664,7 +574,9 @@ const ModifyOrders = (props) => {
 																		type="text"
 																		name="SalePerson"
 																		className="form-control"
-																		defaultValue={salePerson}
+																		defaultValue={
+																			order_details && order_details.so_name
+																		}
 																		readOnly={true}
 																	/>
 																</div>
@@ -956,10 +868,10 @@ const ModifyOrders = (props) => {
 																	{orderData.map(
 																		(item, index) => (
 																			(cartTotalQty =
-																				cartTotalQty + item.item_qty),
+																				cartTotalQty + item.pp_ordered_qty),
 																			(cartTotal +=
 																				item.portal_billing_price *
-																				item.item_qty),
+																				item.pp_ordered_qty),
 																			(
 																				<tr key={index}>
 																					<td className="font12">
@@ -1009,9 +921,9 @@ const ModifyOrders = (props) => {
 																							id={`quantityFieldId1-${item.portal_item_code}`}
 																							step="1"
 																							// defaultValue={
-																							// 	item.item_qty
+																							// 	item.pp_ordered_qty
 																							// }
-																							placeholder={item.item_qty}
+																							placeholder={item.pp_ordered_qty}
 																							onKeyPress={(event) => {
 																								if (
 																									event.charCode < 48 ||
@@ -1028,11 +940,11 @@ const ModifyOrders = (props) => {
 																					</td>
 																					<td className="font12">
 																						{/* {item.portal_billing_price *
-                                                                        item.item_qty} */}
+                                                                        item.pp_ordered_qty} */}
 
 																						{Math.round(
 																							item.portal_billing_price *
-																								item.item_qty *
+																								item.pp_ordered_qty *
 																								100
 																						) / (100).toFixed(2)}
 																					</td>
@@ -1173,7 +1085,7 @@ const ModifyOrders = (props) => {
 																		className="qty-ctl"
 																		id={`quantityFieldId-${item.portal_item_code}`}
 																		step="1"
-																		placeholder={item.item_qty}
+																		placeholder={item.pp_ordered_qty}
 																		onKeyPress={(event) => {
 																			if (
 																				event.charCode < 48 ||
@@ -1244,6 +1156,17 @@ const ModifyOrders = (props) => {
 								<h1 className="text-center card-header">No Data found</h1>
 							)}
 						</div>
+						{addToCart && cartLoading && (
+							<ColorRing
+								visible={true}
+								height="80"
+								width="100%"
+								ariaLabel="blocks-loading"
+								wrapperStyle={{ textAlign: "center" }}
+								wrapperClass="blocks-wrapper"
+								colors={["#e15b64", "#f47e60", "#f8b26a", "#abbd81", "#849b87"]}
+							/>
+						)}
 						{addTocart.length > 0 && (
 							<>
 								<div className="col-md-4 d-sm-block">
@@ -1266,6 +1189,7 @@ const ModifyOrders = (props) => {
 
 										<div
 											// className="card-body collapse"
+											// className={`card-body collapse d-sm-block ${showOrderSummary}`}
 											className={`card-body collapse d-sm-block ${showOrderSummary}`}
 											id="collapseTwo"
 											aria-expanded="true">
@@ -1273,9 +1197,11 @@ const ModifyOrders = (props) => {
 												{addTocart != "null" &&
 													addTocart.map(
 														(item, index) => (
-															(addToCartQty = addToCartQty + item.item_qty),
+															(addToCartQty =
+																addToCartQty + item.pp_ordered_qty),
 															(addToCartTotal +=
-																item.portal_billing_price * item.item_qty),
+																item.portal_billing_price *
+																item.pp_ordered_qty),
 															(
 																<div
 																	className="cart-prod-div-order"
@@ -1318,15 +1244,15 @@ const ModifyOrders = (props) => {
 																			type="number"
 																			className="qty-ctl"
 																			step="1"
-																			// defaultValue={item.item_qty}
-																			placeholder={item.item_qty}
+																			// defaultValue={item.pp_ordered_qty}
+																			placeholder={item.pp_ordered_qty}
 																		/>
 
 																		{/* <span className="cart-prod-lbl ml-2">
-                                                        {item.item_qty} *{" "}
+                                                        {item.pp_ordered_qty} *{" "}
                                                         {item.portal_billing_price} =
                                                         <b>
-                                                            {item.item_qty *
+                                                            {item.pp_ordered_qty *
                                                                 item.portal_billing_price}
                                                         </b>
                                                     </span> */}
@@ -1336,7 +1262,7 @@ const ModifyOrders = (props) => {
 																			<span className="cart-prod-lbl">
 																				Value:{" "}
 																				{Math.round(
-																					(item.item_qty *
+																					(item.pp_ordered_qty *
 																						item.portal_billing_price *
 																						100) /
 																						100
@@ -1367,13 +1293,13 @@ const ModifyOrders = (props) => {
 												type="button"
 												disabled={disableConfirm}
 												className="btn btn-primary btn-block btn-lg my-3 d-sm-block d-none">
-												Confirm Order{" "}
+												Approve{" "}
 												<i className="fa-solid fa-circle-arrow-right"></i>
 											</button>
 										</div>
 									</div>
 								</div>
-								<div className="col-12 d-sm-none d-sm-none">
+								<div className="col-12 d-sm-none">
 									<button
 										onClick={() => {
 											setShowOrderSummary("d-none");
@@ -1451,7 +1377,7 @@ const ModifyOrders = (props) => {
 							type="button"
 							className="atcm-place-order"
 							disabled={disableConfirm}>
-							<span>Confirm Order</span>{" "}
+							<span>Approve</span>{" "}
 							<i className="fa-solid fa-circle-arrow-right"></i>
 						</button>
 					)}

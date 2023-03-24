@@ -313,6 +313,10 @@ const PlaceOrder = (props) => {
 
 	const removeFromCart = (e, id) => {
 		id.item_qty = 0;
+		if (addTocart.length === 1) {
+			setShowSearchFilter("d-block");
+			setShowPlaceOrder(false);
+		}
 		//Removing item from order summary based on selected portal_item_code
 		dispatch(
 			setAddToCart(
@@ -438,32 +442,6 @@ const PlaceOrder = (props) => {
 	const saveOrder = async (e) => {
 		// setShowPlaceOrder(false)
 		e.preventDefault();
-		// addTocart.length > 0
-		// 	? (await PlaceOrderService.saveOrder({
-		// 			userProfile,
-		// 			distributor,
-		// 			profile_details,
-		// 			addToCartTotal,
-		// 			addTocart,
-		// 	  }).then((response) => {
-		// 			{
-		// 				response.data.error_code === "0"
-		// 					? toast.success(
-		// 							<span>
-		// 								{`${response.data.message}-- ${response.data.order_no}`}
-		// 							</span>,
-		// 							{ duration: 4000 },
-		// 							navigate("/dashboard"),
-		// 							dispatch(setAddToCart([]))
-		// 					  )
-		// 					: toast.error(
-		// 							<span>
-		// 								{`${response.data.message}-- ${response.data.add_message}`}
-		// 							</span>
-		// 					  );
-		// 			}
-		// 	  }))
-		// 	: console.log("Please add some item in cart!");
 		setDisableConfirm(true);
 		if (addTocart.length > 0) {
 			await PlaceOrderService.saveOrder({

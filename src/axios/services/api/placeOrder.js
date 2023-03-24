@@ -99,6 +99,51 @@ function saveOrder({
 	});
 }
 
+function saveModifyOrder({
+	userProfile,
+	order_details,
+	profile_details,
+	addToCartTotal,
+	addTocart,
+	selectedOrder,
+}) {
+	const allT = addTocart.every((item) => item.tax_flag === "T");
+	const allE = addTocart.every((item) => item.tax_flag === "E");
+
+	let exempt_order_flag = "";
+	if (allT || allE) {
+		exempt_order_flag = "N";
+	} else {
+		exempt_order_flag = "Y";
+	}
+
+	return request({
+		url: `/placeOrder/saveOrder`,
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${userProfile.token}`,
+		},
+		data: JSON.stringify({
+			locationId: `${selectedOrder.location_code}`,
+			user_Id: `${profile_details.user_id}`,
+			Amount: addToCartTotal,
+			AmountBeforeTax: addToCartTotal,
+			customer_code: `${selectedOrder.customer_code}`,
+			so_id: `${order_details.so_id}`,
+			orderStateFlag: "MOD",
+			previousOrderNo: `${selectedOrder.order_no}`,
+			exempt_order_flag,
+			data: addTocart.map(({ portal_item_code, item_qty, portal_mrp }) => ({
+				parent_code: portal_item_code,
+				order_qty: item_qty,
+				order_amount: item_qty * portal_mrp,
+				order_amount_w_tax: item_qty * portal_mrp,
+			})),
+		}),
+	});
+}
+
 function getModifyOrderDetails({ userProfile, selectedOrder }) {
 	let modOrderNo = selectedOrder.order_no;
 	let customerChannel = "GT";
@@ -124,6 +169,7 @@ const PlaceOrderService = {
 	getProductLine,
 	getFlavour,
 	saveOrder,
+	saveModifyOrder,
 	getModifyOrderDetails,
 };
 

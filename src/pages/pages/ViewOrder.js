@@ -27,7 +27,7 @@ const ViewOrder = () => {
 	useEffect(() => {
 		if (userProfile.usertype !== "null") {
 			getViewOrderChannelFilter();
-			dispatch(setViewOrderFilter([]));
+			dispatch(setViewOrderFilter(null));
 		} else {
 			navigate("/");
 		}

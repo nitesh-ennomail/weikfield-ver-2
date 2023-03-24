@@ -120,18 +120,12 @@ const Dashboard = () => {
 		dispatch(setSelectedOrder(item));
 		console.log("item", item);
 		navigate("/modifyorder");
-
-		// await PlaceOrderService.getModifyOrderDetails({
-		// 	userProfile,
-		// }).then((response) => {
-		// 	dispatch(setOrderDetails(response.data.order_grid_details));
-		// 	navigate("/modifyorder");
-		// });
 	};
 
 	useEffect(() => {
 		if (userProfile.usertype !== "null") {
 			// getProduct();
+			window.scrollTo({ top: 0, behavior: "smooth" });
 			getDashboard();
 		} else {
 			navigate("/");
@@ -306,19 +300,19 @@ const Dashboard = () => {
 																						// onClick={() => alert(item.order_no)}
 																						onClick={() => setStatus(item, 0)}
 																						// type="submit"
-																						className="btn btn-primary btn-sm mr-2">
+																						className="btn btn-dash-primary btn-sm mr-2">
 																						<i className="fa-solid fa-check"></i>
 																					</button>
 																					<button
 																						// type="reset"
 																						onClick={() => setStatus(item, 1)}
-																						className="btn btn-danger btn-sm mr-2">
+																						className="btn btn-dash-danger btn-sm mr-2">
 																						<i className="fa-solid fa-xmark"></i>
 																					</button>
 																					<button
 																						data-dismiss="modal"
 																						aria-label="Close"
-																						className="btn btn-primary btn-sm mr-1"
+																						className="btn btn-dash-primary btn-sm mr-1"
 																						onClick={
 																							() => getModifyOrder(item)
 																							// navigate("/placeorder")

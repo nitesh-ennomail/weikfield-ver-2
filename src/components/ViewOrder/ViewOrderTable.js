@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import DashboardService from "../../axios/services/api/dashboard";
 import { userType } from "../../pages/pages/constants/constants";
 import { setOrderLine } from "../../redux/actions/dashboardAction";
+import { setSelectedOrder } from "../../redux/actions/placeOrderAction";
 
 function ViewOrderTable() {
 	const userProfile = useSelector((state) => state.userProfile);
@@ -22,6 +23,12 @@ function ViewOrderTable() {
 			}
 		);
 		// AXIOS WRAPPER FOR API CALL
+	};
+
+	const getModifyOrder = async (item) => {
+		dispatch(setSelectedOrder(item));
+		console.log("item", item);
+		navigate("/modifyorder");
 	};
 	const setStatus = async (item, id) => {
 		let order_no = item.order_no;
@@ -43,7 +50,7 @@ function ViewOrderTable() {
 	return (
 		<>
 			{/* {viewOrder && !isEmptyObject(viewOrder.viewOrderFilter) && ( */}
-			{viewOrder && viewOrder.viewOrderFilter.length > 0 && (
+			{viewOrder && viewOrder.viewOrderFilter !== null && (
 				<div className="card border-0 rounded-0 mb-3">
 					<div className="card-body">
 						<div className="table-responsive">
@@ -125,23 +132,20 @@ function ViewOrderTable() {
 															<button
 																onClick={() => setStatus(order, 0)}
 																// type="submit"
-																className="btn btn-primary btn-sm mr-2">
+																className="btn btn-dash-primary btn-sm mr-2">
 																<i className="fa-solid fa-check"></i>
 															</button>
 															<button
 																// type="reset"
 																onClick={() => setStatus(order, 1)}
-																className="btn btn-danger btn-sm mr-2">
+																className="btn btn-dash-danger btn-sm mr-2">
 																<i className="fa-solid fa-xmark"></i>
 															</button>
 															<button
 																data-dismiss="modal"
 																aria-label="Close"
-																className="btn btn-primary btn-sm mr-1"
-																// onClick={
-																// 	() => getModifyOrder(item)
-																// }
-															>
+																className="btn btn-dash-primary btn-sm mr-1"
+																onClick={() => getModifyOrder(order)}>
 																<i
 																	className="fa-solid fa-pen"
 																	aria-hidden="true"></i>
@@ -162,7 +166,11 @@ function ViewOrderTable() {
 
 									{viewOrder.viewOrderFilter.length === 0 && (
 										<tr>
-											<td>no data found</td>
+											<td></td>
+											<td></td>
+											<td className="text-nowrap">No data found </td>
+											<td></td>
+											<td></td>
 										</tr>
 									)}
 								</tbody>

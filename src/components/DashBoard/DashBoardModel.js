@@ -66,7 +66,6 @@ function DashBoardModel({ id }) {
 		<div
 			className="modal bd-example-modal-lg fade"
 			id={id}
-			tabIndex="-1"
 			role="dialog"
 			aria-labelledby="exampleModalLabel"
 			aria-hidden="true">

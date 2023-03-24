@@ -1,7 +1,7 @@
 import { ActionTypes } from "../constants/action-type";
 
 const initialState = {
-	viewOrderFilter: "",
+	viewOrderFilter: null,
 };
 export const viewOrderReducer = (state = initialState, { type, payload }) => {
 	switch (type) {

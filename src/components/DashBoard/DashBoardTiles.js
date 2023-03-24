@@ -18,6 +18,7 @@ const DashBoardTiles = () => {
 									<div className="row">
 										<div className="col-8">
 											<p className="huText2">
+												<i className="fa fa-inr mr-2 rsFont"></i>
 												{dashboard_tiles &&
 													Math.round(dashboard_tiles.claim_tile * 100) /
 														(100).toFixed(2)}
@@ -44,6 +45,7 @@ const DashBoardTiles = () => {
 									<div className="row">
 										<div className="col-8">
 											<p className="huText2">
+												<i className="fa fa-inr mr-2 rsFont"></i>
 												{dashboard_tiles &&
 													Math.round(dashboard_tiles.mtd_tile * 100) /
 														(100).toFixed(2)}
@@ -71,6 +73,7 @@ const DashBoardTiles = () => {
 									<div className="row">
 										<div className="col-8">
 											<p className="huText2">
+												<i className="fa fa-inr mr-2 rsFont"></i>
 												{dashboard_tiles &&
 													Math.round(dashboard_tiles.ytd_tile * 100) /
 														(100).toFixed(2)}

@@ -822,6 +822,10 @@ p.huText2 {
 	margin: 0;
 	font-weight: 100;
 	line-height: 60px;
+    white-space: nowrap;
+}
+i.rsFont{
+	font-size: 28pt;
 }
 .dashboard-blocks .card-header {
 	background: transparent;
@@ -1078,6 +1082,23 @@ ul.multiselect-container.dropdown-menu.show {
 	background-color: #3dae2b;
     border-color: #3dae2b;
 	box-shadow: 0 8px 25px -8px #ababab;
+}
+
+.btn-dash-primary, .btn-dash-primary:focus {
+	color: #3dae2b !important;
+	background-color: #fff;
+    border-color: #3dae2b;
+}
+.btn-dash-primary:hover {
+	color: #3dae2b;
+	background-color: #fff;
+    border-color: #3dae2b;
+	box-shadow: 0 8px 25px -8px #ababab;
+}
+.btn-dash-danger {
+    color: #e42526;
+    background-color: #fff;
+    border-color: #e42526;
 }
 .btn-danger {
     color: #fff;
@@ -1337,6 +1358,7 @@ table.dataTable thead .sorting:before, table.dataTable thead .sorting:after, tab
 .btn-primary.focus, .btn-primary:focus {
 	box-shadow: 0 0 0 3px rgb(61 174 43 / 11%);
 }
+
 .dataTables_filter label {
 	margin: 0.5rem 0.5rem 0.5rem 0;
 }
