@@ -25,12 +25,12 @@ const client = axios.create({
  * Request Wrapper with default success/error actions
  */
 let token = JSON.parse(localStorage.getItem("token"));
-let username = localStorage.getItem("username");
-let password = localStorage.getItem("password");
+let stored_username = localStorage.getItem("username");
+let stored_password = localStorage.getItem("password");
 
 function updateAccessToken(token) {
 	return request({
-		url: `/refreshToken/?username=${username}&password=${password}`,
+		url: `/refreshToken/?username=${stored_username}&password=${stored_password}`,
 		method: "GET",
 		headers: {
 			Authorization: `Bearer ${token}`,
@@ -53,6 +53,9 @@ const request = function (options) {
 			// other than 2xx
 			if (error.response.data.status === 500) {
 				toast.error("User ID or Password entered is wrong");
+				localStorage.clear();
+				window.location.replace("/partner/");
+				// window.location.replace("/");
 			} else if (error.response.data.status === 501) {
 				const newUserToken = await updateAccessToken(token);
 				store.dispatch({
@@ -61,7 +64,7 @@ const request = function (options) {
 				});
 			} else if (error.response.data.status === 502) {
 				localStorage.clear();
-				window.location.replace("/partner");
+				window.location.replace("/partner/");
 			} else if (error.response.data.status === 510) {
 				toast.error("You are not authorized to use this application");
 			} else {
