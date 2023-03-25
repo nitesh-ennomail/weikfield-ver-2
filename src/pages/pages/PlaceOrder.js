@@ -98,6 +98,7 @@ const PlaceOrder = (props) => {
 		// AXIOS WRAPPER FOR API CALL
 		/////////////////////////////////////////
 		if (
+			data.order_cut_off_flag === "Y" &&
 			data.customer_block_flag === "NO" &&
 			data.ndc_flag === "NO" &&
 			data.mssr_flag === "NO" &&
@@ -117,8 +118,11 @@ const PlaceOrder = (props) => {
 					}
 				)}
 			</>;
-		}
-		if (data.customer_block_flag === "YES") {
+		} else if (data.order_cut_off_flag === "N") {
+			toast.error(
+				`Order Not Allowed after Cut Off - ${data.order_cut_off_timestamp}`
+			);
+		} else if (data.customer_block_flag === "YES") {
 			setDisableFilter(true);
 			setSalePerson(null);
 			dispatch(setOrderDetails("null"));
@@ -129,14 +133,11 @@ const PlaceOrder = (props) => {
 			dispatch(setFlavour("null"));
 			setOrderData([]);
 			toast.error("customer_block_flag blocked");
-		}
-		if (data.ndc_flag === "YES") {
+		} else if (data.ndc_flag === "YES") {
 			toast.error("ndc_flag blocked");
-		}
-		if (data.mssr_flag === "YES") {
+		} else if (data.mssr_flag === "YES") {
 			toast.error("mssr_flag blocked");
-		}
-		if (data.claim_flag === "YES") {
+		} else if (data.claim_flag === "YES") {
 			toast.error("claim_flag blocked");
 		}
 

@@ -170,8 +170,10 @@ const Dashboard = () => {
 							<ol className="breadcrumb">
 								<li className="breadcrumb-item">Dashboard</li>
 							</ol>
-							{alert_details && alert_details.length > 0 && (
-								<div className="alert alert-success" role="alert">
+							{alert_details && alert_details.alert_message && (
+								<div
+									className={`alert alert-${alert_details.alert_type}`}
+									role="alert">
 									<button
 										type="button"
 										className="close btn"
@@ -179,9 +181,14 @@ const Dashboard = () => {
 										aria-label="Close">
 										<span aria-hidden="true">&times;</span>
 									</button>
-									<h4 className="alert-heading">Alert message heading!</h4>
-									<p className="mb-0">
+									{/* <h4 className="alert-heading">Alert message heading!</h4> */}
+
+									<h4 className="alert-heading">
 										{alert_details && alert_details.alert_message}
+									</h4>
+
+									<p className="mb-0">
+										{/* {alert_details && alert_details[0].alert_message} */}
 									</p>
 								</div>
 							)}

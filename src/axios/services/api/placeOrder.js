@@ -134,12 +134,14 @@ function saveModifyOrder({
 			orderStateFlag: "MOD",
 			previousOrderNo: `${selectedOrder.order_no}`,
 			exempt_order_flag,
-			data: addTocart.map(({ portal_item_code, item_qty, portal_mrp }) => ({
-				parent_code: portal_item_code,
-				order_qty: item_qty,
-				order_amount: item_qty * portal_mrp,
-				order_amount_w_tax: item_qty * portal_mrp,
-			})),
+			data: addTocart.map(
+				({ portal_item_code, pp_ordered_qty, portal_mrp }) => ({
+					parent_code: portal_item_code,
+					order_qty: Number(pp_ordered_qty),
+					order_amount: Number(pp_ordered_qty) * portal_mrp,
+					order_amount_w_tax: Number(pp_ordered_qty) * portal_mrp,
+				})
+			),
 		}),
 	});
 }

@@ -418,7 +418,6 @@ const ModifyOrders = (props) => {
 		e.preventDefault();
 		setDisableConfirm(true);
 		if (addTocart.length > 0) {
-			console.log("addToCartTotal", selectedOrder);
 			await PlaceOrderService.saveModifyOrder({
 				userProfile,
 				order_details,
