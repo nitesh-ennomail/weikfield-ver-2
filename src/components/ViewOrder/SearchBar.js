@@ -7,13 +7,20 @@ import { convert } from "../../pages/pages/utils/dateConverter";
 function SearchBar({ channel }) {
 	console.log("channel", channel);
 	const dispatch = useDispatch();
+
+	const date = new Date();
+	function getFirstDayOfMonth(year, month) {
+		return new Date(year, month, 1);
+	}
+	const firstDay = getFirstDayOfMonth(date.getFullYear(), date.getMonth());
+
 	// Collecting data from Redux store
 	const userProfile = useSelector((state) => state.userProfile);
 	const userId = useSelector(
 		(state) => state.dashboard.dashboard.profile_details.user_id
 	);
 
-	const [startDate, setStartDate] = useState(new Date());
+	const [startDate, setStartDate] = useState(firstDay);
 	const [endDate, setEndDate] = useState(new Date());
 	const [selectedChannel, setSelectedChannel] = useState(0);
 	const [orderStatus, setOrderStatus] = useState(0);

@@ -184,6 +184,7 @@ const Dashboard = () => {
 									{/* <h4 className="alert-heading">Alert message heading!</h4> */}
 
 									<h4 className="alert-heading">
+										<i className={`fa ${alert_details.icon_code}`}></i>{" "}
 										{alert_details && alert_details.alert_message}
 									</h4>
 
