@@ -24,11 +24,11 @@ const client = axios.create({
 /**
  * Request Wrapper with default success/error actions
  */
-let token = JSON.parse(localStorage.getItem("token"));
-let stored_username = localStorage.getItem("username");
-let stored_password = localStorage.getItem("password");
 
-function updateAccessToken(token) {
+function updateAccessToken() {
+	let token = JSON.parse(localStorage.getItem("token"));
+	let stored_username = localStorage.getItem("username");
+	let stored_password = localStorage.getItem("password");
 	return request({
 		url: `/refreshToken/?username=${stored_username}&password=${stored_password}`,
 		method: "GET",
@@ -57,7 +57,8 @@ const request = function (options) {
 				window.location.replace("/partner/");
 				// window.location.replace("/");
 			} else if (error.response.data.status === 501) {
-				const newUserToken = await updateAccessToken(token);
+				const newUserToken = await updateAccessToken();
+				localStorage.setItem("token", JSON.stringify(newUserToken.token));
 				store.dispatch({
 					type: ActionTypes.SET_TOKEN,
 					payload: newUserToken.token,
