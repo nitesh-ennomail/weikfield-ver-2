@@ -15,6 +15,7 @@ import PageNotFound from "./pages/pages/PageNotFound";
 import ForgotPassword from "./pages/pages/ForgotPassword";
 import ModifyOrder from "./pages/pages/ModifyOrder";
 import ModifyOrders from "./pages/pages/ModifyOrders";
+import Mssr from "./pages/pages/Mssr";
 
 function App() {
 	useLayoutEffect(() => {
@@ -43,6 +44,16 @@ function App() {
 							<>
 								<Header />
 								<ProductMaster />
+							</>
+						}
+					/>
+
+					<Route
+						path="/mssr"
+						element={
+							<>
+								<Header />
+								<Mssr />
 							</>
 						}
 					/>

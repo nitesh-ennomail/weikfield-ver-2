@@ -5,6 +5,7 @@ import { menuReducer } from "./menuReducer";
 import { dashboardReducer } from "./dashboardReducer";
 import { placeOrderReducer } from "./placeOrderReducer";
 import { viewOrderReducer } from "./viewOrderReducer";
+import { mssrReducer } from "./mssrReducer";
 
 const reducers = combineReducers({
 	allProducts: productReducer,
@@ -13,6 +14,7 @@ const reducers = combineReducers({
 	dashboard: dashboardReducer,
 	placeOrder: placeOrderReducer,
 	viewOrder: viewOrderReducer,
+	mssr: mssrReducer,
 });
 
 const rootReducer = (state, action) => {
