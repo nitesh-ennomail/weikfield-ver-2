@@ -9,6 +9,11 @@
     width: 50px;
 	border:0.3px solid gray
 }
+.qty-ctl-mssr {
+    width: 25vw;
+	border:0.3px solid gray;
+	height:2rem
+}
 .cart-prod-list.scroll {
     max-height: 57vh;
     overflow: auto;
@@ -1523,6 +1528,10 @@ div#modalshowcart .modal-dialog, div#modalshowcart .modal-content {
 }
 div#modalshowcart .modal-body {overflow:auto}
 .no-border .qty-ctl {
+    border: 1px solid #ced4da !important;
+}
+
+.no-border .qty-ctl-mssr {
     border: 1px solid #ced4da !important;
 }
 .table.table-bordered {

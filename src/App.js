@@ -49,7 +49,7 @@ function App() {
 					/>
 
 					<Route
-						path="/mssr"
+						path="/createmssr"
 						element={
 							<>
 								<Header />

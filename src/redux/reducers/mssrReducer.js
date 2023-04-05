@@ -8,6 +8,7 @@ const initialState = {
 	mssr_brands: null,
 	mssr_product_line: null,
 	mssr_flavour: null,
+	mssr_filter_list: null,
 };
 export const mssrReducer = (state = initialState, { type, payload }) => {
 	switch (type) {
@@ -28,6 +29,9 @@ export const mssrReducer = (state = initialState, { type, payload }) => {
 
 		case ActionTypes.SET_MSSR_PRODUCT_LINE:
 			return { ...state, mssr_product_line: payload };
+
+		case ActionTypes.SET_MSSR_FILTER_LIST:
+			return { ...state, mssr_filter_list: payload };
 
 		case ActionTypes.SET_MSSR_FLAVOUR:
 			return { ...state, mssr_flavour: payload };

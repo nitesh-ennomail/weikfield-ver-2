@@ -9,6 +9,8 @@ import MssrService from "../../axios/services/api/mssr";
 import {
 	setBrands,
 	setDistributors,
+	setMssrFilterList,
+	setMssrList,
 	setPackDetails,
 } from "../../redux/actions/mssrAction";
 
@@ -17,6 +19,8 @@ const Mssr = () => {
 	const dispatch = useDispatch();
 	const userProfile = useSelector((state) => state.userProfile);
 	const getSearchFilter = async () => {
+		dispatch(setMssrList(null));
+		dispatch(setMssrFilterList(null));
 		await MssrService.getDistributors(userProfile).then((response) => {
 			dispatch(setDistributors(response.data.distributor_details));
 		});

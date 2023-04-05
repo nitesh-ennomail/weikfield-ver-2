@@ -4,10 +4,12 @@ import MssrService from "../../axios/services/api/mssr";
 import {
 	setFlavour,
 	setInvoices,
+	setMssrFilterList,
 	setMssrList,
 	setProductLine,
 } from "../../redux/actions/mssrAction";
 import MultiSelect from "../MultiSelect";
+import { toast } from "react-hot-toast";
 
 function SearchBarMssr() {
 	const dispatch = useDispatch();
@@ -21,26 +23,45 @@ function SearchBarMssr() {
 		mssr_brands,
 		mssr_product_line,
 		mssr_flavour,
+		mssr_line_list,
 	} = mssr;
 
-	const [selectedBrand, setSelectedBrand] = useState({});
+	const [selectedBrand, setSelectedBrand] = useState("");
 	const [selectedProductLine, setSelectedProductLine] = useState("");
 	const [selectedFlavour, setSelectedFlavour] = useState("");
 	const [selectedPackType, setSelectedPackType] = useState("");
+	const [mssrListData, setMssrListData] = useState([]);
 
 	const getMssrList = async (customer_code) => {
-		await MssrService.getMssrList(userProfile, customer_code).then(
-			(response) => {
-				console.log("getMssrList", response.data.mssr_line_details);
-				dispatch(setMssrList(response.data.mssr_line_details));
-			}
-		);
-		await MssrService.getInvoices(userProfile, customer_code).then(
-			(response) => {
-				console.log("getInvoices", response.data.invoice_details);
-				dispatch(setInvoices(response.data.invoice_details));
-			}
-		);
+		{
+			setSelectedPackType("");
+		}
+		{
+			setSelectedBrand("");
+		}
+		{
+			dispatch(setFlavour(null));
+		}
+		{
+			dispatch(setProductLine(null));
+		}
+
+		if (customer_code === "0") {
+			dispatch(setMssrList(null));
+		} else {
+			await MssrService.getMssrList(userProfile, customer_code).then(
+				(response) => {
+					console.log("getMssrList", response.data.mssr_line_details);
+					dispatch(setMssrList(response.data.mssr_line_details));
+				}
+			);
+			await MssrService.getInvoices(userProfile, customer_code).then(
+				(response) => {
+					console.log("getInvoices", response.data.invoice_details);
+					dispatch(setInvoices(response.data.invoice_details));
+				}
+			);
+		}
 	};
 
 	const getProductLine = async (brand) => {
@@ -67,7 +88,6 @@ function SearchBarMssr() {
 			productLine,
 		}).then((response) => {
 			//store response data in redux store
-			console.log(response);
 			dispatch(setFlavour(response.data.flavour_details));
 		});
 		// AXIOS WRAPPER FOR API CALL
@@ -84,9 +104,67 @@ function SearchBarMssr() {
 			dispatch(setFlavour(null));
 		}
 		{
+			setSelectedProductLine("");
+		}
+		{
 			dispatch(setProductLine(null));
 		}
 		setSelectedPackType(JSON.parse(e.target.value));
+	};
+
+	const showFilterData = async (e) => {
+		e.preventDefault();
+		if (Object.keys(selectedPackType).length === 0) {
+			return toast.error("You missed selecting Pack type");
+		} else if (Object.keys(selectedBrand).length === 0) {
+			return toast.error("You missed selecting Brand");
+		}
+
+		// Show filtered data based on packType, selectedBrand, selectedProductLine and selectedFlavour
+		let filterData = mssr_line_list.filter(function (el) {
+			if (
+				selectedPackType &&
+				// selectedBrand &&
+				selectedProductLine &&
+				selectedFlavour
+			) {
+				return (
+					el.pack_type === selectedPackType.pack_type_desc &&
+					// el.brand === selectedBrand.brand_desc &&
+					el.product_line === selectedProductLine.product_line_desc &&
+					el.flavour === selectedFlavour.flavour_desc
+				);
+			}
+			// else if (selectedPackType && selectedBrand && selectedProductLine) {
+			// 	return (
+			// 		el.customer_type === selectedPackType.pack_type_desc &&
+			// 		el.brand === selectedBrand.brand_desc &&
+			// 		el.product_line === selectedProductLine.product_line_desc
+			// 	);
+			// } else if (selectedPackType && selectedBrand) {
+			// 	return (
+			// 		el.customer_type === selectedPackType.pack_type_desc &&
+			// 		el.brand === selectedBrand.brand_desc
+			// 	);
+			// }
+		});
+		// if (filterData.length === 0) {
+		// 	setEmpty(true);
+		// } else {
+		// 	setEmpty(false);
+		// }
+		// dispatch(setMssrList(filterData));
+		dispatch(setMssrFilterList(filterData));
+		console.log("Filter data---", filterData);
+		setMssrListData(() => filterData);
+	};
+
+	const resetAll = () => {
+		dispatch(setMssrFilterList(null));
+		setSelectedBrand({});
+		setSelectedFlavour("");
+		setSelectedPackType("");
+		setSelectedProductLine("");
 	};
 
 	return (
@@ -124,6 +202,7 @@ function SearchBarMssr() {
 													data-live-search="true"
 													onChange={(e) => getMssrList(e.target.value)}
 													required>
+													<option value={0}>Select Distributer</option>
 													{mssr_distributors &&
 														mssr_distributors.map((dist, index) => (
 															<option
@@ -148,7 +227,7 @@ function SearchBarMssr() {
 													type="text"
 													name="SalePerson"
 													className="form-control"
-													defaultValue="Subhadeep Sen"
+													defaultValue="Lucky ..."
 													readOnly
 												/>
 											</div>
@@ -171,11 +250,11 @@ function SearchBarMssr() {
 																className="lbl-radio-btn flex-fill"
 																key={packType.pack_type_code}>
 																<input
-																	// checked={
-																	// 	selectedPackType &&
-																	// 	selectedPackType.pack_type_code ===
-																	// 		packType.pack_type_code
-																	// }
+																	checked={
+																		selectedPackType &&
+																		selectedPackType.pack_type_code ===
+																			packType.pack_type_code
+																	}
 																	type="radio"
 																	value={JSON.stringify(packType)}
 																	id={packType.pack_type_code}
@@ -309,9 +388,9 @@ function SearchBarMssr() {
 													name="ProductClass"
 													className="form-control"
 													data-live-search="true"
-													// onChange={(e) =>
-													// 	setSelectedFlavour(JSON.parse(e.target.value))
-													// }
+													onChange={(e) =>
+														setSelectedFlavour(JSON.parse(e.target.value))
+													}
 													required>
 													<option value={JSON.stringify("")}>Show All</option>
 													{mssr_flavour &&
@@ -335,13 +414,20 @@ function SearchBarMssr() {
 											</div>
 											<div className="col-md-8 text-right">
 												<button
-													type="submit"
-													className="btn btn-primary  btn-md">
+													type="button"
+													onClick={(e) => showFilterData(e)}
+													className="btn btn-primary  btn-md"
+													data-toggle="collapse"
+													data-target="#collapseOne"
+													aria-expanded="false">
 													<i className="fa-solid fa-magnifying-glass"></i>{" "}
 													Search
 												</button>
 												&nbsp;
-												<button type="reset" className="btn btn-danger btn-md">
+												<button
+													type="reset"
+													onClick={() => resetAll()}
+													className="btn btn-danger btn-md">
 													<i className="fa-solid fa-rotate-right"></i> Reset
 												</button>
 											</div>

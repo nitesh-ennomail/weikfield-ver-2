@@ -7,7 +7,6 @@ const DashBoardTiles = () => {
 
 	return (
 		<div className="row mb-4 dashboard-blocks">
-			{console.log("dashboard_tiles--", dashboard_tiles)}
 			{dashboard_tiles &&
 				dashboard_tiles.claim_display_flag.toUpperCase() === "Y" && (
 					<div className="col-md-4">

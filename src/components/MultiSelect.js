@@ -5,6 +5,7 @@ import React, { useState } from "react";
 function MultiSelect(mssr_invoices) {
 	const [selectedValue, setSelectedValue] = useState(null);
 
+	console.log("mssr_invoices", mssr_invoices.mssr_invoices);
 	const options = [
 		{ name: "Option 1️⃣", id: 1 },
 		{ name: "Option 2️⃣", id: 2 },

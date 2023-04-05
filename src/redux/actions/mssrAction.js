@@ -28,6 +28,13 @@ export const setMssrList = (data) => {
 	};
 };
 
+export const setMssrFilterList = (data) => {
+	return {
+		type: ActionTypes.SET_MSSR_FILTER_LIST,
+		payload: data,
+	};
+};
+
 export const setInvoices = (data) => {
 	return {
 		type: ActionTypes.SET_MSSR_INVOICES,
