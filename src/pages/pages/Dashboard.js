@@ -94,6 +94,16 @@ const Dashboard = () => {
 			dispatch(setDashboard(response.data));
 			setLoading(false);
 		});
+		//initialize datatable
+		$(function () {
+			$("#dataTable").dataTable({
+				ordering: true,
+				info: false,
+				searching: true,
+				lengthChange: false,
+				paging: true,
+			});
+		});
 		//AXIOS WRAPPER FOR API CALL
 	};
 

@@ -444,7 +444,9 @@ const PlaceOrder = (props) => {
 		// setShowPlaceOrder(false)
 		e.preventDefault();
 		setDisableConfirm(true);
-		if (addTocart.length > 0) {
+		if (!distributor || !userProfile) {
+			toast.error(`Something went wrong, Please re-login`);
+		} else if (addTocart.length > 0) {
 			await PlaceOrderService.saveOrder({
 				userProfile,
 				distributor,

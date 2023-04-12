@@ -15,7 +15,6 @@ function ViewOrderTable() {
 
 	const getOrderLines = async (order) => {
 		const { order_no } = order;
-		console.log("item ord_no", order_no);
 		// AXIOS WRAPPER FOR API CALL
 		await DashboardService.getOrderLines(userProfile, order_no).then(
 			(response) => {
@@ -27,7 +26,6 @@ function ViewOrderTable() {
 
 	const getModifyOrder = async (item) => {
 		dispatch(setSelectedOrder(item));
-		console.log("item", item);
 		navigate("/modifyorder");
 	};
 	const setStatus = async (item, id) => {
@@ -40,13 +38,13 @@ function ViewOrderTable() {
 		if (remark) {
 			await DashboardService.setStatus(userProfile, order_no, id, remark).then(
 				(response) => {
-					console.log("response setStatus", response);
 					Swal.fire(response.status);
 				}
 			);
 			navigate("/vieworder");
 		}
 	};
+
 	return (
 		<>
 			{/* {viewOrder && !isEmptyObject(viewOrder.viewOrderFilter) && ( */}
@@ -56,7 +54,7 @@ function ViewOrderTable() {
 						<div className="table-responsive">
 							<table
 								className="table table-bordered"
-								id="dataTable"
+								id="viewDataTable"
 								width="100%"
 								cellSpacing="0">
 								<thead>

@@ -10,6 +10,7 @@ import {
 } from "../../redux/actions/mssrAction";
 import MultiSelect from "../MultiSelect";
 import { toast } from "react-hot-toast";
+import { json } from "react-router-dom";
 
 function SearchBarMssr() {
 	const dispatch = useDispatch();
@@ -31,8 +32,9 @@ function SearchBarMssr() {
 	const [selectedFlavour, setSelectedFlavour] = useState("");
 	const [selectedPackType, setSelectedPackType] = useState("");
 	const [mssrListData, setMssrListData] = useState([]);
+	const [showInvoice, setShowInvoice] = useState(false);
 
-	const getMssrList = async (customer_code) => {
+	const getMssrList = async (dist) => {
 		{
 			setSelectedPackType("");
 		}
@@ -45,22 +47,32 @@ function SearchBarMssr() {
 		{
 			dispatch(setProductLine(null));
 		}
-
-		if (customer_code === "0") {
+		console.log("dist --- ", dist);
+		if (dist === "0") {
 			dispatch(setMssrList(null));
+			setShowInvoice(false);
+		} else if (dist.mssr_entry_allowed_flag === "N") {
+			toast.error(
+				`You are not allowed to fill mssr now - Please contact Admin}`
+			);
 		} else {
-			await MssrService.getMssrList(userProfile, customer_code).then(
+			await MssrService.getMssrList(userProfile, dist.customer_code).then(
 				(response) => {
 					console.log("getMssrList", response.data.mssr_line_details);
 					dispatch(setMssrList(response.data.mssr_line_details));
 				}
 			);
-			await MssrService.getInvoices(userProfile, customer_code).then(
+			await MssrService.getInvoices(userProfile, dist.customer_code).then(
 				(response) => {
 					console.log("getInvoices", response.data.invoice_details);
 					dispatch(setInvoices(response.data.invoice_details));
 				}
 			);
+		}
+		if (dist.mssr_invoice_lov_display_flag === "0") {
+			setShowInvoice(true);
+		} else {
+			setShowInvoice(false);
 		}
 	};
 
@@ -122,40 +134,15 @@ function SearchBarMssr() {
 
 		// Show filtered data based on packType, selectedBrand, selectedProductLine and selectedFlavour
 		let filterData = mssr_line_list.filter(function (el) {
-			if (
-				selectedPackType &&
-				// selectedBrand &&
-				selectedProductLine &&
-				selectedFlavour
-			) {
+			if (selectedPackType && selectedProductLine && selectedFlavour) {
 				return (
 					el.pack_type === selectedPackType.pack_type_desc &&
-					// el.brand === selectedBrand.brand_desc &&
 					el.product_line === selectedProductLine.product_line_desc &&
 					el.flavour === selectedFlavour.flavour_desc
 				);
 			}
-			// else if (selectedPackType && selectedBrand && selectedProductLine) {
-			// 	return (
-			// 		el.customer_type === selectedPackType.pack_type_desc &&
-			// 		el.brand === selectedBrand.brand_desc &&
-			// 		el.product_line === selectedProductLine.product_line_desc
-			// 	);
-			// } else if (selectedPackType && selectedBrand) {
-			// 	return (
-			// 		el.customer_type === selectedPackType.pack_type_desc &&
-			// 		el.brand === selectedBrand.brand_desc
-			// 	);
-			// }
 		});
-		// if (filterData.length === 0) {
-		// 	setEmpty(true);
-		// } else {
-		// 	setEmpty(false);
-		// }
-		// dispatch(setMssrList(filterData));
 		dispatch(setMssrFilterList(filterData));
-		console.log("Filter data---", filterData);
 		setMssrListData(() => filterData);
 	};
 
@@ -165,6 +152,7 @@ function SearchBarMssr() {
 		setSelectedFlavour("");
 		setSelectedPackType("");
 		setSelectedProductLine("");
+		setShowInvoice(false);
 	};
 
 	return (
@@ -200,14 +188,19 @@ function SearchBarMssr() {
 													name="Distributor"
 													className="form-control"
 													data-live-search="true"
-													onChange={(e) => getMssrList(e.target.value)}
+													onChange={(e) =>
+														getMssrList(JSON.parse(e.target.value))
+													}
 													required>
-													<option value={0}>Select Distributer</option>
+													<option value={JSON.stringify("0")}>
+														Select Distributer
+													</option>
 													{mssr_distributors &&
 														mssr_distributors.map((dist, index) => (
 															<option
 																key={dist.customer_code}
-																value={dist.customer_code}>
+																// value={dist.customer_code}
+																value={JSON.stringify(dist)}>
 																{dist.customer_name}
 															</option>
 														))}
@@ -333,20 +326,6 @@ function SearchBarMssr() {
 									<div className="col-md-6">
 										<div className="row">
 											<div className="col-md-4">
-												<label
-													htmlFor="ProductclassName"
-													className="control-label">
-													Check Recived Invoices This Month:
-												</label>
-											</div>
-											<div className="col-md-8">
-												<MultiSelect mssr_invoices={mssr_invoices} />
-											</div>
-										</div>
-									</div>
-									<div className="col-md-6">
-										<div className="row">
-											<div className="col-md-4">
 												<label htmlFor="ProductClass" className="control-label">
 													Product Line:
 												</label>
@@ -374,8 +353,6 @@ function SearchBarMssr() {
 											</div>
 										</div>
 									</div>
-								</div>
-								<div className="form-group row">
 									<div className="col-md-6">
 										<div className="row">
 											<div className="col-md-4">
@@ -405,6 +382,25 @@ function SearchBarMssr() {
 											</div>
 										</div>
 									</div>
+								</div>
+								<div className="form-group row">
+									<div className="col-md-6">
+										{showInvoice && (
+											<div className="row">
+												<div className="col-md-4">
+													<label
+														htmlFor="ProductclassName"
+														className="control-label">
+														Check Recived Invoices This Month:
+													</label>
+												</div>
+												<div className="col-md-8">
+													<MultiSelect mssr_invoices={mssr_invoices} />
+												</div>
+											</div>
+										)}
+									</div>
+
 									<div className="col-md-6">
 										<div className="row">
 											<div className="col-md-4">

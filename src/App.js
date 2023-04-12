@@ -16,6 +16,13 @@ import ForgotPassword from "./pages/pages/ForgotPassword";
 import ModifyOrder from "./pages/pages/ModifyOrder";
 import ModifyOrders from "./pages/pages/ModifyOrders";
 import Mssr from "./pages/pages/Mssr";
+// import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+
+//jQuery libraries
+// import "jquery/dist/jquery.min.js";
+//Datatable Modules
+import "datatables.net-dt/js/dataTables.dataTables";
+import "../node_modules/datatables.net-dt/css/jquery.dataTables.min.css";
 
 function App() {
 	useLayoutEffect(() => {

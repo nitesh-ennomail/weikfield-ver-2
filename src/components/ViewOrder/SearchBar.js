@@ -4,6 +4,7 @@ import ViewOrderService from "../../axios/services/api/viewOrder";
 import { setViewOrderFilter } from "../../redux/actions/viewOrderAction";
 import DatePicker from "react-datepicker";
 import { convert } from "../../pages/pages/utils/dateConverter";
+import $ from "jquery";
 function SearchBar({ channel }) {
 	console.log("channel", channel);
 	const dispatch = useDispatch();
@@ -69,6 +70,16 @@ function SearchBar({ channel }) {
 			userId
 		).then((response) => {
 			dispatch(setViewOrderFilter(response.data.order_details));
+		});
+		//initialize datatable
+		$(function () {
+			$("#viewDataTable").dataTable({
+				ordering: true,
+				info: false,
+				searching: true,
+				lengthChange: false,
+				paging: true,
+			});
 		});
 	};
 
