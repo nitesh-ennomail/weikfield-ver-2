@@ -9,6 +9,7 @@ const initialState = {
 	mssr_product_line: null,
 	mssr_flavour: null,
 	mssr_filter_list: null,
+	mssr_selected_invoices: null,
 };
 export const mssrReducer = (state = initialState, { type, payload }) => {
 	switch (type) {
@@ -35,6 +36,9 @@ export const mssrReducer = (state = initialState, { type, payload }) => {
 
 		case ActionTypes.SET_MSSR_FLAVOUR:
 			return { ...state, mssr_flavour: payload };
+
+		case ActionTypes.SET_SELECTED_INVOICES:
+			return { ...state, mssr_selected_invoices: payload };
 
 		default:
 			return state;

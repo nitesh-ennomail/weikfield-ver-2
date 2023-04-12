@@ -7,6 +7,7 @@ import {
 	setMssrFilterList,
 	setMssrList,
 	setProductLine,
+	setSelectedInvoice,
 } from "../../redux/actions/mssrAction";
 import MultiSelect from "../MultiSelect";
 import { toast } from "react-hot-toast";
@@ -16,6 +17,9 @@ function SearchBarMssr() {
 	const dispatch = useDispatch();
 
 	const userProfile = useSelector((state) => state.userProfile);
+	const dashboard = useSelector((state) => state.dashboard.dashboard);
+	const { profile_details } = dashboard;
+
 	const mssr = useSelector((state) => state.mssr);
 	const {
 		mssr_distributors,
@@ -47,7 +51,6 @@ function SearchBarMssr() {
 		{
 			dispatch(setProductLine(null));
 		}
-		console.log("dist --- ", dist);
 		if (dist === "0") {
 			dispatch(setMssrList(null));
 			setShowInvoice(false);
@@ -62,6 +65,7 @@ function SearchBarMssr() {
 					dispatch(setMssrList(response.data.mssr_line_details));
 				}
 			);
+
 			await MssrService.getInvoices(userProfile, dist.customer_code).then(
 				(response) => {
 					console.log("getInvoices", response.data.invoice_details);
@@ -69,10 +73,15 @@ function SearchBarMssr() {
 				}
 			);
 		}
-		if (dist.mssr_invoice_lov_display_flag === "0") {
+		if (dist.mssr_invoice_lov_display_flag === "1") {
 			setShowInvoice(true);
 		} else {
 			setShowInvoice(false);
+			// await MssrService.getInvoices(userProfile, dist.customer_code).then(
+			// 	(response) => {
+			// 		dispatch(setSelectedInvoice(response.data.invoice_details));
+			// 	}
+			// );
 		}
 	};
 
@@ -220,7 +229,7 @@ function SearchBarMssr() {
 													type="text"
 													name="SalePerson"
 													className="form-control"
-													defaultValue="Lucky ..."
+													defaultValue={profile_details.user_name}
 													readOnly
 												/>
 											</div>
@@ -395,7 +404,9 @@ function SearchBarMssr() {
 													</label>
 												</div>
 												<div className="col-md-8">
-													<MultiSelect mssr_invoices={mssr_invoices} />
+													{mssr_invoices && (
+														<MultiSelect mssr_invoices={mssr_invoices} />
+													)}
 												</div>
 											</div>
 										)}

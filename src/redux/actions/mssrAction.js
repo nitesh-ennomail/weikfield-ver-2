@@ -55,3 +55,10 @@ export const setFlavour = (data) => {
 		payload: data,
 	};
 };
+
+export const setSelectedInvoice = (data) => {
+	return {
+		type: ActionTypes.SET_SELECTED_INVOICES,
+		payload: data,
+	};
+};
