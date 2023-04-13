@@ -71,16 +71,16 @@ function SearchBar({ channel }) {
 		).then((response) => {
 			dispatch(setViewOrderFilter(response.data.order_details));
 		});
-		//initialize datatable
-		$(function () {
-			$("#viewDataTable").dataTable({
-				ordering: true,
-				info: false,
-				searching: true,
-				lengthChange: false,
-				paging: true,
-			});
-		});
+		// //initialize datatable
+		// $(function () {
+		// 	$("#viewDataTable").dataTable({
+		// 		ordering: true,
+		// 		info: false,
+		// 		searching: true,
+		// 		lengthChange: false,
+		// 		paging: true,
+		// 	});
+		// });
 	};
 
 	const handleSubmit = (e) => {

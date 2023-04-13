@@ -12,7 +12,7 @@ import {
 
 import $ from "jquery";
 import { ColorRing } from "react-loader-spinner";
-import { getUniqueByKey } from "./utils/findUniqueBykey";
+import { getUniqueByKey, getRoundOff } from "./utils/findUniqueBykey";
 import Swal from "sweetalert2";
 import { toast, Toaster } from "react-hot-toast";
 
@@ -211,15 +211,15 @@ const PlaceOrder = (props) => {
 		// AXIOS WRAPPER FOR API CALL
 	};
 
-	useEffect(() => {
-		if (addTocart.length === 0) {
-			setShowSearchFilter("d-block");
-			setShowSearchFilter(true);
-			setShowOrderSummary("d-none");
-			setShowPlaceOrder(false);
-		}
-		// window.scrollTo({ top: 0, behavior: "smooth" });
-	}, [disableFilter, addTocart, orderData]);
+	// useEffect(() => {
+	// 	if (addTocart.length === 0) {
+	// 		setShowSearchFilter("d-block");
+	// 		setShowSearchFilter(true);
+	// 		setShowOrderSummary("d-none");
+	// 		setShowPlaceOrder(false);
+	// 	}
+	// 	// window.scrollTo({ top: 0, behavior: "smooth" });
+	// }, [disableFilter, addTocart, orderData]);
 
 	const showFilterData = async (e) => {
 		e.preventDefault();
@@ -278,18 +278,23 @@ const PlaceOrder = (props) => {
 
 	useEffect(() => {
 		if (userProfile.usertype !== "null") {
-			dispatch(setOrderDetails("null"));
-			dispatch(setAddToCart([]));
-			setSelectedPackType("");
-			setSelectedBrand({});
-			dispatch(setProductLine("null"));
-			dispatch(setFlavour("null"));
-			setOrderData([]);
+			// dispatch(setOrderDetails("null"));
+			// dispatch(setAddToCart([]));
+			// setSelectedPackType("");
+			// setSelectedBrand({});
+			// dispatch(setProductLine("null"));
+			// dispatch(setFlavour("null"));
+			// setOrderData([]);
 			getOrderFilters();
+		} else if (addTocart.length === 0) {
+			setShowSearchFilter("d-block");
+			setShowSearchFilter(true);
+			setShowOrderSummary("d-none");
+			setShowPlaceOrder(false);
 		} else {
 			navigate("/");
 		}
-	}, [userProfile]);
+	}, [userProfile, disableFilter, addTocart, orderData]);
 
 	const addToCart = () => {
 		let currItemList = orderData.filter(function (el) {
@@ -447,6 +452,7 @@ const PlaceOrder = (props) => {
 		if (!distributor || !userProfile) {
 			toast.error(`Something went wrong, Please re-login`);
 		} else if (addTocart.length > 0) {
+			addToCartTotal = getRoundOff(addToCartTotal, 2);
 			await PlaceOrderService.saveOrder({
 				userProfile,
 				distributor,
@@ -659,13 +665,20 @@ const PlaceOrder = (props) => {
 																			getProductLine(JSON.parse(e.target.value))
 																		}
 																		required>
-																		<option>Select Brand</option>
+																		{/* <option value={JSON.stringify("")}>
+																			Select Brand
+																		</option> */}
 																		{brand_details &&
 																			brand_details.map((brand, index) => (
 																				<option
 																					key={brand.brand_code}
 																					value={JSON.stringify(brand)}>
-																					{brand.brand_desc}
+																					{Object.keys(selectedBrand).length ===
+																					0
+																						? "Select Brand"
+																						: brand.brand_desc}
+
+																					{/* {brand.brand_desc} */}
 																				</option>
 																			))}
 																	</select>
@@ -887,16 +900,11 @@ const PlaceOrder = (props) => {
 																						{item.physical_inventory_qty}
 																					</td>
 																					<td className="font12">
-																						{/* {item.portal_billing_price > 0
-																							? item.portal_billing_price
-																							: "Price not found"} */}
 																						{item.portal_billing_price > 0 ? (
-																							(
-																								Math.round(
-																									item.portal_billing_price *
-																										100
-																								) / 100
-																							).toFixed(2)
+																							getRoundOff(
+																								item.portal_billing_price,
+																								2
+																							)
 																						) : (
 																							<span className="text-danger">
 																								Price not found
@@ -939,14 +947,11 @@ const PlaceOrder = (props) => {
 																						/>
 																					</td>
 																					<td className="font12">
-																						{/* {item.portal_billing_price *
-																							item.item_qty} */}
-
-																						{Math.round(
+																						{getRoundOff(
 																							item.portal_billing_price *
-																								item.item_qty *
-																								100
-																						) / (100).toFixed(2)}
+																								item.item_qty,
+																							2
+																						)}
 																					</td>
 																				</tr>
 																			)
@@ -1049,9 +1054,7 @@ const PlaceOrder = (props) => {
 																	<span className="cart-prod-lbl">Price: </span>
 																	<span className="cart-prod-val">
 																		{item.portal_billing_price > 0 ? (
-																			Math.round(
-																				item.portal_billing_price * 100
-																			) / (100).toFixed(2)
+																			getRoundOff(item.portal_billing_price, 2)
 																		) : (
 																			<span className="text-danger">
 																				Price not found
@@ -1140,10 +1143,9 @@ const PlaceOrder = (props) => {
 														</span>{" "}
 													</div>
 												</div>
-												<div className="col-md-3 d-none d-sm-block">
+												<div className="col-md-3 d-sm-block">
 													<h4 className="m-0 text-success  text-center">
-														Total:{" "}
-														{Math.round(cartTotal * 100) / (100).toFixed(2)}
+														Total: {getRoundOff(cartTotal, 2)}
 													</h4>
 												</div>
 											</div>
@@ -1247,12 +1249,11 @@ const PlaceOrder = (props) => {
 																			style={{ float: "right" }}>
 																			<span className="cart-prod-lbl">
 																				Value:{" "}
-																				{Math.round(
-																					(item.item_qty *
-																						item.portal_billing_price *
-																						100) /
-																						100
-																				).toFixed(2)}
+																				{getRoundOff(
+																					item.item_qty *
+																						item.portal_billing_price,
+																					2
+																				)}
 																			</span>
 																		</div>
 																	</div>
@@ -1271,7 +1272,7 @@ const PlaceOrder = (props) => {
 												</span>
 											</p>
 											<h1 className="text-center text-success d-none d-sm-block">
-												{Math.round(addToCartTotal * 100) / (100).toFixed(2)}
+												{getRoundOff(addToCartTotal, 2)}
 											</h1>
 
 											<button
@@ -1321,8 +1322,7 @@ const PlaceOrder = (props) => {
 						<span className="atcm-text">
 							<span className="atc-unit">Count : {addTocart.length}</span>
 							<span className="atc-unit">
-								Amt    : 
-								{Math.round(addToCartTotal * 100) / (100).toFixed(2)}
+								Amt    :  {getRoundOff(addToCartTotal, 2)}
 							</span>
 						</span>
 					</Link>{" "}

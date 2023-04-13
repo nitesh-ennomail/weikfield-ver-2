@@ -82,8 +82,8 @@ function saveOrder({
 		data: JSON.stringify({
 			locationId: `${distributor.wh_location_code}`,
 			user_Id: `${distributor.mapped_so_id}`,
-			Amount: addToCartTotal,
-			AmountBeforeTax: addToCartTotal,
+			Amount: `${addToCartTotal}`,
+			AmountBeforeTax: `${addToCartTotal}`,
 			customer_code: `${distributor.customer_code}`,
 			so_id: `${distributor.mapped_so_id}`,
 			orderStateFlag: "NEW",

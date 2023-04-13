@@ -6,6 +6,8 @@ import DashboardService from "../../axios/services/api/dashboard";
 import { userType } from "../../pages/pages/constants/constants";
 import { setOrderLine } from "../../redux/actions/dashboardAction";
 import { setSelectedOrder } from "../../redux/actions/placeOrderAction";
+import $ from "jquery";
+import Pagenation from "../../pages/pages/utils/Pagenation";
 
 function ViewOrderTable() {
 	const userProfile = useSelector((state) => state.userProfile);
@@ -44,6 +46,29 @@ function ViewOrderTable() {
 			navigate("/vieworder");
 		}
 	};
+
+	useEffect(() => {
+		//initialize datatable
+		// $(function () {
+		// 	$("#viewDataTable").dataTable({
+		// 		ordering: true,
+		// 		info: false,
+		// 		searching: true,
+		// 		lengthChange: false,
+		// 		paging: true,
+		// 	});
+		// });
+		if ($.fn.dataTable.isDataTable("#viewDataTable")) {
+			$("#viewDataTable").DataTable();
+		} else {
+			$("#viewDataTable").DataTable({
+				ordering: true,
+				paging: true,
+				searching: true,
+				lengthChange: false,
+			});
+		}
+	}, [viewOrder]);
 
 	return (
 		<>
@@ -110,14 +135,10 @@ function ViewOrderTable() {
 													userType.DISTRIBUTOR ? null : (
 													<td className="text-nowrap">{order.customer_name}</td>
 												)}
-												{/* <td>{order.customer_name}</td> */}
-												{/* <td>11</td> */}
 												<td style={{ textAlign: "center" }}>
 													{Math.round(order.order_amount_w_tax * 100) /
 														(100).toFixed(2)}
 												</td>
-												{/* <td>5</td> */}
-												{/* <td>25257.25</td> */}
 
 												<td>
 													{userProfile &&
@@ -173,6 +194,7 @@ function ViewOrderTable() {
 									)}
 								</tbody>
 							</table>
+							{/* <Pagenation /> */}
 						</div>
 					</div>
 				</div>
