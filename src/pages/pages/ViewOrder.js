@@ -9,6 +9,7 @@ import SearchBar from "../../components/ViewOrder/SearchBar";
 import ViewOrderModel from "../../components/ViewOrder/ViewOrderModel";
 import ViewOrderTable from "../../components/ViewOrder/ViewOrderTable";
 import { setViewOrderFilter } from "../../redux/actions/viewOrderAction";
+import { Helmet } from "react-helmet";
 const ViewOrder = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
@@ -24,6 +25,8 @@ const ViewOrder = () => {
 		);
 	};
 
+	
+
 	useEffect(() => {
 		if (userProfile.usertype !== "null") {
 			getViewOrderChannelFilter();
@@ -36,6 +39,7 @@ const ViewOrder = () => {
 
 	return (
 		<>
+		<Helmet title="vieworder" />
 			<div className="content-wrapper">
 				<div className="container-fluid">
 					<div className="row">
@@ -52,7 +56,7 @@ const ViewOrder = () => {
 									<h4>List of Oders</h4>
 								</div>
 							</div>
-							<SearchBar channel={channel} />
+							{channel && <SearchBar channel={channel} /> }
 							<ViewOrderTable />
 						</div>
 					</div>

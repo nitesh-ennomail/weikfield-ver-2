@@ -286,14 +286,16 @@ const PlaceOrder = (props) => {
 			// dispatch(setFlavour("null"));
 			// setOrderData([]);
 			getOrderFilters();
-		} else if (addTocart.length === 0) {
+		} else {
+			navigate("/");
+		}
+		 if (addTocart.length === 0) {
 			setShowSearchFilter("d-block");
 			setShowSearchFilter(true);
 			setShowOrderSummary("d-none");
 			setShowPlaceOrder(false);
-		} else {
-			navigate("/");
-		}
+		} 
+		
 	}, [userProfile, disableFilter, addTocart, orderData]);
 
 	const addToCart = () => {
