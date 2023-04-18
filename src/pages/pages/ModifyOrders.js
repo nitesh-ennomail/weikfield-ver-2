@@ -12,7 +12,7 @@ import {
 
 import $ from "jquery";
 import { ColorRing } from "react-loader-spinner";
-import { getUniqueByKey } from "./utils/findUniqueBykey";
+import { getRoundOff, getUniqueByKey } from "./utils/findUniqueBykey";
 import Swal from "sweetalert2";
 import { toast, Toaster } from "react-hot-toast";
 import SearchFilter from "../../components/ModifyOrder/SearchFilter";
@@ -418,6 +418,7 @@ const ModifyOrders = (props) => {
 		e.preventDefault();
 		setDisableConfirm(true);
 		if (addTocart.length > 0) {
+			addToCartTotal = getRoundOff(addToCartTotal, 2);
 			await PlaceOrderService.saveModifyOrder({
 				userProfile,
 				order_details,
