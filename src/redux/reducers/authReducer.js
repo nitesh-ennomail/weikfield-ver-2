@@ -9,7 +9,6 @@ const initialState = {
 	token: token ? JSON.parse(token) : "null",
 	usertype: usertype ? JSON.parse(usertype) : "null",
 };
-console.log("userProfile", userProfile);
 export const authReducer = (state = initialState, { type, payload }) => {
 	switch (type) {
 		case ActionTypes.SET_TOKEN:

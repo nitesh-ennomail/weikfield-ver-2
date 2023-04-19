@@ -23,13 +23,6 @@ const FilteredData = (
 	let addToCartQty = 0;
 	const [orderData, setOrderData] = useState(ord);
 
-	useEffect(() => {
-		console.log("orderData", orderData);
-		console.log("selectedBrand", selectedBrand);
-		console.log("flovour", selectedFlavour);
-		console.log("pline", selectedProductLine);
-	}, []);
-
 	// Assigning local variable Ends
 	const handleQty = (e, id) => {
 		// Handle order grid quantity and store in react state.

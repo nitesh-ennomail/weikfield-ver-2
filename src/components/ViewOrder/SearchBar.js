@@ -6,7 +6,6 @@ import DatePicker from "react-datepicker";
 import { convert } from "../../pages/pages/utils/dateConverter";
 import $ from "jquery";
 function SearchBar({ channel }) {
-	console.log("channel", channel);
 	const dispatch = useDispatch();
 
 	const date = new Date();
@@ -51,7 +50,6 @@ function SearchBar({ channel }) {
 			(response) => {
 				setOrderStatus(response.data.order_status);
 				setDistributor(response.data.distributor_details);
-				console.log("getViewOrderFilter", response);
 				// dispatch(setViewOrderFilter(response.data));
 			}
 		);
@@ -121,7 +119,6 @@ function SearchBar({ channel }) {
 													name="OrderNumber"
 													className="form-control selectpicker"
 													data-live-search="true"
-													// onChange={(e) => console.log(e.target.value)}
 													onChange={(e) => getViewOrderFilter(e.target.value)}
 													required>
 													<option value={0}>Show All</option>
@@ -179,26 +176,6 @@ function SearchBar({ channel }) {
 												</label>
 											</div>
 											<div className="col-md-8">
-												{/* <input
-													// onBlur={(e) => console.warn("kk", e.target.value)}
-													// onChange={(e) => console.warn(e)}
-													// value={fromData}
-													type="text"
-													name="dateFrom"
-													className="form-control datepicker"
-													placeholder="Date From"
-													autoFocus
-												/> */}
-
-												{/* <BootstrapDatePickerComponent /> */}
-												{/* <DatePicker
-													minDate={new Date()}
-													name="dateFrom"
-													className="form-control datepicker"
-													selected={fromDate}
-													onChange={(date) => setFromDate(date)}
-												/> */}
-
 												<DatePicker
 													showIcon
 													className="form-control datepicker"
@@ -210,15 +187,6 @@ function SearchBar({ channel }) {
 													startDate={startDate}
 													endDate={endDate}
 												/>
-
-												{/* <DatePicker
-													className="form-control datepicker"
-													selected={startDate}
-													onChange={(date) => setStartDate(date)}
-													selectsStart
-													startDate={startDate}
-													endDate={endDate}
-												/> */}
 											</div>
 										</div>
 									</div>

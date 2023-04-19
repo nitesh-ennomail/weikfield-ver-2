@@ -48,7 +48,6 @@ const Login = () => {
 	}, []);
 
 	useEffect(() => {
-		console.log("constants userType", usertype);
 
 		{
 			usertype && usertype.toUpperCase() === userType.APPROVER
