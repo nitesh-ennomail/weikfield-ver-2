@@ -24,6 +24,8 @@ function ViewOrderTable() {
 			}
 		);
 		// AXIOS WRAPPER FOR API CALL
+
+		
 	};
 
 	const getModifyOrder = async (item) => {
@@ -31,16 +33,18 @@ function ViewOrderTable() {
 		navigate("/modifyorder");
 	};
 	const setStatus = async (item, id) => {
+		let label = "";
+		{id === 0 ? label = "Remark for Approval" : label="Remark for Rejection"}
 		let order_no = item.order_no;
 		const { value: remark } = await Swal.fire({
 			input: "text",
-			inputLabel: "Remark",
+			inputLabel: `${label}`,
 			inputPlaceholder: "Please Enter Remark",
 		});
 		if (remark) {
 			await DashboardService.setStatus(userProfile, order_no, id, remark).then(
 				(response) => {
-					Swal.fire(response.status);
+					Swal.fire(response.data.message);
 				}
 			);
 			navigate("/vieworder");
