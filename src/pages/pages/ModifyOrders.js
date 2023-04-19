@@ -1285,7 +1285,8 @@ const ModifyOrders = (props) => {
 												</span>
 											</p>
 											<h1 className="text-center text-success d-none d-sm-block">
-												{Math.round(addToCartTotal * 100) / (100).toFixed(2)}
+												{getRoundOff(addToCartTotal,2)}
+												{/* {Math.round(addToCartTotal * 100) / (100).toFixed(2)} */}
 											</h1>
 
 											<button
@@ -1336,7 +1337,8 @@ const ModifyOrders = (props) => {
 							<span className="atc-unit">Count : {addTocart.length}</span>
 							<span className="atc-unit">
 								Amt    : 
-								{Math.round(addToCartTotal * 100) / (100).toFixed(2)}
+								{getRoundOff(addToCartTotal,2)}
+								{/* {Math.round(addToCartTotal * 100) / (100).toFixed(2)} */}
 							</span>
 						</span>
 					</Link>{" "}

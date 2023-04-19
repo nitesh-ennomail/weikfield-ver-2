@@ -13,7 +13,6 @@ import MyProfile from "./pages/pages/MyProfile";
 import Logout from "./pages/pages/Logout";
 import PageNotFound from "./pages/pages/PageNotFound";
 import ForgotPassword from "./pages/pages/ForgotPassword";
-import ModifyOrder from "./pages/pages/ModifyOrder";
 import ModifyOrders from "./pages/pages/ModifyOrders";
 import Mssr from "./pages/pages/Mssr";
 // import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
@@ -76,7 +75,7 @@ function App() {
 					/>
 
 					<Route
-						path="/distribution"
+						path="/distributor"
 						element={
 							<>
 								<Header />

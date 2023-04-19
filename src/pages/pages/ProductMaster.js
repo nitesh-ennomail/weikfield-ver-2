@@ -1,6 +1,7 @@
 import React from "react";
 import $ from "jquery";
 import Helmet from "react-helmet";
+import { Link } from "react-router-dom";
 
 const ProductMaster = () => {
 	return (
@@ -12,7 +13,7 @@ const ProductMaster = () => {
 						<div className="col-md-12">
 							<ol className="breadcrumb">
 								<li className="breadcrumb-item">
-									<a href="Dashboard.html">Dashboard</a>{" "}
+								<Link to="/dashboard">Dashboard</Link>
 								</li>
 								<li className="breadcrumb-item active">Product Master</li>
 							</ol>

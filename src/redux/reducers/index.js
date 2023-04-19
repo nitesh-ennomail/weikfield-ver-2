@@ -6,6 +6,7 @@ import { dashboardReducer } from "./dashboardReducer";
 import { placeOrderReducer } from "./placeOrderReducer";
 import { viewOrderReducer } from "./viewOrderReducer";
 import { mssrReducer } from "./mssrReducer";
+import { distributorReducer } from "./distributorReducers";
 
 const reducers = combineReducers({
 	allProducts: productReducer,
@@ -15,6 +16,7 @@ const reducers = combineReducers({
 	placeOrder: placeOrderReducer,
 	viewOrder: viewOrderReducer,
 	mssr: mssrReducer,
+	distributor: distributorReducer
 });
 
 const rootReducer = (state, action) => {

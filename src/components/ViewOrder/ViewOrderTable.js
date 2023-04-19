@@ -46,18 +46,39 @@ function ViewOrderTable() {
 			navigate("/vieworder");
 		}
 	};
+// pagination 
+
+// const [postsPerPage, setPostsPerPage] = useState(10)
+// 	const showPagination = () => {
+// 		const { postsPerPage, data } = this.state;
+// 		const pageNumbers = [];
+// 		const totalPosts = data.length;
+   
+// 		for(let i = 1; i<=Math.ceil(totalPosts/postsPerPage); i++){
+// 		  pageNumbers.push(i)
+// 		}
+   
+// 		const pagination = (pageNumbers) => {
+// 		  this.setState({currentPage: pageNumbers})
+// 		}
+   
+// 		return(
+// 		  <nav>
+// 		  <ul className="pagination">
+// 		  {pageNumbers.map(number => (
+// 			<li key={number} className={this.state.currentPage === number ? 'page-item active' : 'page-item' }>
+// 			<button onClick={()=> pagination(number)} className="page-link"> {number} </button>
+// 			</li>
+// 		  ))}
+// 		  </ul>
+// 		  </nav>
+// 		)
+   
+   
+// 	  }
 
 	useEffect(() => {
 		//initialize datatable
-		// $(function () {
-		// 	$("#viewDataTable").dataTable({
-		// 		ordering: true,
-		// 		info: false,
-		// 		searching: true,
-		// 		lengthChange: false,
-		// 		paging: true,
-		// 	});
-		// });
 		if ($.fn.dataTable.isDataTable("#viewDataTable")) {
 			$("#viewDataTable").DataTable();
 		} else {
@@ -195,6 +216,9 @@ function ViewOrderTable() {
 								</tbody>
 							</table>
 							{/* <Pagenation /> */}
+							{/* <div style={{ float: 'right' }}>
+       {showPagination()}
+       </div> */}
 						</div>
 					</div>
 				</div>

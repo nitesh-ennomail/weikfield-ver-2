@@ -50,7 +50,7 @@ const Mssr = () => {
 						<div className="col-md-12">
 							<ol className="breadcrumb">
 								<li className="breadcrumb-item">
-									<a href="Dashboard.html">Dashboard</a>{" "}
+								<Link to="/dashboard">Dashboard</Link>
 								</li>
 								<li className="breadcrumb-item active">MSSR</li>
 							</ol>

@@ -57,19 +57,8 @@ const Dashboard = () => {
 		);
 	}, []);
 
-	// const getProduct = async () => {
-	// 	setLoading(true);
-	// 	await ProductService.getProduct().then((response) => {
-	// 		dispatch(setProducts(response));
-	// 		setData(response);
-	// 		console.log(response);
-	// 		setLoading(false);
-	// 	});
-	// };
-
 	const getOrderLines = async (item) => {
 		const { order_no } = item;
-		console.log("item ord_no", order_no);
 		// AXIOS WRAPPER FOR API CALL
 		await DashboardService.getOrderLines(userProfile, order_no).then(
 			(response) => {
@@ -78,14 +67,6 @@ const Dashboard = () => {
 		);
 		// AXIOS WRAPPER FOR API CALL
 	};
-
-	// const addOrder = async (item) => {
-	// 	await ProductService.addOrder(item).then((response) => {
-	// 		alert(`New Message with id ${response.id} created!`);
-	// 		console.log("submitted!", response);
-	// 		// dispatch(selectedProduct(response));
-	// 	});
-	// };
 
 	const getDashboard = async () => {
 		//AXIOS WRAPPER FOR API CALL
@@ -108,18 +89,19 @@ const Dashboard = () => {
 	};
 
 	const setStatus = async (item, id) => {
-		console.log(item.order_no);
+		let label = "";
+
+		{id === 0 ? label = "Remark for Approval" : label="Remark for Rejection"}
 		let order_no = item.order_no;
 		const { value: remark } = await Swal.fire({
 			input: "text",
-			inputLabel: "Remark",
+			inputLabel: `${label}`,
 			inputPlaceholder: "Please Enter Remark",
 		});
 		if (remark) {
 			await DashboardService.setStatus(userProfile, order_no, id, remark).then(
 				(response) => {
-					console.log("response setStatus", response);
-					Swal.fire(response.status);
+					Swal.fire(response.data.message);
 				}
 			);
 			getDashboard();
@@ -128,7 +110,6 @@ const Dashboard = () => {
 
 	const getModifyOrder = async (item) => {
 		dispatch(setSelectedOrder(item));
-		console.log("item", item);
 		navigate("/modifyorder");
 	};
 
@@ -145,34 +126,6 @@ const Dashboard = () => {
 	return (
 		<>
 			<Helmet title="Dashboard" />
-
-			{/* <div className="container">
-				<div className="row">
-					{products &&
-						products.map((item, index) => (
-							<div
-								key={index}
-								onClick={() => getProductDetails(item)}
-								className="col-6"
-								style={{ border: "2px solid #eee", textAlign: "center" }}>
-								{item.title}
-								<br />
-								<img src={item.image} height="120px" width="100px" />
-								<h2>
-									<a
-										href="#vieworderpop"
-										data-toggle="modal"
-										data-tooltip="tooltip"
-										title="View Order">
-										2022200001
-									</a>
-									{item.price}
-								</h2>
-							</div>
-						))}
-				</div>
-			</div> */}
-
 			<div className="content-wrapper">
 				<div className="container-fluid">
 					<div className="row">
@@ -204,14 +157,6 @@ const Dashboard = () => {
 								</div>
 							)}
 							<DashBoardTiles />
-
-							{/* <button
-								onClick={
-									() => getModifyOrder()
-									// navigate("/placeorder")
-								}>
-								getModifyOrder
-							</button> */}
 							<div className="card border-0 rounded-0 mb-3">
 								<div className="card-body">
 									{loading ? (
@@ -263,18 +208,7 @@ const Dashboard = () => {
 																{/* <th>ERP Ref No.</th> */}
 															</tr>
 														</thead>
-														{/* <tfoot>
-															<tr>
-																<th>Order No</th>
-																<th>Order Date</th>
-																<th>Customer Name</th>
-																<th>Order Qty</th>
-																<th>Order Amount</th>
-																<th>Invoice Qty</th>
-																<th>Invoice Amount</th>
-																<th>Status</th>
-															</tr>
-														</tfoot> */}
+													
 														<tbody>
 															{order_details &&
 																order_details.map((item, i) => (
@@ -351,29 +285,7 @@ const Dashboard = () => {
 																	</tr>
 																))}
 														</tbody>
-														{/* <tbody>
-													{products.map((item, index) => (
-														<tr key={index}>
-															<td>
-																<a
-																	href="#vieworderpop"
-																	data-toggle="modal"
-																	data-tooltip="tooltip"
-																	title="View Order">
-																	{item.id}
-																</a>
-															</td>
-															<td>08/02/2022</td>
-															<td>Gautam Foods</td>
-															<td>11</td>
-															<td>25257.25</td>
-															<td>5</td>
-															<td>25257.25</td>
-															<td>Waiting for approval</td>
-															<td>11021</td>
-														</tr>
-													))}
-												</tbody> */}
+													
 													</table>
 												</div>
 											)}
