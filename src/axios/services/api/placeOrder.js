@@ -11,6 +11,17 @@ function getOrderFilters(userProfile) {
 	});
 }
 
+// function getOrderFilters(userProfile) {
+// 	const getFilters = () => request({
+// 		url: `/placeOrder/getOrderFilters`,
+// 		method: "POST",
+// 		headers: {
+// 			"Content-Type": "application/json",
+// 			Authorization: `Bearer ${userProfile.token}`,
+// 		},
+// 	});
+// }
+
 function getOrderDetails({ userProfile, data }) {
 	return request({
 		url: `/placeOrder/getOrderDetails`,

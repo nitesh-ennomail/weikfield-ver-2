@@ -1,6 +1,7 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import PlaceOrderService from "../../axios/services/api/placeOrder";
 import {
 	setAddToCart,
@@ -211,16 +212,15 @@ const PlaceOrder = (props) => {
 		// AXIOS WRAPPER FOR API CALL
 	};
 
-	// useEffect(() => {
-	// 	if (addTocart.length === 0) {
-	// 		setShowSearchFilter("d-block");
-	// 		setShowSearchFilter(true);
-	// 		setShowOrderSummary("d-none");
-	// 		setShowPlaceOrder(false);
-	// 	}
-	// 	// window.scrollTo({ top: 0, behavior: "smooth" });
-	// }, [disableFilter, addTocart, orderData]);
-
+	useEffect(() => {
+		if (addTocart.length === 0) {
+			setShowSearchFilter("d-block");
+			setShowSearchFilter(true);
+			setShowOrderSummary("d-none");
+			setShowPlaceOrder(false);
+		}
+		// window.scrollTo({ top: 0, behavior: "smooth" });
+	}, [disableFilter, addTocart, orderData]);
 	const showFilterData = async (e) => {
 		e.preventDefault();
 		if (Object.keys(selectedPackType).length === 0) {
@@ -289,14 +289,7 @@ const PlaceOrder = (props) => {
 		} else {
 			navigate("/");
 		}
-		 if (addTocart.length === 0) {
-			setShowSearchFilter("d-block");
-			setShowSearchFilter(true);
-			setShowOrderSummary("d-none");
-			setShowPlaceOrder(false);
-		} 
-		
-	}, [userProfile, disableFilter, addTocart, orderData]);
+	}, []);
 
 	const addToCart = () => {
 		let currItemList = orderData.filter(function (el) {
@@ -485,6 +478,8 @@ const PlaceOrder = (props) => {
 
 	return (
 		<>
+			<Helmet title="Place Order" />
+
 			<div className="content-wrapper" ref={containerRef}>
 				<div className="container-fluid">
 					<div className="row">

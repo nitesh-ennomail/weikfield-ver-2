@@ -20,7 +20,6 @@ import { ActionTypes } from "../../../redux/constants/action-type";
 const client = axios.create({
 	baseURL: baseURL,
 });
-
 /**
  * Request Wrapper with default success/error actions
  */
