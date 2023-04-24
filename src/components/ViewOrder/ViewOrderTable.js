@@ -9,7 +9,7 @@ import { setSelectedOrder } from "../../redux/actions/placeOrderAction";
 import $ from "jquery";
 import Pagenation from "../../pages/pages/utils/Pagenation";
 
-function ViewOrderTable() {
+function ViewOrderTable({handleStatus}) {
 	const userProfile = useSelector((state) => state.userProfile);
 	const viewOrder = useSelector((state) => state.viewOrder);
 	const dispatch = useDispatch();
@@ -20,12 +20,11 @@ function ViewOrderTable() {
 		// AXIOS WRAPPER FOR API CALL
 		await DashboardService.getOrderLines(userProfile, order_no).then(
 			(response) => {
-				dispatch(setOrderLine(response.data.order_line_details, order));
+				dispatch(setOrderLine(response.data.data.order_line_details, order));
 			}
 		);
-		// AXIOS WRAPPER FOR API CALL
-
-		
+		// getViewOrderDetails()
+		// AXIOS WRAPPER FOR API CAL
 	};
 
 	const getModifyOrder = async (item) => {
@@ -44,7 +43,9 @@ function ViewOrderTable() {
 		if (remark) {
 			await DashboardService.setStatus(userProfile, order_no, id, remark).then(
 				(response) => {
-					Swal.fire(response.data.message);
+					Swal.fire(response.data.data.message);
+					handleStatus()
+					// window.location.reload(true)
 				}
 			);
 			navigate("/vieworder");

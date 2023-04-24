@@ -9,6 +9,8 @@ import {
 	setOrderDetails,
 	setOrderFilter,
 	setProductLine,
+	setSelectedDistributor,
+	setSelectedSalePerson,
 } from "../../redux/actions/placeOrderAction";
 
 import $ from "jquery";
@@ -36,7 +38,7 @@ const PlaceOrder = (props) => {
 	const { product_line_details } = productLine;
 	const { distributor_details, brand_details, pack_type_details } = orderFilter;
 	const { order_grid_details } = orderDetails;
-	const { addTocart } = placeOrder;
+	const { addTocart, selectedDistributer,selectedSalePerson } = placeOrder;
 	// Collecting data from Redux store Ends
 
 	// Assigning local variable
@@ -91,7 +93,9 @@ const PlaceOrder = (props) => {
 		//AXIOS WRAPPER FOR API CALL
 		await PlaceOrderService.getOrderFilters(userProfile).then((response) => {
 			//store response data in redux store
-			dispatch(setOrderFilter(response.data));
+			console.log(response);
+			// dispatch(setOrderFilter(response.data));
+			dispatch(setOrderFilter(response.data.data));
 		});
 		//AXIOS WRAPPER FOR API CALL
 	};
@@ -114,7 +118,7 @@ const PlaceOrder = (props) => {
 				{dispatch(setProductLine("null"))}
 				{await PlaceOrderService.getOrderDetails({ userProfile, data }).then(
 					(response) => {
-						dispatch(setOrderDetails(response.data));
+						dispatch(setOrderDetails(response.data.data));
 						setDisableFilter(false);
 					}
 				)}
@@ -183,7 +187,7 @@ const PlaceOrder = (props) => {
 		await PlaceOrderService.getProductLine({ userProfile, brand }).then(
 			(response) => {
 				//store response data in redux store
-				dispatch(setProductLine(response.data));
+				dispatch(setProductLine(response.data.data));
 			}
 		);
 		// AXIOS WRAPPER FOR API CALL
@@ -207,7 +211,7 @@ const PlaceOrder = (props) => {
 			productLine,
 		}).then((response) => {
 			//store response data in redux store
-			dispatch(setFlavour(response.data));
+			dispatch(setFlavour(response.data.data));
 		});
 		// AXIOS WRAPPER FOR API CALL
 	};
@@ -228,6 +232,9 @@ const PlaceOrder = (props) => {
 		} else if (Object.keys(selectedBrand).length === 0) {
 			return toast.error("You missed selecting Brand");
 		}
+
+		{dispatch(setSelectedDistributor(distributor?distributor:selectedDistributer))}
+		{dispatch(setSelectedSalePerson(salePerson?salePerson:selectedSalePerson))}
 
 		// Show filtered data based on packType, selectedBrand, selectedProductLine and selectedFlavour
 		let filterData = order_grid_details.filter(function (el) {
@@ -317,6 +324,8 @@ const PlaceOrder = (props) => {
 		if (addTocart.length === 1) {
 			setShowSearchFilter("d-block");
 			setShowPlaceOrder(false);
+			dispatch(setSelectedDistributor("null"));
+			dispatch(setSelectedSalePerson(""))
 		}
 		//Removing item from order summary based on selected portal_item_code
 		dispatch(
@@ -360,7 +369,6 @@ const PlaceOrder = (props) => {
 				object.target.maxLength
 			);
 		}
-
 		object.target.value =
 			!!object.target.value && Math.abs(object.target.value) >= 0
 				? Math.abs(object.target.value)
@@ -375,13 +383,9 @@ const PlaceOrder = (props) => {
 		const inputFieldQty1 = document.getElementById(
 			`quantityFieldId1-${item.portal_item_code}`
 		);
-		// console.log(inputFieldQty)
-		// console.log(inputFieldQty1);
-		// if (item.portal_reg_promo_flag === "N" && item.item_promo_flag === "Y") { RFG-8113002
 		if (
 			item.portal_reg_promo_flag === "Y" &&
 			item.item_promo_flag === "N"
-			//  && !showPromoModel
 		) {
 			Swal.fire({
 				title:
@@ -444,9 +448,11 @@ const PlaceOrder = (props) => {
 		// setShowPlaceOrder(false)
 		e.preventDefault();
 		setDisableConfirm(true);
+		let distributor = selectedDistributer ? selectedDistributer : distributor;
 		if (!distributor || !userProfile) {
 			toast.error(`Something went wrong, Please re-login`);
 		} else if (addTocart.length > 0) {
+			
 			addToCartTotal = getRoundOff(addToCartTotal, 2);
 			await PlaceOrderService.saveOrder({
 				userProfile,
@@ -456,17 +462,24 @@ const PlaceOrder = (props) => {
 				addTocart,
 			}).then((response) => {
 				{
-					response.data.error_code === "0"
+					response.data.data.error_code === "0"
 						? toast.success(
 								<span>
-									{`${response.data.message}-- ${response.data.order_no}`}
+									{`${response.data.data.message}-- ${response.data.data.order_no}`}
 								</span>,
 								{ duration: 4000 },
-								dispatch(setAddToCart([]), navigate("/dashboard"))
+								dispatch(setAddToCart([]),
+
+								dispatch(setSelectedDistributor("null")),
+
+								dispatch(setSelectedSalePerson("")),
+								
+								
+								navigate("/dashboard"))
 						  )
 						: toast.error(
 								<span>
-									{`${response.data.message}-- ${response.data.add_message}`}
+									{`${response.data.data.message}-- ${response.data.data.add_message}`}
 								</span>
 						  );
 				}
@@ -537,6 +550,10 @@ const PlaceOrder = (props) => {
 																		// disabled={
 																		// 	disableFilter || !disableAddToCart
 																		// }
+
+																		disabled={
+																			selectedDistributer!="null"
+																		}
 																		onChange={(e) =>
 																			getOrderDetails(
 																				JSON.parse(e.target.value)
@@ -544,7 +561,7 @@ const PlaceOrder = (props) => {
 																		}
 																		required>
 																		<option value={JSON.stringify("")}>
-																			Show All
+																			{selectedDistributer != "null" ? `${selectedDistributer.customer_name} - ${selectedDistributer.customer_code}` : "Show All"}
 																		</option>
 																		{distributor_details &&
 																			distributor_details.map((data, index) => (
@@ -579,7 +596,7 @@ const PlaceOrder = (props) => {
 																		type="text"
 																		name="SalePerson"
 																		className="form-control"
-																		defaultValue={salePerson}
+																		defaultValue={selectedSalePerson ? selectedSalePerson : salePerson}
 																		readOnly={true}
 																	/>
 																</div>
@@ -817,7 +834,7 @@ const PlaceOrder = (props) => {
 																onClick={(e) => (
 																	showFilterData(e), setDisableFilter(false)
 																)}
-																disabled={disableFilter || salePerson === null}
+																disabled={disableFilter}
 																type="button"
 																className="btn btn-primary btn-md ml-2"
 																data-toggle="collapse"
@@ -912,7 +929,7 @@ const PlaceOrder = (props) => {
 																					<td className="font12">
 																						<input
 																							disabled={
-																								item.portal_billing_price == 0
+																								item.portal_billing_price == 0 || item.sap_block_flag !=0
 																									? true
 																									: false
 																							}
@@ -1003,7 +1020,7 @@ const PlaceOrder = (props) => {
 													{orderData.map((item, index) => (
 														<div className="cart-prod-div" key={index}>
 															<div className="cart-prod-title">
-																{item.portal_item_code} - ({item.portal_mrp})
+																<span className="text-danger">{item.portal_item_code}</span> - ({item.portal_mrp})
 																<span className="pl-2">
 																	{item.flag_color === "R" ? (
 																		<i className="fas fa-flag text-danger mr-2"></i>
@@ -1071,7 +1088,7 @@ const PlaceOrder = (props) => {
 																	style={{ float: "right" }}>
 																	<input
 																		disabled={
-																			item.portal_billing_price == 0
+																			item.portal_billing_price == 0 || item.sap_block_flag !=0
 																				? true
 																				: false
 																		}

@@ -20,9 +20,9 @@ const Login = () => {
 	const authUser = async (data) => {
 		//AXIOS WRAPPER FOR API CALL
 		await AuthService.addUser(data).then((response) => {
-			dispatch(setToken(response.token));
-			AuthService.getUserType(response.token).then((resp) => {
-				dispatch(setUserType(resp.data[0].usertype));
+			dispatch(setToken(response.data.token));
+			AuthService.getUserType(response.data.token).then((resp) => {
+				dispatch(setUserType(resp.data.data[0].usertype));
 			});
 		});
 		//AXIOS WRAPPER FOR API CALL

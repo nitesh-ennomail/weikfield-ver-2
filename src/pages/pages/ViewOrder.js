@@ -20,22 +20,24 @@ const ViewOrder = () => {
 	const getViewOrderChannelFilter = async () => {
 		await ViewOrderService.getViewOrderChannelFilter(userProfile).then(
 			(response) => {
-				setChannel(response.data.channel_details);
+				setChannel(response.data.data.channel_details);
 			}
 		);
 	};
 
-	
+	const handleStatus = async()=>{
+		getViewOrderChannelFilter()
+	} 
 
 	useEffect(() => {
 		if (userProfile.usertype !== "null") {
-			getViewOrderChannelFilter();
 			dispatch(setViewOrderFilter(null));
+			getViewOrderChannelFilter();
 		} else {
 			navigate("/");
 		}
 		// getOrderFilters();
-	}, [userProfile]);
+	}, []);
 
 	return (
 		<>
@@ -57,12 +59,11 @@ const ViewOrder = () => {
 								</div>
 							</div>
 							{channel && <SearchBar channel={channel} /> }
-							<ViewOrderTable />
+							<ViewOrderTable handleStatus={getViewOrderChannelFilter}/>
 						</div>
 					</div>
 				</div>
 			</div>
-			{/* <ViewOrderModel /> */}
 			<DashBoardModel id="vieworderpop" />
 		</>
 	);

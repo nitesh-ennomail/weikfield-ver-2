@@ -28,6 +28,22 @@ export const setFlavour = (data) => {
 	};
 };
 
+export const setSelectedDistributor = (data) => {
+	localStorage.setItem("selectedDistributer", JSON.stringify(data));
+	return {
+		type: ActionTypes.SET_SELECTED_DISTRIBUTOR,
+		payload: data,
+	};
+};
+
+export const setSelectedSalePerson = (name) => {
+	localStorage.setItem("selectedSalePerson", name);
+	return {
+		type: ActionTypes.SET_SELECTED_SALE_PERSON,
+		payload: name,
+	};
+};
+
 export const setAddToCart = (product) => {
 	localStorage.setItem("cartItem", JSON.stringify(product));
 	return {

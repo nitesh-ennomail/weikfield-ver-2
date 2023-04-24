@@ -12,7 +12,7 @@ function getOrderFilters(userProfile) {
 }
 
 // function getOrderFilters(userProfile) {
-// 	const getFilters = () => request({
+// 	return axiosPrivate({
 // 		url: `/placeOrder/getOrderFilters`,
 // 		method: "POST",
 // 		headers: {

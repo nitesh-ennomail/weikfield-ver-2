@@ -8,9 +8,9 @@
  */
 
 import axios from "axios";
-import { baseURL } from "../../shared/constants";
 import Swal from "sweetalert2";
 import toast, { Toaster } from "react-hot-toast";
+import { baseURL } from "../constants";
 import store from "../../../redux/store";
 import { ActionTypes } from "../../../redux/constants/action-type";
 
@@ -24,25 +24,52 @@ const client = axios.create({
  * Request Wrapper with default success/error actions
  */
 
-function updateAccessToken() {
-	let token = JSON.parse(localStorage.getItem("token"));
+// function updateAccessToken() {
+// 	let token = JSON.parse(localStorage.getItem("token"));
+// 	let stored_username = localStorage.getItem("username");
+// 	let stored_password = localStorage.getItem("password");
+// 	return request({
+// 		url: `/refreshToken/?username=${stored_username}&password=${stored_password}`,
+// 		method: "GET",
+// 		headers: {
+// 			Authorization: `Bearer ${token}`,
+// 			isRefreshToken: "true",
+// 		},
+// 	});
+// }
+
+///////////////////////
+
+// Function to refresh the access token using the refresh token
+let accessToken = '';
+async function refreshAccessToken() {
+    let token = JSON.parse(localStorage.getItem("token"));
 	let stored_username = localStorage.getItem("username");
 	let stored_password = localStorage.getItem("password");
-	return request({
-		url: `/refreshToken/?username=${stored_username}&password=${stored_password}`,
-		method: "GET",
-		headers: {
+    try {
+      const response = await axios.get(`${baseURL}/refreshToken/?username=${stored_username}&password=${stored_password}`, {
+        headers: {
 			Authorization: `Bearer ${token}`,
 			isRefreshToken: "true",
-		},
-	});
-}
+		}
+      });
+      accessToken = response.data.token;
+      localStorage.setItem("token", JSON.stringify(response.data.token))
+      store.dispatch({
+					type: ActionTypes.SET_TOKEN,
+					payload: response.data.token,
+				});
+    } catch (err) {
+      console.error(err);
+      throw err;
+    }
+  }
 
 const request = function (options) {
 	const onSuccess = function (response) {
 		// toast.success("response.data.message");
 		// console.debug("Request Successful!", response);
-		return response.data;
+		return response;
 	};
 
 	const onError = async function (error) {
@@ -56,12 +83,21 @@ const request = function (options) {
 				window.location.replace("/partner/");
 				// window.location.replace("/");
 			} else if (error.response.data.status === 501) {
-				const newUserToken = await updateAccessToken();
-				localStorage.setItem("token", JSON.stringify(newUserToken.token));
-				store.dispatch({
-					type: ActionTypes.SET_TOKEN,
-					payload: newUserToken.token,
-				});
+				// const newUserToken = await updateAccessToken();
+				// localStorage.setItem("token", JSON.stringify(newUserToken.token));
+				// store.dispatch({
+				// 	type: ActionTypes.SET_TOKEN,
+				// 	payload: newUserToken.token,
+				// });
+
+                /////////////////////////////////////
+                const originalRequest = error.config;
+                return refreshAccessToken().then(() => {
+                    originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+                    return axios(originalRequest);
+                  });
+                /////////////////////////
+
 			} else if (error.response.data.status === 502) {
 				localStorage.clear();
 				window.location.replace("/partner/");

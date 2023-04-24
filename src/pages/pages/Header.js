@@ -1,18 +1,79 @@
 import { click } from "@testing-library/user-event/dist/click";
 import React, { Component, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { sortMenuFunction } from "./utils/sortMenu";
 
 import { setMenu } from "../../redux/actions/menuAction";
+import Swal from "sweetalert2";
+import { setAddToCart, setSelectedDistributor, setSelectedSalePerson } from "../../redux/actions/placeOrderAction";
 
 const Header = (props) => {
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
+
 	const ref = useRef(null);
 
 	const dashboard = useSelector((state) => state.dashboard.dashboard);
 
+	const addTocart = useSelector((state) => state.placeOrder.addTocart);
+
 	const { menu_details, profile_details } = dashboard;
+
+	const showPopUp = async() =>{
+		// await Swal.fire({
+		// 	title: 'Are you sure?',
+		// 	text: "You won't be able to revert this!",
+		// 	icon: 'warning',
+		// 	showCancelButton: true,
+		// 	confirmButtonColor: '#3085d6',
+		// 	cancelButtonColor: '#d33',
+		// 	confirmButtonText: 'Yes, delete it!',
+		// 	denyButtonText: `Don't save`,
+		//   }).then((result) => {
+		// 	if (result.isConfirmed) {
+		// 	  Swal.fire(
+		// 		'Deleted!',
+		// 		'Your file has been deleted.',
+		// 		'success'
+		// 	  )
+		// 	  dispatch(setAddToCart([]))
+		// 	}
+
+		// 	else if (result.isDenied) {
+		// 		Swal.fire('Changes are not saved', '', 'info')
+		// 	  }
+
+		//   })
+
+
+		  ////////////////
+
+		  Swal.fire({
+			title: 'OOPS! You will loose CART data,Press Exit to come out or Cancel to be in Place Order',
+			showDenyButton: true,
+			// showCancelButton: true,
+			confirmButtonText: 'Exit',
+			denyButtonText: `Cancle`,
+		  }).then((result) => {
+			/* Read more about isConfirmed, isDenied below */
+			if (result.isConfirmed) {
+			  Swal.fire('Item removed from cart', '', 'success')
+
+			  dispatch(setAddToCart([]));
+			  dispatch(setSelectedDistributor("null"));
+			  dispatch(setSelectedSalePerson(""));
+
+			} else if (result.isDenied) {
+				window.history.back();
+			//   navigate('/placeorder')
+			}
+		  })
+
+
+
+		console.log(window.location.pathname)
+	}
 
 	const toggleClass = () => {
 		if (ref.current.classList.contains("show")) {
@@ -21,11 +82,23 @@ const Header = (props) => {
 			console.log();
 		}
 	};
+	
+
+
+	useEffect(() => {
+		if (addTocart.length>0 && window.location.pathname !== '/placeorder') {
+			showPopUp()
+		} else {
+			return
+		}
+	},[window.location.pathname]);
 
 	return (
 		<nav
 			className="navbar navbar-expand-lg navbar-dark bg-light fixed-top"
 			id="mainNav">
+
+				{console.log(addTocart)}
 			<Link className="navbar-brand" to="/dashboard">
 				<img src="assets/images/Weikfield-Logo.svg" title="Logo" height="56" />
 			</Link>

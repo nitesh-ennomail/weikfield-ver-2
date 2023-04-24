@@ -48,14 +48,14 @@ function SearchBar({ channel }) {
 		setDistributor(0);
 		await ViewOrderService.getViewOrderFilter(userProfile, channel).then(
 			(response) => {
-				setOrderStatus(response.data.order_status);
-				setDistributor(response.data.distributor_details);
+				setOrderStatus(response.data.data.order_status);
+				setDistributor(response.data.data.distributor_details);
 				// dispatch(setViewOrderFilter(response.data));
 			}
 		);
 	};
 
-	const getViewOrderDetails = async () => {
+ const getViewOrderDetails = async () => {
 		const fromData = convert(startDate);
 		const toDate = convert(endDate);
 		await ViewOrderService.getViewOrderDetails(
@@ -67,18 +67,8 @@ function SearchBar({ channel }) {
 			selectedOrderStatus,
 			userId
 		).then((response) => {
-			dispatch(setViewOrderFilter(response.data.order_details));
+			dispatch(setViewOrderFilter(response.data.data.order_details));
 		});
-		// //initialize datatable
-		// $(function () {
-		// 	$("#viewDataTable").dataTable({
-		// 		ordering: true,
-		// 		info: false,
-		// 		searching: true,
-		// 		lengthChange: false,
-		// 		paging: true,
-		// 	});
-		// });
 	};
 
 	const handleSubmit = (e) => {

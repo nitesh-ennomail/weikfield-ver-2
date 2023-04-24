@@ -62,7 +62,7 @@ const Dashboard = () => {
 		// AXIOS WRAPPER FOR API CALL
 		await DashboardService.getOrderLines(userProfile, order_no).then(
 			(response) => {
-				dispatch(setOrderLine(response.data.order_line_details, item));
+				dispatch(setOrderLine(response.data.data.order_line_details, item));
 			}
 		);
 		// AXIOS WRAPPER FOR API CALL
@@ -72,7 +72,7 @@ const Dashboard = () => {
 		//AXIOS WRAPPER FOR API CALL
 		setLoading(true);
 		await DashboardService.getDashboardDetails(userProfile).then((response) => {
-			dispatch(setDashboard(response.data));
+			dispatch(setDashboard(response.data.data));
 			setLoading(false);
 		});
 		//initialize datatable
@@ -101,7 +101,7 @@ const Dashboard = () => {
 		if (remark) {
 			await DashboardService.setStatus(userProfile, order_no, id, remark).then(
 				(response) => {
-					Swal.fire(response.data.message);
+					Swal.fire(response.data.data.message);
 				}
 			);
 			getDashboard();
@@ -121,7 +121,7 @@ const Dashboard = () => {
 		} else {
 			navigate("/");
 		}
-	}, [userProfile]);
+	}, []);
 
 	return (
 		<>

@@ -61,15 +61,15 @@ function SearchBarMssr() {
 		} else {
 			await MssrService.getMssrList(userProfile, dist.customer_code).then(
 				(response) => {
-					console.log("getMssrList", response.data.mssr_line_details);
-					dispatch(setMssrList(response.data.mssr_line_details));
+					console.log("getMssrList", response.data.data.mssr_line_details);
+					dispatch(setMssrList(response.data.data.mssr_line_details));
 				}
 			);
 
 			await MssrService.getInvoices(userProfile, dist.customer_code).then(
 				(response) => {
-					console.log("getInvoices", response.data.invoice_details);
-					dispatch(setInvoices(response.data.invoice_details));
+					console.log("getInvoices", response.data.data.invoice_details);
+					dispatch(setInvoices(response.data.data.invoice_details));
 				}
 			);
 		}
@@ -94,7 +94,7 @@ function SearchBarMssr() {
 		dispatch(setProductLine(null));
 		await MssrService.getProductLine({ userProfile, brand }).then(
 			(response) => {
-				dispatch(setProductLine(response.data.product_line_details));
+				dispatch(setProductLine(response.data.data.product_line_details));
 			}
 		);
 		// AXIOS WRAPPER FOR API CALL
@@ -109,7 +109,7 @@ function SearchBarMssr() {
 			productLine,
 		}).then((response) => {
 			//store response data in redux store
-			dispatch(setFlavour(response.data.flavour_details));
+			dispatch(setFlavour(response.data.data.flavour_details));
 		});
 		// AXIOS WRAPPER FOR API CALL
 	};

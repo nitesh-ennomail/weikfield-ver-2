@@ -16,16 +16,19 @@ function DashBoardModel({ id }) {
 	const orderLine = useSelector((state) => state.dashboard.orderLine.products);
 	const orderDetail = useSelector((state) => state.dashboard.orderLine.ord);
 	const setStatus = async (item, id) => {
+		let label = "";
+		{id === 0 ? label = "Remark for Approval" : label="Remark for Rejection"}
 		let order_no = item.order_no;
 		const { value: remark } = await Swal.fire({
 			input: "text",
-			inputLabel: "Remark",
+			inputLabel: `${label}`,
 			inputPlaceholder: "Please Enter Remark",
 		});
 		if (remark) {
 			await DashboardService.setStatus(userProfile, order_no, id, remark).then(
 				(response) => {
-					Swal.fire(response.status);
+					// Swal.fire(response.status);
+					Swal.fire(response.data.data.message);
 				}
 			);
 		}

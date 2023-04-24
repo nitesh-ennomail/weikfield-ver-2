@@ -18,19 +18,19 @@ const Mssr = () => {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const userProfile = useSelector((state) => state.userProfile);
-	const getSearchFilter = async () => {
+	const getSearchFilter =  () => {
 		dispatch(setMssrList(null));
 		dispatch(setMssrFilterList(null));
-		await MssrService.getDistributors(userProfile).then((response) => {
-			dispatch(setDistributors(response.data.distributor_details));
+		 MssrService.getDistributors(userProfile).then((response) => {
+			dispatch(setDistributors(response.data.data.distributor_details));
 		});
 
-		await MssrService.getBrands(userProfile).then((response) => {
-			dispatch(setBrands(response.data.brand_details));
+		 MssrService.getBrands(userProfile).then((response) => {
+			dispatch(setBrands(response.data.data.brand_details));
 		});
 
-		await MssrService.getPackDetails(userProfile).then((response) => {
-			dispatch(setPackDetails(response.data.pack_type_details));
+		 MssrService.getPackDetails(userProfile).then((response) => {
+			dispatch(setPackDetails(response.data.data.pack_type_details));
 		});
 	};
 
@@ -40,7 +40,7 @@ const Mssr = () => {
 		} else {
 			navigate("/");
 		}
-	}, [userProfile]);
+	}, []);
 	return (
 		<>
 			<Helmet title="MSSR" />
