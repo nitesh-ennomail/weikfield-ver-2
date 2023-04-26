@@ -385,7 +385,8 @@ const PlaceOrder = (props) => {
 		);
 		if (
 			item.portal_reg_promo_flag === "Y" &&
-			item.item_promo_flag === "N"
+			item.item_promo_flag === "N" && 
+			e.target.value > 0
 		) {
 			Swal.fire({
 				title:
