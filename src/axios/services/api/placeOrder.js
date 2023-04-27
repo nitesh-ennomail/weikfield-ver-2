@@ -11,17 +11,6 @@ function getOrderFilters(userProfile) {
 	});
 }
 
-// function getOrderFilters(userProfile) {
-// 	return axiosPrivate({
-// 		url: `/placeOrder/getOrderFilters`,
-// 		method: "POST",
-// 		headers: {
-// 			"Content-Type": "application/json",
-// 			Authorization: `Bearer ${userProfile.token}`,
-// 		},
-// 	});
-// }
-
 function getOrderDetails({ userProfile, data }) {
 	return request({
 		url: `/placeOrder/getOrderDetails`,

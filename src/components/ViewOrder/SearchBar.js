@@ -67,6 +67,7 @@ function SearchBar({ channel }) {
 			selectedOrderStatus,
 			userId
 		).then((response) => {
+			console.log("response", response)
 			dispatch(setViewOrderFilter(response.data.data.order_details));
 		});
 	};

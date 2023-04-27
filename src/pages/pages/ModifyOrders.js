@@ -68,23 +68,24 @@ const ModifyOrders = (props) => {
 
 	useEffect(() => {
 		if (userProfile.usertype !== "null") {
-			dispatch(setOrderDetails("null"));
-			dispatch(setAddToCart([]));
-			setSelectedPackType("");
-			setSelectedBrand({});
-			dispatch(setProductLine("null"));
-			dispatch(setFlavour("null"));
-			setOrderData([]);
+			// dispatch(setOrderDetails("null"));
+			// dispatch(setAddToCart([]));
+			// setSelectedPackType("");
+			// setSelectedBrand({});
+			// dispatch(setProductLine("null"));
+			// dispatch(setFlavour("null"));
+			// setOrderData([]);
 			window.scrollTo({ top: 0, behavior: "smooth" });
-			getOrderFilters();
-
+			getModifyOrderDetails();
+			// getOrderFilters();
 			// setShowOrderSummary("d-block");
 			// // setShowSearchFilter("d-block");
 			// setShowPlaceOrder(true);
 		} else {
 			navigate("/");
 		}
-	}, [userProfile]);
+
+	}, []);
 
 	const handlePackType = (e) => {
 		{
@@ -118,7 +119,7 @@ const ModifyOrders = (props) => {
 			setShowPlaceOrder(true);
 		}
 	};
-	const getOrderFilters = async () => {
+	const getModifyOrderDetails = async () => {
 		setCartLoading(true);
 		await PlaceOrderService.getModifyOrderDetails({
 			userProfile,
@@ -126,12 +127,16 @@ const ModifyOrders = (props) => {
 		}).then((response) => {
 			const key = "portal_item_code";
 			const order_grid_details_UniqueByKey = getUniqueByKey(
-				response.data.order_grid_details,
+				response.data.data.order_grid_details,
 				key
 			);
-			let order_details = response.data.order_details;
+			let order_details = response.data.data.order_details;
 			let data = { order_grid_details_UniqueByKey, order_details };
 			dispatch(setOrderDetails(data));
+			let brand_details = response.data.data.brand_details;
+			let pack_type_details = response.data.data.pack_type_details;
+			let orderFilter = {brand_details,pack_type_details}
+			dispatch(setOrderFilter(orderFilter));
 			let cartCount = dispatch(
 				setAddToCart(
 					order_grid_details_UniqueByKey.filter(function (el) {
@@ -139,25 +144,8 @@ const ModifyOrders = (props) => {
 					})
 				)
 			);
-
-			// setShowOrderSummary("d-block");
-			// // setShowSearchFilter("d-block");
-			// setShowPlaceOrder(true);
-			// setCartLoading(false);
 			checkCartData(cartCount);
-
-			// setOrderData(
-			// 	order_grid_details_UniqueByKey.filter(function (el) {
-			// 		return el.pp_ordered_qty === "0.0";
-			// 	})
-			// );
 		});
-
-		//AXIOS WRAPPER FOR API CALL
-		await PlaceOrderService.getOrderFilters(userProfile).then((response) => {
-			dispatch(setOrderFilter(response.data));
-		});
-		//AXIOS WRAPPER FOR API CALL
 	};
 
 	const getProductLine = async (brand) => {
@@ -171,7 +159,7 @@ const ModifyOrders = (props) => {
 		await PlaceOrderService.getProductLine({ userProfile, brand }).then(
 			(response) => {
 				//store response data in redux store
-				dispatch(setProductLine(response.data));
+				dispatch(setProductLine(response.data.data));
 			}
 		);
 		// AXIOS WRAPPER FOR API CALL
@@ -195,7 +183,7 @@ const ModifyOrders = (props) => {
 			productLine,
 		}).then((response) => {
 			//store response data in redux store
-			dispatch(setFlavour(response.data));
+			dispatch(setFlavour(response.data.data));
 		});
 		// AXIOS WRAPPER FOR API CALL
 	};
@@ -428,17 +416,17 @@ const ModifyOrders = (props) => {
 				selectedOrder,
 			}).then((response) => {
 				{
-					response.data.error_code === "0"
+					response.data.data.error_code === "0"
 						? toast.success(
 								<span>
-									{`${response.data.message}-- ${response.data.order_no}`}
+									{`${response.data.data.message}-- ${response.data.data.order_no}`}
 								</span>,
 								{ duration: 4000 },
 								dispatch(setAddToCart([]), navigate("/dashboard"))
 						  )
 						: toast.error(
 								<span>
-									{`${response.data.message}-- ${response.data.add_message}`}
+									{`${response.data.data.message}-- ${response.data.data.add_message}`}
 								</span>
 						  );
 				}
@@ -463,52 +451,7 @@ const ModifyOrders = (props) => {
 							</ol>
 						</div>
 					</div>
-					{/* <SearchFilter
-						showSearchFilter={showSearchFilter}
-						getOrderDetails={getOrderDetails}
-						distributor_details={distributor_details}
-						salePerson={salePerson}
-						pack_type_details={pack_type_details}
-						disableFilter={disableFilter}
-						disableAddToCart={disableAddToCart}
-						selectedPackType={selectedPackType}
-						getProductLine={getProductLine}
-						brand_details={brand_details}
-						selectedBrand={selectedBrand}
-						getFlavour={getFlavour}
-						product_line_details={product_line_details}
-						setSelectedFlavour={setSelectedFlavour}
-						flavour_details={flavour_details}
-						showFilterData={showFilterData}
-						handlePackType={handlePackType}
-						setDisableFilter={setDisableFilter}
-						setDisableAddToCart={setDisableAddToCart}
-						setOrderData={setOrderData}
-						orderData={orderData}
-						loading={loading}
-						cartTotalQty={cartTotalQty}
-						cartTotal={cartTotal}
-						inputRef1={inputRef1}
-						maxLengthCheck={maxLengthCheck}
-						handleQty={handleQty}
-						selectedProductLine={selectedProductLine}
-						selectedFlavour={selectedFlavour}
-						addToCart={addToCart}
-						empty={empty}
-						addTocart={addTocart}
-						showOrderSummary={showOrderSummary}
-						addToCartQty={addToCartQty}
-						addToCartTotal={addToCartTotal}
-						removeFromCart={removeFromCart}
-						handleQtyInCart={handleQtyInCart}
-						saveOrder={saveOrder}
-						disableConfirm={disableConfirm}
-						setShowOrderSummary={setShowOrderSummary}
-						setShowSearchFilter={setShowSearchFilter}
-						setShowPlaceOrder={setShowPlaceOrder}
-					/>
-
-					 */}
+					
 					<div className="row">
 						<div
 							className="col-md-8 collapse show"

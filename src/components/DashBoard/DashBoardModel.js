@@ -38,7 +38,7 @@ function DashBoardModel({ id }) {
 		await PlaceOrderService.getModifyOrderDetails({
 			userProfile,
 		}).then((response) => {
-			dispatch(setOrderDetails(response.data.order_grid_details));
+			dispatch(setOrderDetails(response.data.data.order_grid_details));
 			navigate("/modifyorder");
 		});
 	};
