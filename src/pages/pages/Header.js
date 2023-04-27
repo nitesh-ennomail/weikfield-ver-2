@@ -21,45 +21,16 @@ const Header = (props) => {
 	const { menu_details, profile_details } = dashboard;
 
 	const showPopUp = async() =>{
-		// await Swal.fire({
-		// 	title: 'Are you sure?',
-		// 	text: "You won't be able to revert this!",
-		// 	icon: 'warning',
-		// 	showCancelButton: true,
-		// 	confirmButtonColor: '#3085d6',
-		// 	cancelButtonColor: '#d33',
-		// 	confirmButtonText: 'Yes, delete it!',
-		// 	denyButtonText: `Don't save`,
-		//   }).then((result) => {
-		// 	if (result.isConfirmed) {
-		// 	  Swal.fire(
-		// 		'Deleted!',
-		// 		'Your file has been deleted.',
-		// 		'success'
-		// 	  )
-		// 	  dispatch(setAddToCart([]))
-		// 	}
-
-		// 	else if (result.isDenied) {
-		// 		Swal.fire('Changes are not saved', '', 'info')
-		// 	  }
-
-		//   })
-
-
-		  ////////////////
-
 		  Swal.fire({
 			title: 'OOPS! You will loose CART data,Press Exit to come out or Cancel to be in Place Order',
 			showDenyButton: true,
 			// showCancelButton: true,
 			confirmButtonText: 'Exit',
-			denyButtonText: `Cancle`,
+			denyButtonText: `Cancel`,
 		  }).then((result) => {
 			/* Read more about isConfirmed, isDenied below */
 			if (result.isConfirmed) {
 			  Swal.fire('Item removed from cart', '', 'success')
-
 			  dispatch(setAddToCart([]));
 			  dispatch(setSelectedDistributor("null"));
 			  dispatch(setSelectedSalePerson(""));
@@ -69,10 +40,21 @@ const Header = (props) => {
 			//   navigate('/placeorder')
 			}
 		  })
-
-
-
 		console.log(window.location.pathname)
+	}
+
+	const showPopUps = (path) =>{
+		if(path === '/modifyorder'){
+			dispatch(setAddToCart([]));
+			  dispatch(setSelectedDistributor("null"));
+			  dispatch(setSelectedSalePerson(""));
+			return
+		}else if(path !=='placeorder' && path !== '/modifyorder' && addTocart.length>0){
+			showPopUp()
+		}
+		else{
+			return
+		}
 	}
 
 	const toggleClass = () => {
@@ -85,13 +67,26 @@ const Header = (props) => {
 	
 
 
-	useEffect(() => {
-		if (addTocart.length>0 && window.location.pathname !== '/placeorder') {
-			showPopUp()
-		} else {
-			return
-		}
-	},[window.location.pathname]);
+	// useEffect(() => {
+	// 	if (addTocart.length>0 && window.location.pathname !== '/placeorder' && window.location.pathname !== '/modifyorder') {
+	// 		showPopUp()
+	// 	} else {
+	// 		return
+	// 	}
+	// },[window.location.pathname]);
+
+
+	// useEffect(() => {
+	// 	if(window.location.pathname === '/modifyorder'){
+	// 		alert(window.location.pathname)
+	// 	}else if(addTocart.length>0 && window.location.pathname !== '/placeorder'){
+	// 		showPopUp()
+	// 	}else{
+	// 		return
+	// 	}
+	// },[window.location.pathname]);
+
+
 
 	return (
 		<nav
@@ -135,7 +130,7 @@ const Header = (props) => {
 								data-toggle="tooltip"
 								data-placement="right"
 								title={item.menu_display_name}>
-								<Link className="nav-link" to={item.menu_href}>
+								<Link className="nav-link" to={item.menu_href} onClick={() => showPopUps(window.location.pathname)}>
 									<i className={`fa fa-fw ${item.menu_icon}`}></i>
 									<span className="nav-link-text">
 										{" "}

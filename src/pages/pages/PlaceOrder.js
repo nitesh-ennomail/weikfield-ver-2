@@ -392,8 +392,6 @@ const PlaceOrder = (props) => {
 								: data
 						)
 					);
-					// console.log("input value after click :", orderData);
-					// Swal.fire("Saved!", "", "success");
 				} else if (result.isDenied) {
 					Swal.fire("Changes are not saved", "", "info");
 				}
@@ -1054,7 +1052,10 @@ const PlaceOrder = (props) => {
                           {orderData.map((item, index) => (
                             <div className="cart-prod-div" key={index}>
                               <div className="cart-prod-title">
-                                <span className="text-danger">
+
+                                {/* <span className="text-danger"> */}
+                                <span className={item.sap_block_flag == "1" ? "text-danger" : ""}>
+
                                   {item.portal_item_code}
                                 </span>{" "}
                                 - ({item.portal_mrp})
