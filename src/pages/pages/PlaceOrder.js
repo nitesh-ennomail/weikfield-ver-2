@@ -932,7 +932,7 @@ const PlaceOrder = (props) => {
                                         item.item_qty),
                                       (
                                         <tr key={index}>
-                                          <td className="font12">
+                                          <td className={item.sap_block_flag == "1" ? "text-danger font12" : "font12"}>
                                             {item.portal_item_code}
                                           </td>
                                           <td className="font12">
