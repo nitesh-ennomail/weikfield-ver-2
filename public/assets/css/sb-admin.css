@@ -1426,6 +1426,10 @@ table.table-bordered.dataTable, table.table-bordered.dataTable th {
 nav.navbar {
 	box-shadow: 0 0 10px rgb(34 41 47 / 30%);
 }
+ul.pagination {
+	justify-content: end !important;
+	margin-bottom: 15px !important;
+}
 @media (max-width: 768px) {
 .dataTables_length select.form-control {
 	margin-left: 15px;

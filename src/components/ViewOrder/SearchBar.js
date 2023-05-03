@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ViewOrderService from "../../axios/services/api/viewOrder";
-import { setViewOrderFilter } from "../../redux/actions/viewOrderAction";
+import { selectedPagesNumber, setViewOrderFilter, setViewOrderTotalPages, setViewOrderTotalRecord } from "../../redux/actions/viewOrderAction";
 import DatePicker from "react-datepicker";
 import { convert } from "../../pages/pages/utils/dateConverter";
 import $ from "jquery";
@@ -19,6 +19,9 @@ function SearchBar({ channel }) {
 	const userId = useSelector(
 		(state) => state.dashboard.dashboard.profile_details.user_id
 	);
+
+	const viewOrder = useSelector((state) => state.viewOrder);
+	const { viewOrderFilter, viewOrderTotalPages, selectedPage} = viewOrder;
 
 	const [startDate, setStartDate] = useState(firstDay);
 	const [endDate, setEndDate] = useState(new Date());
@@ -58,6 +61,7 @@ function SearchBar({ channel }) {
  const getViewOrderDetails = async () => {
 		const fromData = convert(startDate);
 		const toDate = convert(endDate);
+		let selectedPageN = selectedPage *10;
 		await ViewOrderService.getViewOrderDetails(
 			userProfile,
 			selectedChannel,
@@ -65,17 +69,28 @@ function SearchBar({ channel }) {
 			fromData,
 			toDate,
 			selectedOrderStatus,
-			userId
+			userId,
+			selectedPageN
 		).then((response) => {
 			console.log("response", response)
 			dispatch(setViewOrderFilter(response.data.data.order_details));
+			dispatch(setViewOrderTotalRecord(response.data.data.total_record_count));
+			{response.data.data.total_record_count > 10 ?
+			dispatch(setViewOrderTotalPages(Math.ceil((response.data.data.total_record_count)/10))):
+			dispatch(setViewOrderTotalPages(0));
+			}
 		});
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+		dispatch(selectedPagesNumber(0));
 		getViewOrderDetails();
 	};
+
+	useEffect(() => {
+		getViewOrderDetails()
+	}, [selectedPage]);
 
 	return (
 		<div className="row mb-3">
@@ -189,22 +204,6 @@ function SearchBar({ channel }) {
 												</label>
 											</div>
 											<div className="col-md-8">
-												{/* <input
-													type="text"
-													name="dateTo"
-													className="form-control datepicker"
-													placeholder="To Date"
-													autoFocus
-												/> */}
-
-												{/* <DatePicker
-													minDate={fromDate}
-													name="dateFrom"
-													className="form-control datepicker"
-													selected={toDate}
-													onChange={(date) => setToDate(date)}
-												/> */}
-
 												<DatePicker
 													showIcon
 													className="form-control datepicker"
@@ -216,16 +215,6 @@ function SearchBar({ channel }) {
 													maxDate={new Date()}
 													minDate={startDate}
 												/>
-
-												{/* <DatePicker
-													className="form-control datepicker"
-													selected={endDate > startDate ? endDate : startDate}
-													onChange={(date) => setEndDate(date)}
-													selectsEnd
-													startDate={startDate}
-													endDate={endDate}
-													minDate={startDate}
-												/> */}
 											</div>
 										</div>
 									</div>

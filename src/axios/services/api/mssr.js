@@ -1,8 +1,10 @@
 import request from "../../shared/lib/request";
 
-function getDistributors(userProfile) {
+
+
+function getMSSRFilter(userProfile) {
 	return request({
-		url: `mssrfilter/getDistributors`,
+		url: `mssrfilter/getMSSRFilter`,
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -11,27 +13,9 @@ function getDistributors(userProfile) {
 	});
 }
 
-function getBrands(userProfile) {
-	return request({
-		url: `mssrfilter/getBrands`,
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${userProfile.token}`,
-		},
-	});
-}
 
-function getPackDetails(userProfile) {
-	return request({
-		url: `mssrfilter/getPackDetails`,
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-			Authorization: `Bearer ${userProfile.token}`,
-		},
-	});
-}
+
+
 
 function getProductLine({ userProfile, brand }) {
 	return request({
@@ -91,13 +75,11 @@ function getFlavour({ userProfile, selectedBrand, productLine }) {
 }
 
 const MssrService = {
-	getDistributors,
+	getMSSRFilter,
 	getMssrList,
 	getInvoices,
-	getPackDetails,
-	getBrands,
 	getProductLine,
-	getFlavour,
+	getFlavour
 };
 
 export default MssrService;

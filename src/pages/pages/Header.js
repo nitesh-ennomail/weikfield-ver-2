@@ -131,7 +131,8 @@ const Header = (props) => {
 								data-placement="right"
 								title={item.menu_display_name}>
 								<Link className="nav-link" to={item.menu_href} onClick={() => showPopUps(window.location.pathname)}>
-									<i className={`fa fa-fw ${item.menu_icon}`}></i>
+								{/* fa fa-fw  */}
+									<i className={`${item.menu_icon}`}></i>
 									<span className="nav-link-text">
 										{" "}
 										{item.menu_display_name}

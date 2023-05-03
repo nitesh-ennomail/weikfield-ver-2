@@ -31,7 +31,8 @@ function getViewOrderDetails(
 	fromData,
 	toDate,
 	selectedOrderStatus,
-	userId
+	userId,
+	selectedPageN
 ) {
 	return request({
 		url: `dashboard/getViewOrderDetails`,
@@ -51,7 +52,7 @@ function getViewOrderDetails(
 			channel: selectedChannel,
 			orderStatus: selectedOrderStatus,
 			limitNo: 10,
-			offsetStart: 0,
+			offsetStart: selectedPageN,
 		}),
 	});
 }

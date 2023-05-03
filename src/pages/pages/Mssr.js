@@ -21,15 +21,11 @@ const Mssr = () => {
 	const getSearchFilter =  () => {
 		dispatch(setMssrList(null));
 		dispatch(setMssrFilterList(null));
-		 MssrService.getDistributors(userProfile).then((response) => {
+
+		// getMSSRFilter
+		MssrService.getMSSRFilter(userProfile).then((response) => {
 			dispatch(setDistributors(response.data.data.distributor_details));
-		});
-
-		 MssrService.getBrands(userProfile).then((response) => {
 			dispatch(setBrands(response.data.data.brand_details));
-		});
-
-		 MssrService.getPackDetails(userProfile).then((response) => {
 			dispatch(setPackDetails(response.data.data.pack_type_details));
 		});
 	};
