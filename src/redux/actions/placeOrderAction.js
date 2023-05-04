@@ -59,3 +59,13 @@ export const setSelectedOrder = (item) => {
 		payload: item,
 	};
 };
+
+export const showPopUp = (value) => {
+	return {
+		type: ActionTypes.SET_SHOW_POPUP,
+		payload: value,
+	};
+};
+
+
+

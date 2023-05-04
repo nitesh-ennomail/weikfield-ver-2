@@ -16,6 +16,7 @@ const initialState = {
     ? JSON.parse(selectedDistributer)
     : "null",
   selectedSalePerson: selectedSalePerson ? selectedSalePerson : "",
+  showPopUp:false
 };
 export const placeOrderReducer = (state = initialState, { type, payload }) => {
   switch (type) {
@@ -42,6 +43,9 @@ export const placeOrderReducer = (state = initialState, { type, payload }) => {
 
     case ActionTypes.SET_SELECTED_SALE_PERSON:
       return { ...state, selectedSalePerson: payload };
+
+    case ActionTypes.SET_SHOW_POPUP:
+        return { ...state, showPopUp: payload };
 	  
     default:
       return state;

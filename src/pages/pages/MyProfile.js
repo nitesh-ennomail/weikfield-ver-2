@@ -1,7 +1,14 @@
 import React, { Component } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 const MyProfile = () => {
+
+  const dashboard = useSelector((state) => state.dashboard.dashboard);
+  const userProfile = useSelector((state) => state.userProfile);
+
+	const { profile_details } = dashboard;
+
   return (
     <div className="content-wrapper">
       <div className="container-fluid">
@@ -27,8 +34,8 @@ const MyProfile = () => {
                             width="100"
                             className="rounded-circle border-blue-thick"
                           />
-                          <h4 className="mb-0 mt-3 text-primary">Subhadeep Sen</h4>
-                          <h6>Sales Officer</h6>
+                          <h4 className="mb-0 mt-3 text-primary">{profile_details && profile_details.user_name}</h4>
+                          <h6>{userProfile && userProfile.usertype}</h6>
                         </div>
                       </div>
                       <div className="form-group">
@@ -41,7 +48,7 @@ const MyProfile = () => {
                               className="form-control"
                               name="username"
                               id="username"
-                              value="S4140"
+                              value={profile_details && profile_details.user_id}
                             />
                           </div>
                           <div className="col-md-6">
@@ -52,7 +59,7 @@ const MyProfile = () => {
                               className="form-control"
                               name="email"
                               id="email"
-                              value="subhadeep.sen@weikfield.com"
+                              value={profile_details && profile_details.email_id}
                             />
                           </div>
                         </div>
@@ -67,7 +74,7 @@ const MyProfile = () => {
                               type="text"
                               className="form-control"
                               name="phone"
-                              value="8939587198"
+                              value={profile_details && profile_details.user_phone}
                             />
                           </div>
                           <div className="col-md-6">

@@ -72,7 +72,6 @@ function SearchBar({ channel }) {
 			userId,
 			selectedPageN
 		).then((response) => {
-			console.log("response", response)
 			dispatch(setViewOrderFilter(response.data.data.order_details));
 			dispatch(setViewOrderTotalRecord(response.data.data.total_record_count));
 			{response.data.data.total_record_count > 10 ?
