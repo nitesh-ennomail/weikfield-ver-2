@@ -423,9 +423,23 @@ const PlaceOrder = (props) => {
 	};
 
 	const saveOrder = async (e) => {
-		// setShowPlaceOrder(false)
 		e.preventDefault();
-		setDisableConfirm(true);
+    await Swal.fire({
+      title: 'Are you sure?',
+      text: "You want to save this orders!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, save it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+       confirmOrder()
+      }
+    })
+	};
+  const confirmOrder = async()=>{
+    setDisableConfirm(true);
 		let distributor = selectedDistributer ? selectedDistributer : distributor;
 		if (!distributor || !userProfile) {
 			toast.error(`Something went wrong, Please re-login`);
@@ -447,12 +461,8 @@ const PlaceOrder = (props) => {
 								</span>,
 								{ duration: 4000 },
 								dispatch(setAddToCart([]),
-
 								dispatch(setSelectedDistributor("null")),
-
 								dispatch(setSelectedSalePerson("")),
-								
-								
 								navigate("/dashboard"))
 						  )
 						: toast.error(
@@ -465,12 +475,10 @@ const PlaceOrder = (props) => {
 		} else {
 			setDisableConfirm(false);
 		}
-	};
-
+  }
 	return (
     <>
       <Helmet title="Place Order" />
-
       <div className="content-wrapper" ref={containerRef}>
         <div className="container-fluid">
           <div className="row">

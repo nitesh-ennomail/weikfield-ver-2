@@ -82,7 +82,7 @@ const Dashboard = () => {
 				info: false,
 				searching: true,
 				lengthChange: false,
-				paging: true,
+				paging: false,
 			});
 		});
 		//AXIOS WRAPPER FOR API CALL
