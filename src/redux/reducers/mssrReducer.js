@@ -1,46 +1,53 @@
 import { ActionTypes } from "../constants/action-type";
 
+const cartItem = localStorage.getItem("cartItem");
+const selectedOrder = localStorage.getItem("selectedOrder");
+const selectedDistributer = localStorage.getItem("selectedDistributer");
+const selectedSalePerson = localStorage.getItem("selectedSalePerson");
+
 const initialState = {
-	mssr_distributors: null,
-	mssr_line_list: null,
-	mssr_invoices: null,
-	mssr_pack_details: null,
-	mssr_brands: null,
-	mssr_product_line: null,
-	mssr_flavour: null,
-	mssr_filter_list: null,
-	mssr_selected_invoices: null,
+  orderFilter: "null",
+  orderDetails: "null",
+  productLine: "null",
+  flavour: "null",
+  selectedOrder: selectedOrder ? JSON.parse(selectedOrder) : "null",
+  addTocart: cartItem ? JSON.parse(cartItem) : [],
+  selectedDistributer: selectedDistributer
+    ? JSON.parse(selectedDistributer)
+    : "null",
+  selectedSalePerson: selectedSalePerson ? selectedSalePerson : "",
+  showPopUp:false
 };
 export const mssrReducer = (state = initialState, { type, payload }) => {
-	switch (type) {
-		case ActionTypes.SET_MSSR_DISTRIBUTORS:
-			return { ...state, mssr_distributors: payload };
+  switch (type) {
+    case ActionTypes.SET_ORDER_FILTER:
+      return { ...state, orderFilter: payload };
 
-		case ActionTypes.SET_MSSR_LINE_LIST:
-			return { ...state, mssr_line_list: payload };
+    case ActionTypes.SET_SELECTED_ORDER:
+      return { ...state, selectedOrder: payload };
 
-		case ActionTypes.SET_MSSR_INVOICES:
-			return { ...state, mssr_invoices: payload };
+    case ActionTypes.SET_ORDER_DETAILS:
+      return { ...state, orderDetails: payload };
 
-		case ActionTypes.SET_MSSR_PACK_DETAILS:
-			return { ...state, mssr_pack_details: payload };
+    case ActionTypes.SET_PRODUCT_LINE:
+      return { ...state, productLine: payload };
 
-		case ActionTypes.SET_MSSR_BRANDS:
-			return { ...state, mssr_brands: payload };
+    case ActionTypes.SET_FLAVOUR:
+      return { ...state, flavour: payload };
 
-		case ActionTypes.SET_MSSR_PRODUCT_LINE:
-			return { ...state, mssr_product_line: payload };
+    case ActionTypes.ADD_TO_CART:
+      return { ...state, addTocart: payload };
 
-		case ActionTypes.SET_MSSR_FILTER_LIST:
-			return { ...state, mssr_filter_list: payload };
+    case ActionTypes.SET_SELECTED_DISTRIBUTOR:
+      return { ...state, selectedDistributer: payload };
 
-		case ActionTypes.SET_MSSR_FLAVOUR:
-			return { ...state, mssr_flavour: payload };
+    case ActionTypes.SET_SELECTED_SALE_PERSON:
+      return { ...state, selectedSalePerson: payload };
 
-		case ActionTypes.SET_SELECTED_INVOICES:
-			return { ...state, mssr_selected_invoices: payload };
-
-		default:
-			return state;
-	}
+    case ActionTypes.SET_SHOW_POPUP:
+        return { ...state, showPopUp: payload };
+	  
+    default:
+      return state;
+  }
 };

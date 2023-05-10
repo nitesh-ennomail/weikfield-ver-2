@@ -10,9 +10,11 @@
 	border:0.3px solid gray
 }
 .qty-ctl-mssr {
-    width: 25vw;
+    width: 95%;
 	border:0.3px solid gray;
-	height:2rem
+}
+.qty-ctl-mssr-div{
+		text-align: center;
 }
 .cart-prod-list.scroll {
     max-height: 57vh;
@@ -1644,3 +1646,18 @@ input[type=number] {
  margin-top: 5px;
  background-color: white;
 }
+
+
+/* /////// */
+
+
+.input-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+  }
+  
+  .input-field {
+	width: 100%;
+	max-width: 150px;
+  }

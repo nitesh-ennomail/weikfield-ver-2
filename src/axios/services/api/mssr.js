@@ -2,7 +2,7 @@ import request from "../../shared/lib/request";
 
 
 
-function getMSSRFilter(userProfile) {
+function getMssrFilter(userProfile) {
 	return request({
 		url: `mssrfilter/getMSSRFilter`,
 		method: "POST",
@@ -74,12 +74,27 @@ function getFlavour({ userProfile, selectedBrand, productLine }) {
 	});
 }
 
+function addNewMssr({ userProfile, search }) {
+	return request({
+		url: `/mssr/searchItemDetails`,
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${userProfile.token}`,
+		},
+		data: JSON.stringify({
+			search_key: `${search}`
+		}),
+	});
+}
+
 const MssrService = {
-	getMSSRFilter,
+	getMssrFilter,
 	getMssrList,
 	getInvoices,
 	getProductLine,
-	getFlavour
+	getFlavour,
+	addNewMssr
 };
 
 export default MssrService;
