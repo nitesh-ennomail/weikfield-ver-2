@@ -48,6 +48,14 @@ span.cart-prod-hdlbl {
     font-size: .9rem;
 	position:relative
 } 
+
+.cart-prod-div-order-mssr{
+    background: #e9efd6;
+    padding: 5px 15px 10px;
+    margin-bottom: 15px;
+    font-size: .9rem;
+	position:relative
+} 
 .cart-prod-title {
     font-size: 1.05rem;
     font-weight: 500;
@@ -1661,3 +1669,19 @@ input[type=number] {
 	width: 100%;
 	max-width: 150px;
   }
+
+  .mssr-stock-input{
+		text-align: center;
+		justify-content: space-between;
+  }
+
+
+  .modal-body {
+    position: relative;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 1rem;
+    max-height: 82vh;
+    overflow: scroll;
+}

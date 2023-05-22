@@ -2,7 +2,6 @@ import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
-import PlaceOrderService from "../../axios/services/api/placeOrder";
 import {
   setAddToCart,
   setFlavour,
@@ -20,6 +19,7 @@ import Swal from "sweetalert2";
 import { toast, Toaster } from "react-hot-toast";
 import MSSRService from "../../axios/services/api/mssrService";
 import MssrModel from "../../components/Mssr/MssrModel";
+import MultiSelect from "../../components/MultiSelect";
 
 const Mssr = (props) => {
   const dispatch = useDispatch();
@@ -29,24 +29,25 @@ const Mssr = (props) => {
   const inputRef1 = useRef(null);
   // Collecting data from Redux store
   const userProfile = useSelector((state) => state.userProfile);
-  const orderFilter = useSelector((state) => state.placeOrder.orderFilter);
-  const orderDetails = useSelector((state) => state.placeOrder.orderDetails);
-  const productLine = useSelector((state) => state.placeOrder.productLine);
-  const flavour = useSelector((state) => state.placeOrder.flavour);
-  const placeOrder = useSelector((state) => state.placeOrder);
   const dashboard = useSelector((state) => state.dashboard.dashboard);
   const { profile_details } = dashboard;
-  const { flavour_details } = flavour;
-  const { product_line_details } = productLine;
-  const { distributor_details, brand_details, pack_type_details } = orderFilter;
-  const { order_grid_details } = orderDetails;
-  const { addTocart, selectedDistributer, selectedSalePerson } = placeOrder;
 
   ////////////////////////////////////////////////
 
-  const mssr = useSelector((state) => state.mssr.orderDetails);
-
-  const { mssr_line_details } = orderDetails;
+  const mssr = useSelector((state) => state.mssr);
+  const {
+    addTocart,
+    selectedDistributer,
+    selectedSalePerson,
+    orderDetails,
+    orderFilter,
+    productLine,
+    flavour,
+  } = mssr;
+  const { distributor_details, brand_details, pack_type_details } = orderFilter;
+  const { product_line_details } = productLine;
+  const { flavour_details } = flavour;
+  const { mssr_line_details, invoice_details } = orderDetails;
 
   // Collecting data from Redux store Ends
 
@@ -75,6 +76,8 @@ const Mssr = (props) => {
   const [empty, setEmpty] = useState(false);
   const [disableConfirm, setDisableConfirm] = useState(false);
   const [showPromoModel, setShowPromoModel] = useState(true);
+  const [showInvoice, setShowInvoice] = useState(false);
+
   const handlePackType = (e) => {
     {
       setEmpty(false);
@@ -100,66 +103,76 @@ const Mssr = (props) => {
   const getOrderFilters = async () => {
     //AXIOS WRAPPER FOR API CALL
     await MSSRService.getOrderFilters(userProfile).then((response) => {
+      // console.log(response.data.data)
       dispatch(setOrderFilter(response.data.data));
     });
     //AXIOS WRAPPER FOR API CALL
   };
   const getOrderDetails = async (data) => {
-    console.log("mssr", data);
-
-    if (data.mssr_entry_allowed_flag === "N") {
+    if (data === "0") {
+      // dispatch(setMssrList(null));
+      // setOrderData([]);
+      dispatch(setOrderDetails("null"));
+      setOrderData([]);
       setSelectedPackType("");
       setSelectedBrand({});
       dispatch(setFlavour("null"));
       dispatch(setProductLine("null"));
       setDisableFilter(true);
+      setShowInvoice(false);
+    } else if (data.mssr_entry_allowed_flag === "N") {
+      setOrderData([]);
+      setSelectedPackType("");
+      setSelectedBrand({});
+      dispatch(setFlavour("null"));
+      dispatch(setProductLine("null"));
+      setDisableFilter(true);
+      setShowInvoice(false);
       setSalePerson(profile_details.user_name);
-
       toast.error(
-        `You are not allowed to fill mssr now - Please contact Admin}`
+        `You are not allowed to fill mssr now - Please contact Admin`
       );
     } else if (data.mssr_entry_allowed_flag === "Y") {
       setSalePerson(profile_details.user_name);
-
       setDistributor(data);
-
       setSelectedPackType("");
-
       setSelectedBrand({});
-
       dispatch(setFlavour("null"));
-
       dispatch(setProductLine("null"));
-
       await MSSRService.getOrderDetails({ userProfile, data }).then(
         (response) => {
           dispatch(setOrderDetails(response.data.data));
           setDisableFilter(false);
         }
       );
-    } else if (data.order_cut_off_flag === "N") {
-      toast.error(
-        `Order Not Allowed after Cut Off - ${data.order_cut_off_timestamp}`
-      );
-    } else if (data.customer_block_flag === "YES") {
-      setDisableFilter(true);
-      setSalePerson(null);
-      dispatch(setOrderDetails("null"));
-      dispatch(setAddToCart([]));
-      setSelectedPackType("");
-      setSelectedBrand({});
-      dispatch(setProductLine("null"));
-      dispatch(setFlavour("null"));
-      setOrderData([]);
-      toast.error("customer_block_flag blocked");
-    } else if (data.ndc_flag === "YES") {
-      toast.error("ndc_flag blocked");
-    } else if (data.mssr_flag === "YES") {
-      toast.error("mssr_flag blocked");
-    } else if (data.claim_flag === "YES") {
-      toast.error("claim_flag blocked");
+      if (data.mssr_invoice_lov_display_flag === "1") {
+        setShowInvoice(true);
+      }
     }
-    ////////////////////////////////
+    ///////////////today12 comment////////////////
+    // else if (data.order_cut_off_flag === "N") {
+    //   toast.error(
+    //     `Order Not Allowed after Cut Off - ${data.order_cut_off_timestamp}`
+    //   );
+    // } else if (data.customer_block_flag === "YES") {
+    //   setDisableFilter(true);
+    //   setSalePerson(null);
+    //   dispatch(setOrderDetails("null"));
+    //   dispatch(setAddToCart([]));
+    //   setSelectedPackType("");
+    //   setSelectedBrand({});
+    //   dispatch(setProductLine("null"));
+    //   dispatch(setFlavour("null"));
+    //   setOrderData([]);
+    //   toast.error("customer_block_flag blocked");
+    // } else if (data.ndc_flag === "YES") {
+    //   toast.error("ndc_flag blocked");
+    // } else if (data.mssr_flag === "YES") {
+    //   toast.error("mssr_flag blocked");
+    // } else if (data.claim_flag === "YES") {
+    //   toast.error("claim_flag blocked");
+    // }
+    ////////////////today12 comment///////////////
     // AXIOS WRAPPER FOR API CALL
   };
 
@@ -236,13 +249,13 @@ const Mssr = (props) => {
       } else if (selectedPackType && selectedBrand && selectedProductLine) {
         return (
           el.pack_type === selectedPackType.pack_type_desc &&
-          el.brand === selectedBrand.brand_desc &&
+          // el.brand === selectedBrand.brand_desc &&
           el.product_line === selectedProductLine.product_line_desc
         );
       } else if (selectedPackType && selectedBrand) {
         return (
-          el.pack_type === selectedPackType.pack_type_desc &&
-          el.brand === selectedBrand.brand_desc
+          el.pack_type === selectedPackType.pack_type_desc
+          // && el.brand === selectedBrand.brand_desc
         );
       }
     });
@@ -268,13 +281,17 @@ const Mssr = (props) => {
 
   useEffect(() => {
     if (userProfile.usertype !== "null") {
-      // dispatch(setOrderDetails("null"));
-      // dispatch(setAddToCart([]));
-      // setSelectedPackType("");
-      // setSelectedBrand({});
-      // dispatch(setProductLine("null"));
-      // dispatch(setFlavour("null"));
-      // setOrderData([]);
+      ///////////////////////////////
+
+      dispatch(setOrderDetails("null"));
+      dispatch(setAddToCart([]));
+      setSelectedPackType("");
+      setSelectedBrand({});
+      dispatch(setProductLine("null"));
+      dispatch(setFlavour("null"));
+      setOrderData([]);
+
+      ///////////////////////////////////////
       getOrderFilters();
     } else {
       navigate("/");
@@ -283,7 +300,9 @@ const Mssr = (props) => {
 
   const addToCart = () => {
     let currItemList = orderData.filter(function (el) {
-      return el.physical_closing >= 1;
+      return (
+        el.physical_closing >= 1 || el.expire_qty >= 1 || el.trasfer_qty >= 1
+      );
     });
 
     // dispatch(setSelectedDistributor(distributor?distributor:selectedDistributer))
@@ -350,43 +369,7 @@ const Mssr = (props) => {
     const inputFieldQty1 = document.getElementById(
       `quantityFieldId1-${item.item_code}`
     );
-    // if (
-    // 	item.portal_reg_promo_flag === "Y" &&
-    // 	item.item_promo_flag === "N" &&
-    // 	e.target.value > 0
-    // ) {
-    // 	Swal.fire({
-    // 		title:
-    // 			"You have a Promo Running item Code, please enter your Order in Promo Item Code",
-    // 		showCancelButton: true,
-    // 		confirmButtonText: "Yes",
-    // 		customClass: {
-    // 			actions: "my-actions",
-    // 			confirmButton: "order-1 right-gap",
-    // 			cancelButton: "order-2",
-    // 		},
-    // 	}).then((result) => {
-    // 		if (result.isConfirmed) {
-    // 			{
-    // 				inputFieldQty.value = 0;
-    // 			}
-    // 			{
-    // 				inputFieldQty1.value = 0;
-    // 			}
-    // 			setOrderData((orderData) =>
-    // 				orderData.map((data) =>
-    // 					item.portal_item_code === data.portal_item_code
-    // 						? { ...data, item_qty: 0 }
-    // 						: data
-    // 				)
-    // 			);
-    // 		} else if (result.isDenied) {
-    // 			Swal.fire("Changes are not saved", "", "info");
-    // 		}
-    // 	});
-    // }
 
-    console.log("stock type", stock);
     if (stock === "physical_closing") {
       setOrderData((orderData) =>
         orderData.map((data) =>
@@ -445,49 +428,46 @@ const Mssr = (props) => {
       confirmButtonText: "Yes, save it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        confirmOrder();
+        console.log("confirmOrder 11");
+        confirmMssrOrder();
       }
     });
   };
-  const confirmOrder = async () => {
-    setDisableConfirm(true);
-    let distributor = selectedDistributer ? selectedDistributer : distributor;
-    if (!distributor || !userProfile) {
-      toast.error(`Something went wrong, Please re-login`);
-    } else if (addTocart.length > 0) {
-      addToCartTotal = getRoundOff(addToCartTotal, 2);
-      await PlaceOrderService.saveOrder({
-        userProfile,
-        distributor,
-        profile_details,
-        addToCartTotal,
-        addTocart,
-      }).then((response) => {
-        {
-          response.data.data.error_code === "0"
-            ? toast.success(
-                <span>
-                  {`${response.data.data.message}-- ${response.data.data.order_no}`}
-                </span>,
-                { duration: 4000 },
-                dispatch(
-                  setAddToCart([]),
-                  dispatch(setSelectedDistributor("null")),
-                  dispatch(setSelectedSalePerson("")),
-                  navigate("/dashboard")
-                )
-              )
-            : toast.error(
-                <span>
-                  {`${response.data.data.message}-- ${response.data.data.add_message}`}
-                </span>
-              );
-        }
-      });
-    } else {
-      setDisableConfirm(false);
-    }
-  };
+
+
+
+  const confirmMssrOrder = async () =>{
+
+    console.log("addTocart", addTocart)
+    // await MSSRService.saveMssrEntry({
+    //   userProfile,
+    //   distributor,
+    //   profile_details,
+    //   addToCartTotal,
+    //   addTocart,
+    // }).then((response) => {
+    //   {
+    //     response.data.data.error_code === "0"
+    //       ? toast.success(
+    //           <span>
+    //             {`${response.data.data.message}-- ${response.data.data.order_no}`}
+    //           </span>,
+    //           { duration: 4000 },
+    //           dispatch(
+    //             setAddToCart([]),
+    //             dispatch(setSelectedDistributor("null")),
+    //             dispatch(setSelectedSalePerson("")),
+    //             navigate("/dashboard")
+    //           )
+    //         )
+    //       : toast.error(
+    //           <span>
+    //             {`${response.data.data.message}-- ${response.data.data.add_message}`}
+    //           </span>
+    //         );
+    //   }
+    // });
+  }
   return (
     <>
       <Helmet title="Mssr" />
@@ -563,8 +543,8 @@ const Mssr = (props) => {
                                     }
                                     required
                                   >
-                                    <option value={JSON.stringify("")}>
-                                      {"Show All"}
+                                    <option value={JSON.stringify("0")}>
+                                      {"Select Distributor"}
                                     </option>
                                     {distributor_details &&
                                       distributor_details.map((data, index) => (
@@ -675,31 +655,6 @@ const Mssr = (props) => {
                                   </label>
                                 </div>
                                 <div className="col-md-8">
-                                  {/* <select
-																		name="ProductFamily"
-																		className="form-control d-none d-sm-block"
-																		data-live-search="true"
-																		disabled={
-																			disableFilter || !disableAddToCart
-																		}
-																		onClick={(e) =>
-																			getProductLine(JSON.parse(e.target.value))
-																		}
-																		required>
-																		{brand_details &&
-																			brand_details.map((brand, index) => (
-																				<option
-																					key={brand.brand_code}
-																					value={JSON.stringify(brand)}>
-																					{Object.keys(selectedBrand).length ===
-																					0
-																						? "Select Brand"
-																						: brand.brand_desc}
-																				</option>
-																			))}
-																	</select> */}
-                                  {/* ////////////////////// */}
-
                                   <select
                                     name="ProductFamily"
                                     className="form-control d-none d-sm-block"
@@ -851,7 +806,70 @@ const Mssr = (props) => {
                               </div>
                             </div>
                           </div>
-                          <div className="row">
+
+                          <div className="form-group row">
+                            <div className="col-md-8">
+                              {showInvoice && (
+                                <div className="row">
+                                  <div className="col-md-4">
+                                    <label
+                                      htmlFor="ProductclassName"
+                                      className="control-label"
+                                    >
+                                      Check Recived Invoices This Month:
+                                    </label>
+                                  </div>
+                                  <div className="col-md-8">
+                                    {showInvoice && (
+                                      <MultiSelect
+                                        invoice_details={invoice_details}
+                                      />
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="col-md-4 mt-md-0 mt-4">
+                              <div
+                                className="col-md-12"
+                                style={{ textAlign: "right" }}
+                              >
+                                <button
+                                  type="button"
+                                  onClick={(e) => (
+                                    setDisableFilter(false),
+                                    setDisableAddToCart(true),
+                                    setSelectedPackType("null"),
+                                    dispatch(setFlavour("null")),
+                                    dispatch(setProductLine("null")),
+                                    dispatch(setOrderDetails("null")),
+                                    setShowInvoice(false),
+                                    setSelectedBrand({}),
+                                    setOrderData([])
+                                  )}
+                                  className="btn btn-danger btn-md"
+                                >
+                                  <i className="fas fa fa-gear mr-2"></i> Reset
+                                </button>
+
+                                <button
+                                  onClick={(e) => (
+                                    showFilterData(e), setDisableFilter(false)
+                                  )}
+                                  disabled={disableFilter}
+                                  type="button"
+                                  className="btn btn-primary btn-md ml-2"
+                                  data-toggle="collapse"
+                                  data-target="#collapseOne"
+                                  aria-expanded="false"
+                                >
+                                  Apply
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                          {/* <div className="row" style={{zIndex:999}}>
                             <div
                               className="col-md-12"
                               style={{ textAlign: "right" }}
@@ -861,9 +879,12 @@ const Mssr = (props) => {
                                 onClick={(e) => (
                                   setDisableFilter(false),
                                   setDisableAddToCart(true),
-                                  // setSelectedPackType("null"),
-                                  // dispatch(setFlavour("null")),
-                                  // dispatch(setProductLine("null")),
+                                  setSelectedPackType("null"),
+                                  dispatch(setFlavour("null")),
+                                  dispatch(setProductLine("null")),
+                                  dispatch(setOrderDetails("null")),
+                                  setShowInvoice(false),
+                                  setSelectedBrand({}),
                                   setOrderData([])
                                 )}
                                 className="btn btn-danger btn-md"
@@ -885,7 +906,7 @@ const Mssr = (props) => {
                                 Apply
                               </button>
                             </div>
-                          </div>
+                          </div> */}
                         </form>
                       </div>
                     </div>
@@ -1234,7 +1255,6 @@ const Mssr = (props) => {
                     </div>
 
                     <div
-                      // className="card-body collapse"
                       className={`card-body collapse d-sm-block ${showOrderSummary}`}
                       id="collapseTwo"
                       aria-expanded="true"
@@ -1242,10 +1262,7 @@ const Mssr = (props) => {
                       <div className="cart-prod-list scroll">
                         {addTocart != "null" &&
                           addTocart.map((item, index) => (
-                            //   (addToCartQty = addToCartQty + item.item_qty),
-                            //   (addToCartTotal +=
-                            //     item.portal_billing_price * item.item_qty),
-                            <div className="cart-prod-div-order" key={index}>
+                            <div className={item.mssr_entry ? `cart-prod-div-order-mssr` : `cart-prod-div-order`} key={index}>
                               <div className="cart-prod-trash">
                                 <i
                                   onClick={(e) => removeFromCart(e, item)}
@@ -1261,85 +1278,82 @@ const Mssr = (props) => {
                                 </span>
                               </div>
 
-                              <div className="cart-prod-desc mt-1">
+                              <div className="row m-auto mssr-stock-input">
                                 <span className="cart-prod-lbl">
-                                  Closing Stock{"  "}
-                                </span>
-                                <span className="cart-prod-val">
-                                  :{" "}
-                                  <input
-                                    min={1}
-                                    maxLength="3"
-                                    onInput={maxLengthCheck}
-                                    style={{ textAlign: "right" }}
-                                    onChange={(e) =>
-                                      handleQtyInCart(e, item.item_code)
-                                    }
-                                    onKeyPress={(event) => {
-                                      if (event.charCode < 48) {
-                                        event.preventDefault();
+                                  Closing stock
+                                  <br></br>
+                                  <span className="cart-prod-val">
+                                    <input
+                                      disabled={true}
+                                      min={1}
+                                      maxLength="3"
+                                      onInput={maxLengthCheck}
+                                      style={{ textAlign: "right" }}
+                                      onChange={(e) =>
+                                        handleQtyInCart(e, item.item_code)
                                       }
-                                    }}
-                                    type="number"
-                                    className="qty-ctl"
-                                    step="1"
-                                    placeholder={item.physical_closing}
-                                  />
+                                      onKeyPress={(event) => {
+                                        if (event.charCode < 48) {
+                                          event.preventDefault();
+                                        }
+                                      }}
+                                      type="number"
+                                      className="qty-ctl"
+                                      step="1"
+                                      placeholder={item.physical_closing}
+                                    />
+                                  </span>
                                 </span>
-                              </div>
 
-                              <div className="cart-prod-desc mt-1">
-                                <span className="cart-prod-lbl">
-                                  Market Return{" "}
-                                </span>
-                                <span className="cart-prod-val">
-                                  :{" "}
-                                  <input
-                                    min={1}
-                                    maxLength="3"
-                                    onInput={maxLengthCheck}
-                                    style={{ textAlign: "right" }}
-                                    onChange={(e) =>
-                                      handleQtyInCart(e, item.item_code)
-                                    }
-                                    onKeyPress={(event) => {
-                                      if (event.charCode < 48) {
-                                        event.preventDefault();
-                                      }
-                                    }}
-                                    type="number"
-                                    className="qty-ctl"
-                                    step="1"
-                                    placeholder={item.trasfer_qty}
-                                  />
-                                </span>
-                              </div>
+                                  <span className="cart-prod-lbl">
+                                    Market Return <br></br>
+                                    <span className="cart-prod-val">
+                                      <input
+                                        disabled={true}
+                                        min={1}
+                                        maxLength="3"
+                                        onInput={maxLengthCheck}
+                                        style={{ textAlign: "right" }}
+                                        onChange={(e) =>
+                                          handleQtyInCart(e, item.item_code)
+                                        }
+                                        onKeyPress={(event) => {
+                                          if (event.charCode < 48) {
+                                            event.preventDefault();
+                                          }
+                                        }}
+                                        type="number"
+                                        className="qty-ctl"
+                                        step="1"
+                                        placeholder={item.trasfer_qty}
+                                      />
+                                    </span>
+                                  </span>
 
-                              <div className="cart-prod-desc mt-1">
-                                <span className="cart-prod-lbl">
-                                  Expiry Qty{" "}
-                                </span>
-                                <span className="cart-prod-val ml-4">
-                                  :{" "}
-                                  <input
-                                    min={1}
-                                    maxLength="3"
-                                    onInput={maxLengthCheck}
-                                    style={{ textAlign: "right" }}
-                                    onChange={(e) =>
-                                      handleQtyInCart(e, item.item_code)
-                                    }
-                                    onKeyPress={(event) => {
-                                      if (event.charCode < 48) {
-                                        event.preventDefault();
-                                      }
-                                    }}
-                                    type="number"
-                                    className="qty-ctl"
-                                    step="1"
-                                    placeholder={item.expire_qty}
-                                  />
-                                </span>
+                                  <span className="cart-prod-lbl">
+                                    Expiry Qty <br></br>
+                                    <span className="cart-prod-val">
+                                      <input
+                                        disabled={true}
+                                        min={1}
+                                        maxLength="3"
+                                        onInput={maxLengthCheck}
+                                        style={{ textAlign: "right" }}
+                                        onChange={(e) =>
+                                          handleQtyInCart(e, item.item_code)
+                                        }
+                                        onKeyPress={(event) => {
+                                          if (event.charCode < 48) {
+                                            event.preventDefault();
+                                          }
+                                        }}
+                                        type="number"
+                                        className="qty-ctl"
+                                        step="1"
+                                        placeholder={item.expire_qty}
+                                      />
+                                    </span>
+                                  </span>
                               </div>
                             </div>
                           ))}
@@ -1356,17 +1370,6 @@ const Mssr = (props) => {
                       {/* <h1 className="text-center text-success d-none d-sm-block">
                         {getRoundOff(addToCartTotal, 2)}
                       </h1> */}
-
-                      <button
-                        onClick={(e) => saveOrder(e)}
-                        type="button"
-                        disabled={disableConfirm}
-                        className="btn btn-primary btn-block btn-lg my-3 d-sm-block d-none"
-                      >
-                        Confirm Order{" "}
-                        <i className="fa-solid fa-circle-arrow-right"></i>
-                      </button>
-
                       <a
                         // href="#modalshowcart"
                         href="#mssrModelTable"
@@ -1374,11 +1377,24 @@ const Mssr = (props) => {
                       >
                         <button
                           type="button"
-                          className={`btn btn-primary btn-block btn-lg my-3 d-sm-block d-none`}
+                          className={`btn btn-info btn-block btn-lg my-3 d-sm-block d-none`}
                         >
-                          <i className="fa fa-plus"></i> Add New Mssr
+                          <i className="fa fa-plus"></i> Add New Sku's
                         </button>
                       </a>
+
+                      <button
+                        onClick={(e) => saveOrder(e)}
+                        type="button"
+                        disabled={disableConfirm}
+                        className="btn btn-primary btn-block btn-lg my-3 d-sm-block d-none"
+                      >
+                        Save Mssr{" "}
+                        {/* <i className="fa-solid fa-circle-arrow-right"></i> */}
+                        <i className="fa-solid fa-floppy-disk"></i>
+                      </button>
+
+                      
                     </div>
                   </div>
                 </div>
@@ -1404,9 +1420,9 @@ const Mssr = (props) => {
                   >
                     <button
                       type="button"
-                      className={`btn btn-primary btn-block btn-lg my-3 ${showOrderSummary}`}
+                      className={`btn btn-info btn-block btn-lg my-3 ${showOrderSummary}`}
                     >
-                      <i className="fa fa-plus"></i> Add New Mssr
+                      <i className="fa fa-plus"></i> Add New Sku's
                     </button>
                   </a>
                 </div>
@@ -1468,7 +1484,7 @@ const Mssr = (props) => {
               className="atcm-place-order"
               disabled={disableConfirm}
             >
-              <span>Confirm Order</span>{" "}
+              <span>Save Mssr</span>{" "}
               <i className="fa-solid fa-circle-arrow-right"></i>
             </button>
           )}
@@ -1476,213 +1492,7 @@ const Mssr = (props) => {
         </div>
       </div>
       <MssrModel id="mssrModelTable" />
-      <div
-        className="modal bd-example-modal-lg fade"
-        id="modalshowcart"
-        tabIndex="-1"
-        role="dialog"
-        aria-labelledby="exampleModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-lg" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLabel">
-                ORDER SUMMARY
-              </h5>
-              <button
-                className="close"
-                type="button"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                {" "}
-                <span aria-hidden="true">×</span>{" "}
-              </button>
-            </div>
 
-            <div className="modal-body">
-              <div className="cart-prod-list">
-                <div className="cart-prod-div">
-                  <div className="cart-prod-title">Macaroni - FG -8114044</div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-val">
-                      CHEF'S BASKET-PASTA-MACARONI-POUCH-60X180gm
-                    </span>
-                  </div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-lbl">Physical Inventory: </span>
-                    <span className="cart-prod-val">20</span>
-                  </div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-lbl">Allocate Qty: </span>
-                    <span className="cart-prod-val">5</span>
-                  </div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-lbl">Price: </span>
-                    <span className="cart-prod-val">2222.5</span>
-                  </div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-lbl">UOM: </span>
-                    <span className="cart-prod-val">Case</span>
-                  </div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-lbl">Schemes: </span>
-                    <span className="cart-prod-val">
-                      Buy 5 case Get 1 Case Free
-                    </span>
-                  </div>
-                  <div className="cart-prod-qty">
-                    <input
-                      style={{ textAlign: "right" }}
-                      type="number"
-                      className="qty-ctl"
-                      step="1"
-                      defaultValue="3"
-                    />
-                  </div>
-                </div>
-                <div className="cart-prod-div">
-                  <div className="cart-prod-title">Macaroni - FG -8114044</div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-val">
-                      CHEF'S BASKET-PASTA-MACARONI-POUCH-60X180gm
-                    </span>
-                  </div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-lbl">Physical Inventory: </span>
-                    <span className="cart-prod-val">20</span>
-                  </div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-lbl">Allocate Qty: </span>
-                    <span className="cart-prod-val">5</span>
-                  </div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-lbl">Price: </span>
-                    <span className="cart-prod-val">2222.5</span>
-                  </div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-lbl">UOM: </span>
-                    <span className="cart-prod-val">Case</span>
-                  </div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-lbl">Schemes: </span>
-                    <span className="cart-prod-val">
-                      Buy 5 case Get 1 Case Free
-                    </span>
-                  </div>
-                  <div className="cart-prod-qty">
-                    <input
-                      style={{ textAlign: "right" }}
-                      type="number"
-                      className="qty-ctl"
-                      step="1"
-                      defaultValue="3"
-                    />
-                  </div>
-                </div>
-                <div className="cart-prod-div">
-                  <div className="cart-prod-title">Macaroni - FG -8114044</div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-val">
-                      CHEF'S BASKET-PASTA-MACARONI-POUCH-60X180gm
-                    </span>
-                  </div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-lbl">Physical Inventory: </span>
-                    <span className="cart-prod-val">20</span>
-                  </div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-lbl">Allocate Qty: </span>
-                    <span className="cart-prod-val">5</span>
-                  </div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-lbl">Price: </span>
-                    <span className="cart-prod-val">2222.5</span>
-                  </div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-lbl">UOM: </span>
-                    <span className="cart-prod-val">Case</span>
-                  </div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-lbl">Schemes: </span>
-                    <span className="cart-prod-val">
-                      Buy 5 case Get 1 Case Free
-                    </span>
-                  </div>
-                  <div className="cart-prod-qty">
-                    <input
-                      style={{ textAlign: "right" }}
-                      type="number"
-                      className="qty-ctl"
-                      step="1"
-                      defaultValue="3"
-                    />
-                  </div>
-                </div>
-                <div className="cart-prod-div">
-                  <div className="cart-prod-title">Macaroni - FG -8114044</div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-val">
-                      CHEF'S BASKET-PASTA-MACARONI-POUCH-60X180gm
-                    </span>
-                  </div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-lbl">Physical Inventory: </span>
-                    <span className="cart-prod-val">20</span>
-                  </div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-lbl">Allocate Qty: </span>
-                    <span className="cart-prod-val">5</span>
-                  </div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-lbl">Price: </span>
-                    <span className="cart-prod-val">2222.5</span>
-                  </div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-lbl">UOM: </span>
-                    <span className="cart-prod-val">Case</span>
-                  </div>
-                  <div className="cart-prod-desc">
-                    <span className="cart-prod-lbl">Schemes: </span>
-                    <span className="cart-prod-val">
-                      Buy 5 case Get 1 Case Free
-                    </span>
-                  </div>
-                  <div className="cart-prod-qty">
-                    <input
-                      style={{ textAlign: "right" }}
-                      type="number"
-                      className="qty-ctl"
-                      step="1"
-                      defaultValue="3"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="modal-footer">
-              <div className="atcm-button-group">
-                {" "}
-                <Link to="" className="atcm-total-amount">
-                  <span className="atcm-icon">
-                    <i className="fas fa-cart-shopping mr-2"></i>
-                  </span>
-                  <span className="atcm-text">
-                    <span className="atc-unit">Unit: 5</span>
-                    <span className="atc-total">{cartTotal}</span>
-                  </span>
-                </Link>{" "}
-                <Link to="" className="atcm-place-order">
-                  <span>Place Order</span>
-                  <i className="fa-solid fa-circle-arrow-right"></i>
-                </Link>{" "}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
       {/* <Toaster position="bottom-center" reverseOrder={false} /> */}
     </>
   );

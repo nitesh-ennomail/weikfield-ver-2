@@ -20,31 +20,31 @@ const initialState = {
 };
 export const mssrReducer = (state = initialState, { type, payload }) => {
   switch (type) {
-    case ActionTypes.SET_ORDER_FILTER:
+    case ActionTypes.SET_ORDER_FILTER_MSSR:
       return { ...state, orderFilter: payload };
 
-    case ActionTypes.SET_SELECTED_ORDER:
+    case ActionTypes.SET_SELECTED_ORDER_MSSR:
       return { ...state, selectedOrder: payload };
 
-    case ActionTypes.SET_ORDER_DETAILS:
+    case ActionTypes.SET_ORDER_DETAILS_MSSR:
       return { ...state, orderDetails: payload };
 
-    case ActionTypes.SET_PRODUCT_LINE:
+    case ActionTypes.SET_PRODUCT_LINE_MSSR:
       return { ...state, productLine: payload };
 
-    case ActionTypes.SET_FLAVOUR:
+    case ActionTypes.SET_FLAVOUR_MSSR:
       return { ...state, flavour: payload };
 
-    case ActionTypes.ADD_TO_CART:
+    case ActionTypes.ADD_TO_CART_MSSR:
       return { ...state, addTocart: payload };
 
-    case ActionTypes.SET_SELECTED_DISTRIBUTOR:
+    case ActionTypes.SET_SELECTED_DISTRIBUTOR_MSSR:
       return { ...state, selectedDistributer: payload };
 
-    case ActionTypes.SET_SELECTED_SALE_PERSON:
+    case ActionTypes.SET_SELECTED_SALE_PERSON_MSSR:
       return { ...state, selectedSalePerson: payload };
 
-    case ActionTypes.SET_SHOW_POPUP:
+    case ActionTypes.SET_SHOW_POPUP_MSSR:
         return { ...state, showPopUp: payload };
 	  
     default:

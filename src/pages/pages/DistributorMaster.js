@@ -27,7 +27,7 @@ const DistributorMaster = () => {
       userProfile,
       profile_details,
     }).then((response) => {
-      dispatch(setDistributor(response.data.distributor_grid));
+      dispatch(setDistributor(response.data.data.distributor_grid));
       setLoading(false);
     });
     //initialize datatable

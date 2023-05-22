@@ -3,19 +3,20 @@ import Multiselect from "multiselect-react-dropdown";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-function MultiSelect(mssr_invoices) {
+function MultiSelect({invoice_details}) {
 	const [selectedValue, setSelectedValue] = useState(null);
 
 	// const mssr = useSelector((state) => state.mssr);
 	// const { mssr_distributors, mssr_invoices } = mssr;
 	let invoice_data = [];
 
-	invoice_data =
-		mssr_invoices &&
-		mssr_invoices.mssr_invoices.map((item, index) => ({
+		invoice_data =
+		invoice_details &&
+		invoice_details.map((item, index) => ({
 			name: item,
 			id: index,
-		}));
+		}))
+
 	// console.log("mssr_invoices", mssr_invoices.mssr_invoices);
 	// const options = [
 	// 	{ name: "Option 1️⃣", id: 1 },
@@ -31,6 +32,7 @@ function MultiSelect(mssr_invoices) {
 	};
 	return (
 		<Multiselect
+			// disable={disableFilter}
 			options={options} // Options to display in the dropdown
 			selectedValues={selectedValue} // Preselected value to persist in dropdown
 			onSelect={onSelect} // Function will trigger on select event
