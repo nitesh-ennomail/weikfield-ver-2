@@ -39,9 +39,9 @@ const MssrModel = ({id, data}) => {
             // `<p style="text-align:left">${item.item_name}</p>` +
             `<p style="text-align:left"><span style="font-size:12px;"> ${item.item_details}</span></p>` +
             `<div class="input-row">` +
-                `<input id="swal-input1" style="border:1px solid gray" placeholder='Closing Stock' class="swal-input input-field">` +
-                `<input id="swal-input2" style="border:1px solid gray" placeholder='Market Stock' class="swal-input input-field">` +
-                `<input id="swal-input3" style="border:1px solid gray" placeholder='Expiry Qty' class="swal-input input-field">` +
+                `<input type="number" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" id="swal-input1" style="border:1px solid gray" placeholder='Closing Stock' class="swal-input input-field">` +
+                `<input type="number" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" id="swal-input2" style="border:1px solid gray" placeholder='Market Stock' class="swal-input input-field">` +
+                `<input type="number" min="0" onkeypress="return (event.charCode !=8 && event.charCode ==0 || (event.charCode >= 48 && event.charCode <= 57))" id="swal-input3" style="border:1px solid gray" placeholder='Expiry Qty' class="swal-input input-field">` +
               `</div>`,
             showCancelButton: true,
             confirmButtonText: 'Confirm',
@@ -64,9 +64,9 @@ const MssrModel = ({id, data}) => {
 					item_code:item.item_code,
 					item_name:item.item_name,
 					item_details:item.item_details,
-					physical_closing:input1,
-					trasfer_qty:input2,
-					expire_qty:input3,
+					physical_closing:input1 ? input1 : "0",
+					trasfer_qty:input2 ? input2 : "0",
+					expire_qty:input3 ? input3 : "0",
 					mssr_entry:true
 				}
 				
@@ -93,6 +93,7 @@ const MssrModel = ({id, data}) => {
       role="dialog"
       aria-labelledby="exampleModalLabel"
       aria-hidden="true"
+      data-bs-focus="false"
     >
       <div className="modal-dialog modal-lg" role="document">
         <div className="modal-content">

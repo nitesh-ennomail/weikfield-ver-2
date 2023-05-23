@@ -16,6 +16,19 @@ function addUser(data) {
 	});
 }
 
+function forgetPassward(data) {
+	return request({
+		url: `/login/retrievePassword`,
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		data: JSON.stringify({
+				"userId": `${data}`
+		}),
+	});
+}
+
 function getUserType(token) {
 	return request({
 		url: `/home/getUserType`,
@@ -29,6 +42,7 @@ function getUserType(token) {
 const AuthService = {
 	addUser,
 	getUserType,
+	forgetPassward
 };
 
 export default AuthService;

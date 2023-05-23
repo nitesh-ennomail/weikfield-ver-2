@@ -16,6 +16,7 @@ const initialState = {
     ? JSON.parse(selectedDistributer)
     : "null",
   selectedSalePerson: selectedSalePerson ? selectedSalePerson : "",
+  selectedInvoice:[],
   showPopUp:false
 };
 export const mssrReducer = (state = initialState, { type, payload }) => {
@@ -46,6 +47,9 @@ export const mssrReducer = (state = initialState, { type, payload }) => {
 
     case ActionTypes.SET_SHOW_POPUP_MSSR:
         return { ...state, showPopUp: payload };
+
+    case ActionTypes.SET_SELECTED_INVOICES:
+        return { ...state, selectedInvoice: payload };
 	  
     default:
       return state;

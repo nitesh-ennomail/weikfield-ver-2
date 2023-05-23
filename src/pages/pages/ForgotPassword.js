@@ -1,30 +1,50 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import AuthService from "../../axios/services/api/auth";
 
 function ForgotPassword() {
+
+	const forgetPassward = async (event) => {
+      event.preventDefault();
+      console.log(event.target[0].value);
+      //AXIOS WRAPPER FOR API CALL
+      let data = event.target[0].value;
+      await AuthService.forgetPassward(data).then((response) => {
+
+		console.log(response)
+
+        // dispatch(setToken(response.data.token));
+
+       
+      });
+
+      //AXIOS WRAPPER FOR API CALL
+    };
+
+	
 	return (
-		<div class="container-fluid">
-			<div class="row">
-				<div class="col-md-6 m-auto">
-					<div class="card card-login mx-auto">
-						<div class="card-body">
-							<div class="text-center">
+		<div className="container-fluid">
+			<div className="row">
+				<div className="col-md-6 m-auto">
+					<div className="card card-login mx-auto">
+						<div className="card-body">
+							<div className="text-center">
 								<img
 									src="assets/images/Weikfield-Logo.svg"
-									class="img-fluid my-3"
+									className="img-fluid my-3"
 									width="179"
 								/>
-								<h3 class=" my-4">Forgot Password?</h3>
-								<p class="card-text mb-2">
+								<h3 className=" my-4">Forgot Password?</h3>
+								<p className="card-text mb-2">
 									Enter your Login Id and we'll send the Password to your Mail
 									Id
 								</p>
 							</div>
-							<form action="login.html">
+							<form onSubmit={forgetPassward}>
 								<div class="form-group">
 									<label for="InputUserid">Login ID</label>
 									<input
-										class="form-control"
+										className="form-control"
 										id="InputUserid"
 										type="text"
 										aria-describedby="InputUserid"
@@ -32,11 +52,11 @@ function ForgotPassword() {
 										required
 									/>
 								</div>
-								<input type="submit" class="btn btn-md btn-primary btn-block" />
+								<input type="submit" className="btn btn-md btn-primary btn-block" />
 							</form>
 							<div class="text-center mt-4 mb-2">
 								<Link to="/">
-									<i class="fa-solid fa-arrow-left-long"></i> Back to login
+									<i className="fa-solid fa-arrow-left-long"></i> Back to login
 								</Link>
 							</div>
 						</div>

@@ -7,6 +7,7 @@ import { setDashboard } from "../../redux/actions/dashboardAction";
 
 import DistributorService from "../../axios/services/api/distributor";
 import { setDistributor } from "../../redux/actions/distributorAction";
+import { ColorRing } from "react-loader-spinner";
 
 const DistributorMaster = () => {
   const navigate = useNavigate();
@@ -19,6 +20,7 @@ const DistributorMaster = () => {
   );
   const { profile_details } = dashboard;
   const [loading, setLoading] = useState(false);
+	let pagenation = false
 
   const getDistibutor = async () => {
     //AXIOS WRAPPER FOR API CALL
@@ -28,12 +30,12 @@ const DistributorMaster = () => {
       profile_details,
     }).then((response) => {
       dispatch(setDistributor(response.data.data.distributor_grid));
+      {response.data.data.distributor_grid.length>10?pagenation=true:pagenation=false}
       setLoading(false);
     });
     //initialize datatable
-	let pagenation = false
-	{distributorGrid.length>10 ? pagenation=true:pagenation=false}
-    $(function () {
+	// {distributorGrid.length>10 ? pagenation=true:pagenation=false}
+   await $(function () {
       $("#distributorTable").dataTable({
         ordering: true,
         info: false,
@@ -69,11 +71,28 @@ const DistributorMaster = () => {
               </ol>
               <div className="row">
                 <div className="col-lg-12 mb-2">
-                  <h4>List of Distributors</h4>
+                  <h4>List of Distributors - ({distributorGrid.length})</h4>
                 </div>
               </div>
               <div className="card border-0 rounded-0 mb-3">
                 <div className="card-body">
+                  {loading ? 
+                  <ColorRing
+                  visible={true}
+                  height="80"
+                  width="100%"
+                  ariaLabel="blocks-loading"
+                  wrapperStyle={{}}
+                  wrapperClass="blocks-wrapper"
+                  colors={[
+                    "#e15b64",
+                    "#f47e60",
+                    "#f8b26a",
+                    "#abbd81",
+                    "#849b87",
+                  ]}
+                />
+                  :
                   <div className="table-responsive">
                     {distributorGrid && distributorGrid.length > 0 && (
                       <table
@@ -86,20 +105,20 @@ const DistributorMaster = () => {
                           <tr>
                             <th>Dist Code</th>
                             <th>Dist Name</th>
-                            <th>Phone</th>
+                            <th>Mobile</th>
                             <th>Mail ID</th>
                             <th>GSTIN</th>
+                            <th>Channel</th>
+                            <th>Territory</th>
                             <th>Mapped SR</th>
-                            <th>Approver</th>
-                            <th>User Master Flag</th>
-                            <th>Price Page Flag</th>
-                            <th>Status</th>
-                            <th>SAP Channel</th>
-                            <th>Location Code</th>
-                            <th>SAP Territory</th>
-                            {/* <th>PAN</th> */}
-                            <th>Price Page Code</th>
+                            <th>Approver Name</th>
+                            <th>W/h Location</th>
                             <th>Block Sale Flag</th>
+                            <th>MSSR Flag</th>
+                            <th>NDC Flag</th>
+                            <th>Claim Flag</th>
+                            <th>Partner Type</th>
+                            <th>Status</th>
                             <th>TCS Applicable</th>
                           </tr>
                         </thead>
@@ -112,19 +131,17 @@ const DistributorMaster = () => {
                                 <td className="text-nowrap">{data.phone_no1}</td>
                                 <td className="text-nowrap">{data.email_id}</td>
                                 <td className="text-nowrap">{data.gstin}</td>
+                                <td className="text-nowrap">{data.partner_channel}</td>
+                                <td className="text-nowrap">{data.sap_territory}</td>
                                 <td className="text-nowrap">{data.mapped_sr}</td>
-                                <td className="text-nowrap">
-                                  {data.approver_name ? data.approver_name : ""}
-                                </td>
+                                <td className="text-nowrap">{data.approver_name}</td>
+                                <td className="text-nowrap">{data.wh_location_name}</td>
+                                <td className="text-nowrap">{data.block_sale}</td>
                                 <td className="text-nowrap">{data.mssr_flag}</td>
                                 <td className="text-nowrap">{data.ndc_flag}</td>
-                                <td className="text-nowrap">{data.status}</td>
-                                <td className="text-nowrap">{data.partner_channel}</td>
-                                <td className="text-nowrap">{data.location_code}</td>
-                                <td className="text-nowrap">{data.sap_territory}</td>
-                                {/* <td>BDZPK9238F</td> */}
-                                <td className="text-nowrap">{data.price_channel}</td>
-                                <td className="text-nowrap">{data.block_sale}</td>
+                                <td className="text-nowrap">{data.claim_flag}</td>
+                                <td className="text-nowrap">{data.partner_type}</td>
+                                <td className="text-nowrap">{data.customer_status}</td>
                                 <td className="text-nowrap">{data.tcs_applicable}</td>
                               </tr>
                             ))}
@@ -132,6 +149,7 @@ const DistributorMaster = () => {
                       </table>
                     )}
                   </div>
+}
                 </div>
               </div>
             </div>

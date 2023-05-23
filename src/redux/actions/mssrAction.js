@@ -67,5 +67,12 @@ export const showPopUp = (value) => {
 	};
 };
 
+export const setInvoice = (value) => {
+	return {
+		type: ActionTypes.SET_SELECTED_INVOICES,
+		payload: value,
+	};
+};
+
 
 

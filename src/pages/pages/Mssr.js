@@ -5,6 +5,7 @@ import { Helmet } from "react-helmet";
 import {
   setAddToCart,
   setFlavour,
+  setInvoice,
   setOrderDetails,
   setOrderFilter,
   setProductLine,
@@ -43,6 +44,7 @@ const Mssr = (props) => {
     orderFilter,
     productLine,
     flavour,
+    selectedInvoice,
   } = mssr;
   const { distributor_details, brand_details, pack_type_details } = orderFilter;
   const { product_line_details } = productLine;
@@ -110,6 +112,7 @@ const Mssr = (props) => {
   };
   const getOrderDetails = async (data) => {
     if (data === "0") {
+      setDistributor(null);
       // dispatch(setMssrList(null));
       // setOrderData([]);
       dispatch(setOrderDetails("null"));
@@ -121,6 +124,7 @@ const Mssr = (props) => {
       setDisableFilter(true);
       setShowInvoice(false);
     } else if (data.mssr_entry_allowed_flag === "N") {
+      setDistributor(null);
       setOrderData([]);
       setSelectedPackType("");
       setSelectedBrand({});
@@ -282,7 +286,7 @@ const Mssr = (props) => {
   useEffect(() => {
     if (userProfile.usertype !== "null") {
       ///////////////////////////////
-
+      dispatch(setInvoice([]));
       dispatch(setOrderDetails("null"));
       dispatch(setAddToCart([]));
       setSelectedPackType("");
@@ -416,11 +420,30 @@ const Mssr = (props) => {
     // setDisableAddToCart(false);
   };
 
-  const saveOrder = async (e) => {
-    e.preventDefault();
+  const saveConfirmMssrOrder = async () => {
+    await MSSRService.saveMssrEntry({
+      userProfile,
+      distributor,
+      profile_details,
+      selectedInvoice,
+      addTocart,
+    }).then((response) => {
+      {
+        response.data.data.error_code === "0"
+          ? toast.success(
+              <span>{`${response.data.data.message}--${response.data.data.pp_mssr_entry_no}`}</span>,
+              { duration: 4000 },
+              navigate("/dashboard")
+            )
+          : toast.error(<span>{`${response.data.data.message}`}</span>);
+      }
+    });
+  };
+
+  const confirmMssrOrder = async () => {
     await Swal.fire({
       title: "Are you sure?",
-      text: "You want to save this orders!",
+      text: "You want to save this MSSR!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -428,46 +451,36 @@ const Mssr = (props) => {
       confirmButtonText: "Yes, save it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log("confirmOrder 11");
-        confirmMssrOrder();
+        saveConfirmMssrOrder();
       }
     });
   };
 
+  // const confirmMssrOrder = async () =>{
+  const saveOrder = async (e) => {
+    e.preventDefault();
 
-
-  const confirmMssrOrder = async () =>{
-
-    console.log("addTocart", addTocart)
-    // await MSSRService.saveMssrEntry({
-    //   userProfile,
-    //   distributor,
-    //   profile_details,
-    //   addToCartTotal,
-    //   addTocart,
-    // }).then((response) => {
-    //   {
-    //     response.data.data.error_code === "0"
-    //       ? toast.success(
-    //           <span>
-    //             {`${response.data.data.message}-- ${response.data.data.order_no}`}
-    //           </span>,
-    //           { duration: 4000 },
-    //           dispatch(
-    //             setAddToCart([]),
-    //             dispatch(setSelectedDistributor("null")),
-    //             dispatch(setSelectedSalePerson("")),
-    //             navigate("/dashboard")
-    //           )
-    //         )
-    //       : toast.error(
-    //           <span>
-    //             {`${response.data.data.message}-- ${response.data.data.add_message}`}
-    //           </span>
-    //         );
-    //   }
-    // });
-  }
+    if (
+      distributor.mssr_invoice_lov_display_flag === "1" &&
+      selectedInvoice.length === 0
+    ) {
+      await Swal.fire({
+        title: "You have not selected any invoice!",
+        text: "Do you want to continue without selecting invoice?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          confirmMssrOrder();
+        }
+      });
+    } else {
+      confirmMssrOrder();
+    }
+  };
   return (
     <>
       <Helmet title="Mssr" />
@@ -480,7 +493,7 @@ const Mssr = (props) => {
                   {" "}
                   <Link to="/dashboard">Dashboard</Link>{" "}
                 </li>
-                <li className="breadcrumb-item active">Place Order</li>
+                <li className="breadcrumb-item active">Create MSSR</li>
               </ol>
             </div>
           </div>
@@ -1251,7 +1264,7 @@ const Mssr = (props) => {
                       // 	setShowPlaceOrder(true);
                       // }}
                     >
-                      Mssr Summary
+                      MSSR Summary
                     </div>
 
                     <div
@@ -1262,7 +1275,14 @@ const Mssr = (props) => {
                       <div className="cart-prod-list scroll">
                         {addTocart != "null" &&
                           addTocart.map((item, index) => (
-                            <div className={item.mssr_entry ? `cart-prod-div-order-mssr` : `cart-prod-div-order`} key={index}>
+                            <div
+                              className={
+                                item.mssr_entry
+                                  ? `cart-prod-div-order-mssr`
+                                  : `cart-prod-div-order`
+                              }
+                              key={index}
+                            >
                               <div className="cart-prod-trash">
                                 <i
                                   onClick={(e) => removeFromCart(e, item)}
@@ -1305,55 +1325,55 @@ const Mssr = (props) => {
                                   </span>
                                 </span>
 
-                                  <span className="cart-prod-lbl">
-                                    Market Return <br></br>
-                                    <span className="cart-prod-val">
-                                      <input
-                                        disabled={true}
-                                        min={1}
-                                        maxLength="3"
-                                        onInput={maxLengthCheck}
-                                        style={{ textAlign: "right" }}
-                                        onChange={(e) =>
-                                          handleQtyInCart(e, item.item_code)
+                                <span className="cart-prod-lbl">
+                                  Market Return <br></br>
+                                  <span className="cart-prod-val">
+                                    <input
+                                      disabled={true}
+                                      min={1}
+                                      maxLength="3"
+                                      onInput={maxLengthCheck}
+                                      style={{ textAlign: "right" }}
+                                      onChange={(e) =>
+                                        handleQtyInCart(e, item.item_code)
+                                      }
+                                      onKeyPress={(event) => {
+                                        if (event.charCode < 48) {
+                                          event.preventDefault();
                                         }
-                                        onKeyPress={(event) => {
-                                          if (event.charCode < 48) {
-                                            event.preventDefault();
-                                          }
-                                        }}
-                                        type="number"
-                                        className="qty-ctl"
-                                        step="1"
-                                        placeholder={item.trasfer_qty}
-                                      />
-                                    </span>
+                                      }}
+                                      type="number"
+                                      className="qty-ctl"
+                                      step="1"
+                                      placeholder={item.trasfer_qty}
+                                    />
                                   </span>
+                                </span>
 
-                                  <span className="cart-prod-lbl">
-                                    Expiry Qty <br></br>
-                                    <span className="cart-prod-val">
-                                      <input
-                                        disabled={true}
-                                        min={1}
-                                        maxLength="3"
-                                        onInput={maxLengthCheck}
-                                        style={{ textAlign: "right" }}
-                                        onChange={(e) =>
-                                          handleQtyInCart(e, item.item_code)
+                                <span className="cart-prod-lbl">
+                                  Expiry Qty <br></br>
+                                  <span className="cart-prod-val">
+                                    <input
+                                      disabled={true}
+                                      min={1}
+                                      maxLength="3"
+                                      onInput={maxLengthCheck}
+                                      style={{ textAlign: "right" }}
+                                      onChange={(e) =>
+                                        handleQtyInCart(e, item.item_code)
+                                      }
+                                      onKeyPress={(event) => {
+                                        if (event.charCode < 48) {
+                                          event.preventDefault();
                                         }
-                                        onKeyPress={(event) => {
-                                          if (event.charCode < 48) {
-                                            event.preventDefault();
-                                          }
-                                        }}
-                                        type="number"
-                                        className="qty-ctl"
-                                        step="1"
-                                        placeholder={item.expire_qty}
-                                      />
-                                    </span>
+                                      }}
+                                      type="number"
+                                      className="qty-ctl"
+                                      step="1"
+                                      placeholder={item.expire_qty}
+                                    />
                                   </span>
+                                </span>
                               </div>
                             </div>
                           ))}
@@ -1393,8 +1413,6 @@ const Mssr = (props) => {
                         {/* <i className="fa-solid fa-circle-arrow-right"></i> */}
                         <i className="fa-solid fa-floppy-disk"></i>
                       </button>
-
-                      
                     </div>
                   </div>
                 </div>
@@ -1462,7 +1480,7 @@ const Mssr = (props) => {
                   setEmpty(false);
                   setOrderData([]);
                 } else {
-                  toast.error("Order Summary is empty");
+                  toast.error("MSSR Summary is empty");
                 }
               }}
               style={{ color: "#fff" }}
@@ -1472,7 +1490,7 @@ const Mssr = (props) => {
               // data-target="#collapseTwo"
               // aria-expanded="true"
               >
-                Mssr Summary
+                MSSR Summary
               </span>
               <i className="fa-solid fa-circle-arrow-right"></i>
             </Link>

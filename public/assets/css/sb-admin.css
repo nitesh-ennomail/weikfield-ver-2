@@ -50,7 +50,7 @@ span.cart-prod-hdlbl {
 } 
 
 .cart-prod-div-order-mssr{
-    background: #e9efd6;
+    background: #ebede4;
     padding: 5px 15px 10px;
     margin-bottom: 15px;
     font-size: .9rem;
@@ -1685,3 +1685,45 @@ input[type=number] {
     max-height: 82vh;
     overflow: scroll;
 }
+
+
+
+/* //////////////scroll css @Nitesh//////////////// */
+
+.table-responsive::-webkit-scrollbar {
+    -webkit-appearance: none;
+}
+
+.table-responsive::-webkit-scrollbar:vertical {
+    width: 12px;
+}
+
+.table-responsive::-webkit-scrollbar:horizontal {
+    height: 12px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background-color: rgba(228, 33, 33, 0.5);
+    border-radius: 10px;
+    border: 2px solid #ffffff;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    border-radius: 10px;  
+    background-color: #ffffff; 
+}
+
+
+.table-responsive{
+	scrollbar-face-color: rgba(228, 33, 33, 0.5); /* Firefox 63 compatibility */
+	scrollbar-track-color: #f7f7f7; /* Firefox 63 compatibility */ 
+	scrollbar-color: rgba(228, 33, 33, 0.5) #fbfcfb;
+	scrollbar-width: inherit;	
+  }
+
+
+ 
+
+
+
+  

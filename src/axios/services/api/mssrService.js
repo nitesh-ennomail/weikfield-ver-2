@@ -54,51 +54,47 @@ function getFlavour({ userProfile, selectedBrand, productLine }) {
 	});
 }
 
-// function saveMssrEntry({
-// 	userProfile,
-// 	distributor,
-// 	profile_details,
-// 	addToCartTotal,
-// 	addTocart,
-// }) {
-
-// 	return request({
-// 		url: `/mssr/saveEntries`,
-// 		method: "POST",
-// 		headers: {
-// 			"Content-Type": "application/json",
-// 			Authorization: `Bearer ${userProfile.token}`,
-// 		},
-// 		data: JSON.stringify({
-// 			locationId: `${distributor.wh_location_code}`,
-// 			user_Id: `${distributor.mapped_so_id}`,
-// 			Amount: `${addToCartTotal}`,
-// 			AmountBeforeTax: `${addToCartTotal}`,
-// 			customer_code: `${distributor.customer_code}`,
-// 			so_id: `${distributor.mapped_so_id}`,
-// 			orderStateFlag: "NEW",
-// 			previousOrderNo: "0",
-// 			exempt_order_flag,
-// 			data: addTocart.map(({ portal_item_code, item_qty, portal_mrp }) => ({
-// 				parent_code: portal_item_code,
-// 				order_qty: item_qty,
-// 				order_amount: item_qty * portal_mrp,
-// 				order_amount_w_tax: item_qty * portal_mrp,
-// 			})),
-// 		}),
-// 	});
-// }
-
-
-
-
+function saveMssrEntry({
+	  userProfile,
+	  distributor,
+      profile_details,
+      selectedInvoice,
+      addTocart,
+}) {
+	if(selectedInvoice.length === 0){
+		selectedInvoice = [{sap_doc_no:"0"}]
+	}
+	return request({
+		url: `/mssr/saveEntries`,
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${userProfile.token}`,
+		},
+		data: JSON.stringify({
+			user_Id: `${profile_details.user_id}`,
+			customer_code: `${distributor.customer_code}`,
+			data: selectedInvoice.map(({ sap_doc_no }) => ({
+				sap_doc_no: sap_doc_no
+			})),
+			
+			data1: addTocart.map(({ item_code, expire_qty, trasfer_qty, physical_closing }) => ({
+				item_code: item_code,
+				cls_stk_qty_saleable: physical_closing ? physical_closing : "0",
+				cls_stk_qty_damage: expire_qty ? expire_qty : "0",
+				market_return_qty: trasfer_qty ? trasfer_qty : "0",
+			})),
+			mssr_invoice_display_flag: `${distributor.mssr_invoice_lov_display_flag}`
+		}),
+	});
+}
 
 const MSSRService = {
 	getOrderFilters,
 	getOrderDetails,
 	getProductLine,
 	getFlavour,
-	// saveMssrEntry,
+	saveMssrEntry,
 };
 
 export default MSSRService;
