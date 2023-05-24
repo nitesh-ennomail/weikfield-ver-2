@@ -136,7 +136,21 @@ const Mssr = (props) => {
       toast.error(
         `You are not allowed to fill mssr now - Please contact Admin`
       );
-    } else if (data.mssr_entry_allowed_flag === "Y") {
+    } else if(data.cur_mth_mssr_entry_flag === "Y"){
+      setDistributor(null);
+      setOrderData([]);
+      setSelectedPackType("");
+      setSelectedBrand({});
+      dispatch(setFlavour("null"));
+      dispatch(setProductLine("null"));
+      setDisableFilter(true);
+      setShowInvoice(false);
+      setSalePerson(profile_details.user_name);
+      toast.error(
+        `You have already fillup the MSSR for this month!`
+      );
+    }
+    else if (data.mssr_entry_allowed_flag === "Y" && data.cur_mth_mssr_entry_flag === "N") {
       setSalePerson(profile_details.user_name);
       setDistributor(data);
       setSelectedPackType("");
@@ -153,31 +167,6 @@ const Mssr = (props) => {
         setShowInvoice(true);
       }
     }
-    ///////////////today12 comment////////////////
-    // else if (data.order_cut_off_flag === "N") {
-    //   toast.error(
-    //     `Order Not Allowed after Cut Off - ${data.order_cut_off_timestamp}`
-    //   );
-    // } else if (data.customer_block_flag === "YES") {
-    //   setDisableFilter(true);
-    //   setSalePerson(null);
-    //   dispatch(setOrderDetails("null"));
-    //   dispatch(setAddToCart([]));
-    //   setSelectedPackType("");
-    //   setSelectedBrand({});
-    //   dispatch(setProductLine("null"));
-    //   dispatch(setFlavour("null"));
-    //   setOrderData([]);
-    //   toast.error("customer_block_flag blocked");
-    // } else if (data.ndc_flag === "YES") {
-    //   toast.error("ndc_flag blocked");
-    // } else if (data.mssr_flag === "YES") {
-    //   toast.error("mssr_flag blocked");
-    // } else if (data.claim_flag === "YES") {
-    //   toast.error("claim_flag blocked");
-    // }
-    ////////////////today12 comment///////////////
-    // AXIOS WRAPPER FOR API CALL
   };
 
   const getProductLine = async (brand) => {
@@ -240,26 +229,26 @@ const Mssr = (props) => {
     let filterData = mssr_line_details.filter(function (el) {
       if (
         selectedPackType &&
-        // selectedBrand &&
+        selectedBrand &&
         selectedProductLine &&
         selectedFlavour
       ) {
         return (
           el.pack_type === selectedPackType.pack_type_desc &&
-          // el.brand === selectedBrand.brand_desc &&
+          el.brand === selectedBrand.brand_desc &&
           el.product_line === selectedProductLine.product_line_desc &&
           el.flavour === selectedFlavour.flavour_desc
         );
       } else if (selectedPackType && selectedBrand && selectedProductLine) {
         return (
           el.pack_type === selectedPackType.pack_type_desc &&
-          // el.brand === selectedBrand.brand_desc &&
+          el.brand === selectedBrand.brand_desc &&
           el.product_line === selectedProductLine.product_line_desc
         );
       } else if (selectedPackType && selectedBrand) {
         return (
           el.pack_type === selectedPackType.pack_type_desc
-          // && el.brand === selectedBrand.brand_desc
+          && el.brand === selectedBrand.brand_desc
         );
       }
     });
@@ -342,7 +331,7 @@ const Mssr = (props) => {
 
     if (
       id.pack_type === selectedPackType.pack_type_desc &&
-      // id.brand === selectedBrand.brand_desc &&
+      id.brand === selectedBrand.brand_desc &&
       id.product_line === selectedProductLine.product_line_desc &&
       id.flavour === selectedFlavour.flavour_desc
     ) {
@@ -564,6 +553,7 @@ const Mssr = (props) => {
                                         <option
                                           key={index}
                                           value={JSON.stringify(data)}
+                                          className={data.cur_mth_mssr_entry_flag === "Y" ? "strikeout" : ""}
                                         >
                                           {data.customer_name} -{" "}
                                           {data.customer_code}

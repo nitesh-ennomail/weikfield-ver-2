@@ -1845,6 +1845,12 @@ input[type=number] {
 
   /*end  pagination css  */
 
+	.strikeout {
+		color: rgb(255, 99, 99);
+		background-color: #dad6d6;
+		text-decoration: line-through !important;
+	  }
+	 
 
  
 
