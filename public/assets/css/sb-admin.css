@@ -1721,6 +1721,110 @@ input[type=number] {
 	scrollbar-width: inherit;	
   }
 
+  /*Css for pagination @AtiqurRahman */
+.input-row {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.input-field {
+	width: 100%;
+	max-width: 150px;
+}
+
+.input-row {
+	display: flex;
+	align-items: right;
+	gap: 8px;
+}
+
+.input-field {
+	width: 100%;
+	max-width: 150px;
+}
+
+.pagination-bar {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+
+.pagination-container {
+	display: flex;
+	list-style-type: none;
+	border-color: #000;
+	width: 100%;
+	justify-content: center;
+}
+
+.pagination-item {
+	padding: 0 12px;
+	background-color: #d8dbe08c;
+	height: 32px;
+	text-align: center;
+	margin: auto 4px;
+	color: rgb(0, 0, 0);
+	display: flex;
+	box-sizing: border-box;
+	align-items: center;
+	letter-spacing: 0.01071em;
+	border-radius: 5px !important;
+	line-height: 1.43;
+	font-size: 13px;
+	min-width: 32px;
+}
+
+.pagination-item.dots:hover {
+	background-color: transparent;
+	cursor: default;
+}
+
+.pagination-item:hover {
+	background-color: #3dae2b;
+	cursor: pointer;
+}
+
+.pagination-item.selected {
+	background-color: #3dae2b;
+}
+
+.pagination-item .arrow::before {
+	position: relative;
+	/* top: 3pt; Uncomment this to lower the icons as requested in comments*/
+	/* content: ''; */
+	/* By using an em scale, the arrows will size with the font */
+	display: inline-block;
+	width: 0.4em;
+	height: 0.4em;
+	border-right: 0.12em solid rgba(0, 0, 0, 0.87);
+	border-top: 0.12em solid rgba(0, 0, 0, 0.87);
+}
+
+.pagination-item .arrow.left {
+	transform: rotate(-135deg) translate(-50%);
+}
+
+.pagination-item .arrow.right {
+	transform: rotate(45deg);
+}
+
+.pagination-item.disabled {
+	pointer-events: none;
+}
+
+.pagination-item.disabled .arrow::before {
+	border-right: 0.12em solid rgba(0, 0, 0, 0.43);
+	border-top: 0.12em solid rgba(0, 0, 0, 0.43);
+}
+
+.pagination-item.disabled:hover {
+	background-color: transparent;
+	cursor: default;
+}
+
+  /*end  pagination css  */
+
 
  
 

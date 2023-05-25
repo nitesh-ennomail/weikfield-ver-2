@@ -9,14 +9,15 @@ import { setSelectedOrder } from "../../redux/actions/placeOrderAction";
 import $ from "jquery";
 import Pagenation from "../../pages/pages/utils/Pagenation";
 import { selectedPagesNumber, setViewOrderTotalPages } from "../../redux/actions/viewOrderAction";
-
+import Pagination from "./Pagination";
+// import Pagination from "./Pagination";
 function ViewOrderTable({handleStatus}) {
 	const userProfile = useSelector((state) => state.userProfile);
 	const viewOrder = useSelector((state) => state.viewOrder);
 	const { viewOrderFilter, viewOrderTotalPages, selectedPage} = viewOrder;
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-
+  const [currentPage, setCurrentPage] = useState(1);
 	const numbers = [...Array(viewOrderTotalPages + 1).keys()].slice(1);
 
 	const getOrderLines = async (order) => {
@@ -180,7 +181,14 @@ function ViewOrderTable({handleStatus}) {
                 </tbody>
               </table>
 
-              <nav >
+              <Pagination
+                className="pagination-bar"
+                currentPage={currentPage}
+                totalCount={viewOrderTotalPages}
+                onPageChange={page => setCurrentPage(page)}
+              />
+
+              {/* <nav >
                 <ul className="pagination">
                   <li className="page-item">
                   <a className="page-link"  onClick={ selectedPage>0 ?()=>selectedPageNumber(selectedPage-1):(event) => event.preventDefault()}>
@@ -189,20 +197,19 @@ function ViewOrderTable({handleStatus}) {
                   </li>
                   {console.log("selectedPage", selectedPage)}
                   {numbers.map((n, i) => (
-                    <li className={selectedPage  === i ? "page-item active" :"page-item"} key={i}>
-                      <a className="page-link " onClick={()=>selectedPageNumber(i)}>
-                        {n}
-                      </a>
-                    </li>
-                  ))}
-
+                  <li className={selectedPage === i ? "page-item active" : "page-item"} key={i}>
+                    <a className="page-link" onClick={() => selectedPageNumber(i)}>
+                      {n}
+                    </a>
+                  </li>
+                ))}
                   <li className="page-item">
                     <a className="page-link"  onClick={ numbers.length > selectedPage+1 ?()=>selectedPageNumber(selectedPage+1):(event) => event.preventDefault()}>
                       Next
                     </a>
                   </li>
                 </ul>
-              </nav>
+              </nav> */}
             </div>
           </div>
         </div>
