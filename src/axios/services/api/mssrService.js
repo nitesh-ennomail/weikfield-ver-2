@@ -78,11 +78,13 @@ function saveMssrEntry({
 				sap_doc_no: sap_doc_no
 			})),
 			
-			data1: addTocart.map(({ item_code, expire_qty, trasfer_qty, physical_closing }) => ({
+			data1: addTocart.map(({ item_code, expire_qty, trasfer_qty, physical_closing, asp_gsv, asp_nsv}) => ({
 				item_code: item_code,
 				cls_stk_qty_saleable: physical_closing ? physical_closing : "0",
 				cls_stk_qty_damage: expire_qty ? expire_qty : "0",
 				market_return_qty: trasfer_qty ? trasfer_qty : "0",
+				asp_gsv: asp_gsv ? asp_gsv : "0",
+				asp_nsv: asp_nsv ? asp_nsv : "0"
 			})),
 			mssr_invoice_display_flag: `${distributor.mssr_invoice_lov_display_flag}`
 		}),
