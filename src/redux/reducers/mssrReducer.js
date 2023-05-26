@@ -10,6 +10,12 @@ const initialState = {
   orderDetails: "null",
   productLine: "null",
   flavour: "null",
+  viewMssrFilter: null,
+  viewMssrTotalRecord: null,
+  viewMssrTotalPages: null,
+  selectedPage: 0,
+  setMssrValidationStatus: null,
+  getViewStockDetailsLines: null,
   selectedOrder: selectedOrder ? JSON.parse(selectedOrder) : "null",
   addTocart: cartItem ? JSON.parse(cartItem) : [],
   selectedDistributer: selectedDistributer
@@ -50,6 +56,24 @@ export const mssrReducer = (state = initialState, { type, payload }) => {
 
     case ActionTypes.SET_SELECTED_INVOICES:
         return { ...state, selectedInvoice: payload };
+
+      case ActionTypes.SET_VIEW_MSSRFILTER:
+        return { ...state, viewMssrFilter: payload };
+    
+      case ActionTypes.SET_VIEW_MSSR_TOTALRECORD:
+        return { ...state, viewMssrTotalRecord: payload };
+    
+      case ActionTypes.SET_VIEW_MSSR_TOTALPAGE:
+        return { ...state, viewMssrTotalPages: payload };
+    
+      case ActionTypes.SET_SELECTED_MSSRPAGE_NUMBER:
+        return { ...state, selectedPage: payload };
+
+      case ActionTypes.SET_VIEW_MSSR_VALIDATION_STATUS:
+        return{...state, setMssrValidationStatus : payload}; 
+
+        case ActionTypes.SET_VIEW_MSSR_STOCK_DETAILS_LINES:
+          return{...state, getViewStockDetailsLines : payload};         
 	  
     default:
       return state;

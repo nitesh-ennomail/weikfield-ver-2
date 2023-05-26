@@ -1,5 +1,47 @@
 import { ActionTypes } from "../constants/action-type";
 
+export const setViewMssrFilter = (data) => {
+	return {
+		type: ActionTypes.SET_VIEW_MSSRFILTER,
+		payload: data,
+	};
+};
+
+export const setViewMssrTotalRecord = (data) => {
+	return {
+		type: ActionTypes.SET_VIEW_MSSR_TOTALRECORD,
+		payload: data,
+	};
+};
+
+export const setViewMssrTotalPages = (data) => {
+	return {
+		type: ActionTypes.SET_VIEW_MSSR_TOTALPAGE,
+		payload: data,
+	};
+};
+
+export const selectedMssrPagesNumber = (data) => {
+	return {
+		type: ActionTypes.SET_SELECTED_MSSRPAGE_NUMBER,
+		payload: data,
+	};
+};
+
+export const setMssrViewValidationStatus =(data)=>{
+	return {
+		type: ActionTypes.SET_VIEW_MSSR_VALIDATION_STATUS,
+		payload: data,
+	};
+}
+
+export const getViewMssrDetailsLines =(data)=>{
+	return {
+		type: ActionTypes.SET_VIEW_MSSR_STOCK_DETAILS_LINES,
+		payload: data,
+	};
+}
+
 export const setOrderFilter = (data) => {
 	return {
 		type: ActionTypes.SET_ORDER_FILTER_MSSR,

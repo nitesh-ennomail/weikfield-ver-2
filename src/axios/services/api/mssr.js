@@ -1,6 +1,92 @@
 import request from "../../shared/lib/request";
 
+function getViewStockDetailsChannelFilter(userProfile) {
+	return request({
+		url: `dashboard/getViewStockDetailsChannelFilter`,
+		method: "GET",
+		headers: {
+			Authorization: `Bearer ${userProfile.token}`,
+		},
+	});
+}
 
+function getViewStockDetailFilter(userProfile, channel) {
+	return request({
+		url: `dashboard/getViewStockDetailsFilter`,
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${userProfile.token}`,
+		},
+		data: JSON.stringify({
+			channel: channel,
+		}),
+	});
+}
+
+function getViewStockDetails(
+	userProfile,
+	selectedChannel,
+	userId,
+	month,
+	selectedDistributer,
+	selectedOrderStatus,
+	selectedPageN
+) {
+	return request({
+		url: `dashboard/getViewStockDetailsList`,
+		method: "POST",
+		headers: {
+			'Content-Type': 'application/json',
+			Authorization: `Bearer ${userProfile.token}`,
+		},
+		data: JSON.stringify({
+
+			userType:`${userProfile.usertype}`,
+			userID:userId,
+			month:month,
+			sortOn:"mssr_entry_no",
+			orderBy:"DESC",
+			distCode:selectedDistributer,
+			channel:selectedChannel,
+			stock_details_status:selectedOrderStatus,
+			limitNo:10,
+			offsetStart:selectedPageN,
+
+
+		}),
+	});
+}
+
+function setValidationStatus( userProfile, stock_entry_no, cur_status_code, vaidation_remarks) {
+	return request({
+		url: `mssr/setStockDetailsStatus`,
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${userProfile.token}`,
+		},
+		data: JSON.stringify({
+			stock_entry_no:stock_entry_no,
+			cur_status_code:cur_status_code,
+			vaidation_remarks:vaidation_remarks 
+		}),
+	});
+}
+
+function getViewStockDetailsLines(userProfile, stock_entry_no) {
+	return request({
+		url: `dashboard/getViewStockDetailsLines`,
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${userProfile.token}`,
+		},
+		data: JSON.stringify({
+			stock_entry_no: stock_entry_no,
+		}),
+	});
+}
 
 function getMssrFilter(userProfile) {
 	return request({
@@ -94,7 +180,13 @@ const MssrService = {
 	getInvoices,
 	getProductLine,
 	getFlavour,
-	addNewMssr
+	addNewMssr,
+	getViewStockDetailsChannelFilter,
+	getViewStockDetailFilter,
+	getViewStockDetails,
+	setValidationStatus,
+	getViewStockDetailsLines,
+
 };
 
 export default MssrService;

@@ -22,6 +22,7 @@ import Mssr from "./pages/pages/Mssr";
 //Datatable Modules
 import "datatables.net-dt/js/dataTables.dataTables";
 import "../node_modules/datatables.net-dt/css/jquery.dataTables.min.css";
+import MssrViewOrder from "./pages/pages/MssrViewOrder";
 
 function App() {
 	useLayoutEffect(() => {
@@ -60,6 +61,16 @@ function App() {
 							<>
 								<Header />
 								<Mssr />
+							</>
+						}
+					/>
+
+					<Route
+						path="/mssrvieworder"
+						element={
+							<>
+								<Header />
+								<MssrViewOrder />
 							</>
 						}
 					/>
