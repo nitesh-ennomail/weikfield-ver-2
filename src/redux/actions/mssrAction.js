@@ -42,6 +42,13 @@ export const getViewMssrDetailsLines =(data)=>{
 	};
 }
 
+export const getStockEntryNo =(data)=>{
+	return {
+		type: ActionTypes.SET_STOCK_ENTRY_NO,
+		payload: data,
+	};
+}
+
 export const setOrderFilter = (data) => {
 	return {
 		type: ActionTypes.SET_ORDER_FILTER_MSSR,

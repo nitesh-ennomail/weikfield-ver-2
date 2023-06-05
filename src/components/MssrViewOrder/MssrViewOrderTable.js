@@ -6,7 +6,7 @@ import MssrService from "../../axios/services/api/mssr";
 import DashboardService from "../../axios/services/api/dashboard";
 import { userType } from "../../pages/pages/constants/constants";
 import { setOrderLine } from "../../redux/actions/dashboardAction";
-import { getViewMssrDetailsLines } from "../../redux/actions/mssrAction";
+import { getViewMssrDetailsLines,getStockEntryNo } from "../../redux/actions/mssrAction";
 import { setSelectedOrder } from "../../redux/actions/placeOrderAction";
 import $ from "jquery";
 import MssrViewOrderModel from './MssrViewOrderModel'
@@ -25,28 +25,30 @@ function MssrViewOrderTable({handleStatus}) {
 	const numbers = [...Array(viewMssrTotalPages + 1).keys()].slice(1);
 
 	const getOrderLines = async (mssr) => {
-		const stock_entry_no = mssr.stock_entry_no;
+		const stock_entry_no = mssr.mssr_entry_no;
+    
 		// AXIOS WRAPPER FOR API CALL
 		await MssrService.getViewStockDetailsLines(userProfile, stock_entry_no).then(
 			(response) => {
+          dispatch(getStockEntryNo(stock_entry_no))
 				dispatch(getViewMssrDetailsLines(response.data.data.stock_line_details));
+
 			}
 		);
 		// getViewOrderDetails()
 		// AXIOS WRAPPER FOR API CAL
 	};
 
-	const setStatus = async (item) => {
-        let label;
+	const setValidationStatus = async (item) => {
         let stock_entry_no = item.mssr_entry_no;
         let cur_status_code = item.status_code
 		const { value: remark } = await Swal.fire({
+      title:"Enter Validarion Remark ",
 			input: "text",
-			inputLabel: `${label}`,
 			inputPlaceholder: "Please Enter Remark",
 		});
 		if (remark) {
-			await MssrService.setValidationStatus(userProfile, stock_entry_no, cur_status_code, remark).then(
+			await MssrService.setValidationStatus(userProfile, stock_entry_no, cur_status_code, remark.toUpperCase()).then(
 				(response) => {
 					Swal.fire(response.data.data.message);
 					// handleStatus()
@@ -56,20 +58,6 @@ function MssrViewOrderTable({handleStatus}) {
 			navigate("/dashboard");
 		}
 	};
-	// useEffect(() => {
-	// 	//initialize datatable
-	// 	if ($.fn.dataTable.isDataTable("#viewDataTable")) {
-	// 		$("#viewDataTable").DataTable();
-	// 	} else {
-	// 		$("#viewDataTable").DataTable({
-	// 			ordering: true,
-	// 			paging: false,
-	// 			searching: true,
-	// 			lengthChange: false,
-    //     info: false,
-	// 		});
-	// 	}
-	// }, [viewOrder]);
 	const selectedPageNumber = (pageNo) =>{
 		dispatch(selectedPagesNumber(pageNo));
 	}
@@ -119,25 +107,27 @@ function MssrViewOrderTable({handleStatus}) {
                         </td>
 
                         <td>
-                          {profile_details && profile_details.user_id ===
-                          mssr.approver_name ? (
-                            <div>
-                              <button
-                                data-dismiss="modal"
-                                aria-label="Close"
-                                className="btn btn-dash-primary btn-sm mr-1"
-                                onClick={() => setStatus(mssr)}
-                              >
-                                <i
-                                  className="fa-solid fa-pen"
-                                  aria-hidden="true"
-                                ></i>
-                              </button>
-                            </div>
-                          ) : (
+                          { mssr.status_code === "3" ? (        //profile_details.user_id !== mssr.created_by_uid ||
                             <span className="text-danger text-nowrap">
-                              {mssr.ui_status}
-                            </span>
+                            {mssr.ui_status}
+                          </span>
+                          ) : (
+                            <div>
+                            <button
+                            title="validate"
+                              data-dismiss="modal"
+                              aria-label="Close"
+                              className="btn btn-dash-primary btn-sm mr-1"
+                              onClick={() => setValidationStatus(mssr)}
+                            >
+                              <i
+                                className="fa-solid fa-pen"
+                                aria-hidden="true"
+                              ></i>
+                            </button>
+                          </div>
+                            
+                            
                           )}
                         </td>
                       </tr>

@@ -83,9 +83,26 @@ function getViewStockDetailsLines(userProfile, stock_entry_no) {
 			Authorization: `Bearer ${userProfile.token}`,
 		},
 		data: JSON.stringify({
-			stock_entry_no: stock_entry_no,
+			// stock_entry_no:"CS2300042",
+			 stock_entry_no: stock_entry_no,
 		}),
 	});
+}
+
+function getUpdateStockDetails(userProfile, stock_entry_no, newInputData){
+	return request({
+		url: `dashboard/updateStockDetails`,
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			Authorization: `Bearer ${userProfile.token}`,
+		},
+		data: JSON.stringify({
+			stock_entry_no:stock_entry_no,
+			data:newInputData,
+		}),
+	});
+
 }
 
 function getMssrFilter(userProfile) {
@@ -186,6 +203,7 @@ const MssrService = {
 	getViewStockDetails,
 	setValidationStatus,
 	getViewStockDetailsLines,
+	getUpdateStockDetails,
 
 };
 

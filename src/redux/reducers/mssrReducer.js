@@ -16,6 +16,7 @@ const initialState = {
   selectedPage: 0,
   setMssrValidationStatus: null,
   getViewStockDetailsLines: null,
+  getStockEntryNO:null,
   selectedOrder: selectedOrder ? JSON.parse(selectedOrder) : "null",
   addTocart: cartItem ? JSON.parse(cartItem) : [],
   selectedDistributer: selectedDistributer
@@ -73,7 +74,10 @@ export const mssrReducer = (state = initialState, { type, payload }) => {
         return{...state, setMssrValidationStatus : payload}; 
 
         case ActionTypes.SET_VIEW_MSSR_STOCK_DETAILS_LINES:
-          return{...state, getViewStockDetailsLines : payload};         
+          return{...state, getViewStockDetailsLines : payload};    
+          
+          case ActionTypes.SET_STOCK_ENTRY_NO:
+            return{...state, getStockEntryNO : payload};    
 	  
     default:
       return state;

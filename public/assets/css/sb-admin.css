@@ -1642,7 +1642,7 @@ input[type=number] {
 } 
 .react-datepicker__header {
  text-align: center;
- height: 62px;
+ /* height: 62px; */
  background-color: #E42526 !important;
  border-bottom: 1px solid #aeaeae;
  border-top-left-radius: 0.3rem;
@@ -1655,7 +1655,10 @@ input[type=number] {
  background-color: white;
 }
 
+.datepick.react-datepicker__header{
+	height: 31px;
 
+}
 /* /////// */
 
 
@@ -1686,6 +1689,23 @@ input[type=number] {
     overflow: scroll;
 }
 
+/* css for month picker @AtiqurRahman */
+.monthpicker .react-datepicker__header {
+	background-color: red;
+	height: 31px !important;
+	color: white ;
+  }
+  
+  .monthpicker .react-datepicker__navigation--previous,
+  .monthpicker .react-datepicker__navigation--next {
+	background-color: white;
+	color: red;
+  }
+  
+  .monthpicker .react-datepicker__year-text {
+	color: white;
+  }
+  
 
 
 /* //////////////scroll css @Nitesh//////////////// */

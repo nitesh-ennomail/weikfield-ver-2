@@ -183,7 +183,7 @@ function SearchBar({ channel }) {
 											<div className="col-md-8">
 												<DatePicker
 													showIcon
-													className="form-control datepicker"
+													className="datepick form-control datepicker"
 													selected={startDate}
 													minDate={minimumDate}
 													onChange={(date) => setStartDate(date)}
@@ -205,7 +205,7 @@ function SearchBar({ channel }) {
 											<div className="col-md-8">
 												<DatePicker
 													showIcon
-													className="form-control datepicker"
+													className="datepick form-control datepicker"
 													selected={endDate > startDate ? endDate : startDate}
 													onChange={(date) => setEndDate(date)}
 													selectsEnd
