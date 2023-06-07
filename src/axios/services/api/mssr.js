@@ -191,6 +191,7 @@ function addNewMssr({ userProfile, search }) {
 	});
 }
 
+
 const MssrService = {
 	getMssrFilter,
 	getMssrList,
@@ -203,8 +204,7 @@ const MssrService = {
 	getViewStockDetails,
 	setValidationStatus,
 	getViewStockDetailsLines,
-	getUpdateStockDetails,
-
+	getUpdateStockDetails
 };
 
 export default MssrService;

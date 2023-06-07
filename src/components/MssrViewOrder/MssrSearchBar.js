@@ -115,7 +115,7 @@ function MssrSearchBar({ channel }) {
             data-target="#collapseOne"
             aria-expanded="true"
           >
-            Search Mssr Orders
+            Search Mssr Entries
           </div>
           <div
             className="card-body collapse show py-0"
@@ -223,7 +223,7 @@ function MssrSearchBar({ channel }) {
                     <div className="row">
                       <div className="col-md-4">
                         <label htmlFor="OrderStatus" className="control-label">
-                          Order Status:
+                          MSSR Status:
                         </label>
                       </div>
                       <div className="col-md-8">
@@ -262,6 +262,11 @@ function MssrSearchBar({ channel }) {
                           onClick={handleSubmit}
                           type="submit"
                           className="btn btn-primary  btn-md"
+
+
+                          data-toggle="collapse"
+                                data-target="#collapseOne"
+                                aria-expanded="false"
                         >
                           <i className="fa-solid fa-magnifying-glass"></i>{" "}
                           Search

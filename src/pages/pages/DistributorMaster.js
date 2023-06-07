@@ -112,6 +112,8 @@ const DistributorMaster = () => {
                             <th>Territory</th>
                             <th>Mapped SR</th>
                             <th>Approver Name</th>
+                            <th>BM Name</th>
+                            <th>ZSM Name</th>
                             <th>W/h Location</th>
                             <th>Block Sale Flag</th>
                             <th>MSSR Flag</th>
@@ -135,6 +137,8 @@ const DistributorMaster = () => {
                                 <td className="text-nowrap">{data.sap_territory}</td>
                                 <td className="text-nowrap">{data.mapped_sr}</td>
                                 <td className="text-nowrap">{data.approver_name}</td>
+                                <td className="text-nowrap">{data.bm_name}</td>
+                                <td className="text-nowrap">{data.zsm_name}</td>
                                 <td className="text-nowrap">{data.wh_location_name}</td>
                                 <td className="text-nowrap">{data.block_sale}</td>
                                 <td className="text-nowrap">{data.mssr_flag}</td>

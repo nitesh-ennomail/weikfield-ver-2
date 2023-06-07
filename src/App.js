@@ -23,6 +23,7 @@ import Mssr from "./pages/pages/Mssr";
 import "datatables.net-dt/js/dataTables.dataTables";
 import "../node_modules/datatables.net-dt/css/jquery.dataTables.min.css";
 import MssrViewOrder from "./pages/pages/MssrViewOrder";
+import MyForm from "./pages/pages/MyForm";
 
 function App() {
 	useLayoutEffect(() => {
@@ -36,119 +37,129 @@ function App() {
 	}, []);
 
 	return (
-		<>
-			<BrowserRouter basename={process.env.PUBLIC_URL}>
-				{/* <BrowserRouter basename={"/partner"}> */}
-				{/* <HashRouter> */}
+    <>
+      <BrowserRouter basename={process.env.PUBLIC_URL}>
+        {/* <BrowserRouter basename={"/partner"}> */}
+        {/* <HashRouter> */}
 
-				<Routes>
-					<Route path="/" element={<Login />} />
-					<Route path="/forgotpassword" element={<ForgotPassword />} />
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/forgotpassword" element={<ForgotPassword />} />
 
-					<Route
-						path="/productmaster"
-						element={
-							<>
-								<Header />
-								<ProductMaster />
-							</>
-						}
-					/>
+          <Route
+            path="/productmaster"
+            element={
+              <>
+                <Header />
+                <ProductMaster />
+              </>
+            }
+          />
 
-					<Route
-						path="/createmssr"
-						element={
-							<>
-								<Header />
-								<Mssr />
-							</>
-						}
-					/>
+          <Route
+            path="/createmssr"
+            element={
+              <>
+                <Header />
+                <Mssr />
+              </>
+            }
+          />
 
-					<Route
-						path="/mssrvieworder"
-						element={
-							<>
-								<Header />
-								<MssrViewOrder />
-							</>
-						}
-					/>
+          <Route
+            path="/viewmssr"
+            element={
+              <>
+                <Header />
+                <MssrViewOrder />
+              </>
+            }
+          />
 
-					<Route
-						path="/dashboard"
-						element={
-							<>
-								<Header />
-								<Dashboard />
-							</>
-						}
-					/>
+          <Route
+            path="/test"
+            element={
+              <>
+                <Header />
+                <MyForm />
+              </>
+            }
+          />
 
-					<Route
-						path="/distributor"
-						element={
-							<>
-								<Header />
-								<DistributorMaster />
-							</>
-						}
-					/>
+          <Route
+            path="/dashboard"
+            element={
+              <>
+                <Header />
+                <Dashboard />
+              </>
+            }
+          />
 
-					<Route
-						path="/placeorder"
-						element={
-							<>
-								<Header />
-								<PlaceOrder />
-							</>
-						}
-					/>
-					<Route
-						path="/modifyorder"
-						element={
-							<>
-								<Header />
-								<ModifyOrders />
-							</>
-						}
-					/>
+          <Route
+            path="/distributor"
+            element={
+              <>
+                <Header />
+                <DistributorMaster />
+              </>
+            }
+          />
 
-					<Route
-						path="/vieworder"
-						element={
-							<>
-								<Header />
-								<ViewOrder />
-							</>
-						}
-					/>
+          <Route
+            path="/placeorder"
+            element={
+              <>
+                <Header />
+                <PlaceOrder />
+              </>
+            }
+          />
+          <Route
+            path="/modifyorder"
+            element={
+              <>
+                <Header />
+                <ModifyOrders />
+              </>
+            }
+          />
 
-					<Route
-						path="/myprofile"
-						element={
-							<>
-								<Header />
-								<MyProfile />
-							</>
-						}
-					/>
+          <Route
+            path="/vieworder"
+            element={
+              <>
+                <Header />
+                <ViewOrder />
+              </>
+            }
+          />
 
-					<Route
-						path="/logout"
-						element={
-							<>
-								<Logout />
-							</>
-						}
-					/>
+          <Route
+            path="/myprofile"
+            element={
+              <>
+                <Header />
+                <MyProfile />
+              </>
+            }
+          />
 
-					<Route path="*" element={<PageNotFound />} />
-				</Routes>
-				{/* </HashRouter> */}
-			</BrowserRouter>
-		</>
-	);
+          <Route
+            path="/logout"
+            element={
+              <>
+                <Logout />
+              </>
+            }
+          />
+
+          <Route path="*" element={<PageNotFound />} />
+        </Routes>
+        {/* </HashRouter> */}
+      </BrowserRouter>
+    </>
+  );
 }
 
 export default App;
