@@ -41,7 +41,7 @@ const MssrViewOrder = () => {
 
 	return (
 		<>
-		<Helmet title="vieworder" />
+		<Helmet title="View MSSR" />
 			<div className="content-wrapper">
 				<div className="container-fluid">
 					<div className="row">
@@ -51,11 +51,11 @@ const MssrViewOrder = () => {
 									{" "}
 									<Link to="/dashboard">Dashboard</Link>
 								</li>
-								<li className="breadcrumb-item active">Mssr View Order</li>
+								<li className="breadcrumb-item active">View MSSR</li>
 							</ol>
 							<div className="row">
 								<div className="col-lg-12 mb-2">
-									<h4>List of MssrOders</h4>
+									<h4>List of MSSR Entries</h4>
 								</div>
 							</div>
 							{channel && <MssrSearchBar channel={channel} /> }

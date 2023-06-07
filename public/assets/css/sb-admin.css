@@ -1843,6 +1843,14 @@ input[type=number] {
 	cursor: default;
 }
 
+.loader {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100px;
+	font-size: 18px;
+  }
+
   /*end  pagination css  */
 
 	.strikeout {
@@ -1850,6 +1858,8 @@ input[type=number] {
 		background-color: #dad6d6;
 		text-decoration: line-through !important;
 	  }
+
+
 	 
 
  

@@ -6,62 +6,117 @@ import MssrService from "../../axios/services/api/mssr";
 import DashboardService from "../../axios/services/api/dashboard";
 import { userType } from "../../pages/pages/constants/constants";
 import { setOrderLine } from "../../redux/actions/dashboardAction";
-import { getViewMssrDetailsLines,getStockEntryNo } from "../../redux/actions/mssrAction";
+import {
+  getViewMssrDetailsLines,
+  getStockEntryNo,
+} from "../../redux/actions/mssrAction";
 import { setSelectedOrder } from "../../redux/actions/placeOrderAction";
 import $ from "jquery";
-import MssrViewOrderModel from './MssrViewOrderModel'
-import { selectedPagesNumber, setViewOrderTotalPages } from "../../redux/actions/viewOrderAction";
+import MssrViewOrderModel from "./MssrViewOrderModel";
+import {
+  selectedPagesNumber,
+  setViewOrderTotalPages,
+} from "../../redux/actions/viewOrderAction";
 
-function MssrViewOrderTable({handleStatus}) {
-	const userProfile = useSelector((state) => state.userProfile);
-    const dashboard = useSelector((state) => state.dashboard.dashboard);
-    const { menu_details, profile_details } = dashboard;
-    const mssr = useSelector((state)=>state.mssr);
-    const {viewMssrFilter,viewMssrTotalPages} = mssr;
+import { saveAs } from "file-saver";
+import axios from "axios";
+import { baseURL } from "../../axios/shared/constants";
 
-	const dispatch = useDispatch();
-	const navigate = useNavigate();
+function MssrViewOrderTable({ handleStatus }) {
+  const userProfile = useSelector((state) => state.userProfile);
+  const dashboard = useSelector((state) => state.dashboard.dashboard);
+  const { menu_details, profile_details } = dashboard;
+  const mssr = useSelector((state) => state.mssr);
+  const { viewMssrFilter, viewMssrTotalPages } = mssr;
+  
+  const [loadingItems, setLoadingItems] = useState([]);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
-	const numbers = [...Array(viewMssrTotalPages + 1).keys()].slice(1);
+  const numbers = [...Array(viewMssrTotalPages + 1).keys()].slice(1);
 
-	const getOrderLines = async (mssr) => {
-		const stock_entry_no = mssr.mssr_entry_no;
-    
-		// AXIOS WRAPPER FOR API CALL
-		await MssrService.getViewStockDetailsLines(userProfile, stock_entry_no).then(
-			(response) => {
-          dispatch(getStockEntryNo(stock_entry_no))
-				dispatch(getViewMssrDetailsLines(response.data.data.stock_line_details));
+  const getOrderLines = async (mssr) => {
+    console.log("MSSR", mssr);
+    const stock_entry_no = mssr.mssr_entry_no;
 
-			}
-		);
-		// getViewOrderDetails()
-		// AXIOS WRAPPER FOR API CAL
-	};
+    // AXIOS WRAPPER FOR API CALL
+    await MssrService.getViewStockDetailsLines(
+      userProfile,
+      stock_entry_no
+    ).then((response) => {
+      // dispatch(getStockEntryNo(stock_entry_no));
+      dispatch(getStockEntryNo(mssr));
 
-	const setValidationStatus = async (item) => {
-        let stock_entry_no = item.mssr_entry_no;
-        let cur_status_code = item.status_code
-		const { value: remark } = await Swal.fire({
-      title:"Enter Validarion Remark ",
-			input: "text",
-			inputPlaceholder: "Please Enter Remark",
-		});
-		if (remark) {
-			await MssrService.setValidationStatus(userProfile, stock_entry_no, cur_status_code, remark.toUpperCase()).then(
-				(response) => {
-					Swal.fire(response.data.data.message);
-					// handleStatus()
-					// window.location.reload(true)
-				}
-			);
-			navigate("/dashboard");
-		}
-	};
-	const selectedPageNumber = (pageNo) =>{
-		dispatch(selectedPagesNumber(pageNo));
-	}
-	return (
+      dispatch(getViewMssrDetailsLines(response.data.data.stock_line_details));
+    });
+    // getViewOrderDetails()
+    // AXIOS WRAPPER FOR API CAL
+  };
+
+  const setValidationStatus = async (item) => {
+    let stock_entry_no = item.mssr_entry_no;
+    let cur_status_code = item.status_code;
+    const { value: remark } = await Swal.fire({
+      title: "Enter Validarion Remark ",
+      input: "text",
+      inputPlaceholder: "Please Enter Remark",
+    });
+    if (remark) {
+      await MssrService.setValidationStatus(
+        userProfile,
+        stock_entry_no,
+        cur_status_code,
+        remark.toUpperCase()
+      ).then((response) => {
+        Swal.fire(response.data.data.message);
+        // handleStatus()
+        // window.location.reload(true)
+      });
+      navigate("/dashboard");
+    }
+  };
+  const selectedPageNumber = (pageNo) => {
+    dispatch(selectedPagesNumber(pageNo));
+  };
+
+  const downloadPDF = async(mssr) => {
+
+    setLoadingItems((prevLoadingItems) => [...prevLoadingItems, mssr]);
+
+    const filePath = mssr.download_path;
+    const fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
+    const fileUrl = `${baseURL}/dashboard/downloadFile/test.pdf`;
+    // const fileUrl = `${baseURL}/dashboard/downloadFile/${fileName}`;
+    console.log("fileName : ", fileName)
+
+   await fetch(fileUrl,{
+      method: 'GET', 
+      headers: {
+      //   'Content-Type': 'application/json', // Replace with the desired content type
+      //   'Authorization': `Bearer ${userProfile.token}`, // Replace with your actual authorization token
+      // Add any additional headers as needed
+      },
+      })
+      .then(response => response.blob())
+      .then(blob => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      // link.download = `${fileName}`;
+      link.download = `test.pdf`;
+      link.click();
+      URL.revokeObjectURL(url);
+      })
+      .catch(error => {
+      console.error('Error downloading file:', error);
+      });
+      setLoadingItems((prevLoadingItems) =>
+      prevLoadingItems.filter((loadingItem) => loadingItem !== mssr)
+    );
+    };
+
+  return (
     <>
       {/* {viewOrder && !isEmptyObject(viewOrder.viewMssrFilter) && ( */}
       {viewMssrFilter && viewMssrFilter !== null && (
@@ -76,19 +131,19 @@ function MssrViewOrderTable({handleStatus}) {
               >
                 <thead>
                   <tr>
-                    <th>Mssr Entry No</th>
-                    <th>Customer Code</th>
-
-                   <th>Customer Name</th>
-                   
-                    <th style={{ minWidth: "120px" }}>Ui Status</th>
+                    <th style={{ textAlign: "center" }}>MSSR Entry No</th>
+                    <th style={{ textAlign: "center" }}>Customer Code</th>
+                    <th style={{ textAlign: "center" }}>Customer Name</th>
+                    <th style={{ textAlign: "center" }}>Pending with</th>
+                    <th style={{ minWidth: "120px" }}>Status</th>
+                    <th style={{ minWidth: "120px" }}>Download</th>
                   </tr>
                 </thead>
                 <tbody>
                   {viewMssrFilter &&
                     viewMssrFilter.map((mssr, index) => (
                       <tr key={index}>
-                        <td >
+                        <td>
                           <a
                             onClick={() => getOrderLines(mssr)}
                             className="text-green"
@@ -101,34 +156,58 @@ function MssrViewOrderTable({handleStatus}) {
                           </a>
                         </td>
                         <td className="text-nowrap">{mssr.customer_code}</td>
-                      
+
                         <td style={{ textAlign: "center" }}>
-                         {mssr.customer_name}
+                          {mssr.customer_name}
+                        </td>
+
+                        <td style={{ textAlign: "left" }}>
+                          {Number(mssr.status_code) < 2 ? (
+                            <>{mssr.approver_name}</>
+                          ) : (
+                            ""
+                          )}
                         </td>
 
                         <td>
-                          { mssr.status_code === "3" ? (        //profile_details.user_id !== mssr.created_by_uid ||
-                            <span className="text-danger text-nowrap">
-                            {mssr.ui_status}
-                          </span>
-                          ) : (
+                          {profile_details.user_id == mssr.approver_uid &&
+                          Number(mssr.status_code) < 2 ? (
                             <div>
-                            <button
-                            title="validate"
-                              data-dismiss="modal"
-                              aria-label="Close"
-                              className="btn btn-dash-primary btn-sm mr-1"
-                              onClick={() => setValidationStatus(mssr)}
-                            >
-                              <i
-                                className="fa-solid fa-pen"
-                                aria-hidden="true"
-                              ></i>
-                            </button>
-                          </div>
-                            
-                            
+                              <button
+                                title="validate"
+                                data-dismiss="modal"
+                                aria-label="Close"
+                                className="btn btn-dash-primary btn-sm mr-1"
+                                onClick={() => setValidationStatus(mssr)}
+                              >
+                                <i
+                                  className="fa fa-check"
+                                  style={{ color: "green" }}
+                                  aria-hidden="true"
+                                ></i>
+                              </button>
+                            </div>
+                          ) : (
+                            <span className="text-danger text-nowrap">
+                              {mssr.ui_status}
+                            </span>
                           )}
+                        </td>
+
+                        <td>
+                          {loadingItems.includes(mssr) ?
+                            <i
+                              class="fa fa-spinner fa-spin"
+                              style={{ fontSize: "24px", color:"red" }}
+                            ></i>
+                            :
+                            <i
+                            onClick={() => downloadPDF(mssr)}
+                            className="fa fa-download"
+                            style={{ fontSize: "24px", color: "green" }}
+                            aria-hidden="true"
+                          ></i>
+                          }
                         </td>
                       </tr>
                     ))}
@@ -175,7 +254,7 @@ function MssrViewOrderTable({handleStatus}) {
                 </ul>
               </nav> */}
             </div>
-            <MssrViewOrderModel id="viewmssrorderpop"/>
+            <MssrViewOrderModel id="viewmssrorderpop" />
           </div>
         </div>
       )}

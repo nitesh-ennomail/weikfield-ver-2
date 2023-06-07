@@ -1,7 +1,9 @@
-          import { useState } from "react";
+          import { useEffect, useState } from "react";
           import { useSelector } from "react-redux";
           import MssrService from "../../axios/services/api/mssr";
           import { useNavigate } from "react-router-dom";
+
+          import {maxLengthCheck} from "../../pages/pages/utils/maxLengthInput"
 
           import Swal from "sweetalert2";
           const ViewOrderModel = ({ id }) => {
@@ -14,6 +16,37 @@
             const [damageQtyData, setDamageQtyData] = useState([]);
             const [inputData, setInputData] = useState([]);
 
+            ////////
+	const [saveMssrData, setSaveMssrData] = useState([]);
+
+
+            const setReset = () =>{
+              console.log("setSaveMssrData", saveMssrData)
+
+              // setQtySaleableData([]);
+              // setReturnQtyData([]);
+              // setDamageQtyData([])
+            }
+         
+
+            const handleQtyChange = (e, mssr, field) =>{
+              const qtySaleable = document.getElementById(
+                `saleableStockQty-${mssr.item_code}`
+              );
+
+              if(field === "qtySaleable"){
+              setSaveMssrData((getViewStockDetailsLines) =>
+              getViewStockDetailsLines.map((data) =>
+                mssr.item_code === data.item_code
+                  ? { ...data, cls_stk_qty_saleable: e.target.value }
+                  : data
+              )
+            );
+            }
+            }
+
+            //////////
+            
             const handleInputChange = (e, index, field) => {
               const { value } = e.target;
               if (field === "qtySaleable") {
@@ -38,8 +71,7 @@
             };
             const handleSubmit = async () => {
               // const stock_entry_no="CS2300042";
-              const stock_entry_no = getStockEntryNO;
-              
+              const stock_entry_no  = getStockEntryNO.mssr_entry_no;
               const newInputData = getViewStockDetailsLines.map((mssr, index) => ({
                 itemCode: mssr.item_code,
                 qtySaleable: qtySaleableData[index],
@@ -50,38 +82,31 @@
                  item.damageQty !== undefined);
             
               if (newInputData.length > 0) {
-                console.log("if condition is running ");
-                await MssrService.getUpdateStockDetails(userProfile, stock_entry_no, newInputData)
-                  .then((response) => {
-                    Swal.fire({
-                      title: `${response.data.data.message}`,
-                      text: `${response.data.data.add_message}`,
-                      showCancelButton: false,
-                      showCloseButton: false,
-                      confirmButtonColor: "#3085d6",
-                      confirmButtonText: "OK",
-                      customClass: {
-                        confirmButton: "your-custom-class",
-                      },
-                    }).then((result) => {
-                      if (result.isConfirmed) {
-                        const closeButton = document.querySelector(".close");
-                        if (closeButton) {
-                          closeButton.click();
-                        }
-                      }
-                    },
+                console.log("if condition is running ==");
+                // await MssrService.getUpdateStockDetails(userProfile, stock_entry_no, newInputData)
+                //   .then((response) => {
+                //     Swal.fire({
+                //       title: `${response.data.data.message}`,
+                //       text: `${response.data.data.add_message}`,
+                //       showCancelButton: false,
+                //       showCloseButton: false,
+                //       confirmButtonColor: "#3085d6",
+                //       confirmButtonText: "OK",
+                //       customClass: {
+                //         confirmButton: "your-custom-class",
+                //       },
+                //     }).then((result) => {
+                //       if (result.isConfirmed) {
+                //         const closeButton = document.querySelector(".close");
+                //         if (closeButton) {
+                //           closeButton.click();
+                //         }
+                //       }
+                //     },
                    
-                    );
-                  });
-                  // navigate("/vieworder") 
+                //     );
+                //   });
                 setInputData(newInputData);
-                // set all input field empty 
-                // setQtySaleableData([])
-                // setReturnQtyData([])
-                // setDamageQtyData([])
-            
-                // Do something with the input data
                 console.log("Array of output", newInputData);
               } else {
                 Swal.fire({
@@ -104,18 +129,20 @@
                 role="dialog"
                 aria-labelledby="exampleModalLabel"
                 aria-hidden="true"
+                data-backdrop="static"
               >
                 <div className="modal-dialog modal-lg" role="document">
                   <div className="modal-content">
                     <div className="modal-header">
                       <h5 className="modal-title" id="exampleModalLabel">
-                        Mssr View Order Details
+                        View MSSR Line Details
                       </h5>
                       <button
                         className="close"
                         type="button"
                         data-dismiss="modal"
                         aria-label="Close"
+                        onClick={setReset}
                       >
                         {" "}
                         <span aria-hidden="true">×</span>{" "}
@@ -135,10 +162,14 @@
                             <tr>
                               <th style={{ minWidth: "100px" }}>Item Code</th>
                               <th style={{ minWidth: "280px" }}>Item Name</th>
-                              <th style={{ minWidth: "100px" }}>Stock Qty Saleable</th>
-                              <th style={{ minWidth: "100px" }}>Market Return Qty</th>
-                              <th>Damage Qty</th>
-                              <th>Ui Status</th>
+                              <th style={{ minWidth: "100px" }}>
+                                Saleable Stock Qty{" "}
+                              </th>
+                              <th style={{ minWidth: "100px" }}>
+                                Market Return Qty
+                              </th>
+                              <th>Expiry Qty</th>
+                              <th>Status</th>
                             </tr>
                           </thead>
 
@@ -154,7 +185,11 @@
                                       type="number"
                                       placeholder={mssr.cls_stk_qty_saleable}
                                       onChange={(e) =>
-                                        handleInputChange(e, index, "qtySaleable")
+                                        handleInputChange(
+                                          e,
+                                          index,
+                                          "qtySaleable"
+                                        )
                                       }
                                     />
                                   </td>
@@ -189,35 +224,87 @@
                           getViewStockDetailsLines.map((mssr, index) => (
                             <div className="cart-prod-div" key={index}>
                               <div className="cart-prod-desc">
-                                <span className="cart-prod-lbl">Item Code : </span>
-                                <span className="cart-prod-val">{mssr.item_code}</span>
-                              </div>
-                              <div className="cart-prod-desc">
-                                <span className="cart-prod-lbl">Item Name : </span>
-                                <span className="cart-prod-val">{mssr.item_name}</span>
+                                <span className="cart-prod-lbl">
+                                  Item Code :{" "}
+                                </span>
+                                <span className="cart-prod-val">
+                                  {mssr.item_code}
+                                </span>
                               </div>
                               <div className="cart-prod-desc">
                                 <span className="cart-prod-lbl">
-                                  Stock Qty Saleable:{" "}
+                                  Item Name :{" "}
+                                </span>
+                                <span className="cart-prod-val">
+                                  {mssr.item_name}
+                                </span>
+                              </div>
+                              <div className="cart-prod-desc pt-1">
+                                <span className="cart-prod-lbl">
+                                  Saleable Stock Qty :{" "}
                                 </span>
                                 <span className="cart-prod-val">
                                   <input
+                                    disabled={
+                                      getStockEntryNO && getStockEntryNO.status_code == 0
+                                        ? false
+                                        : true
+                                    }
+                                    id={`saleableStockQty-${mssr.item_code}`}
+                                    style={{ textAlign: "right" }}
+                                    min={0}
+                                    maxLength="3"
+                                    onInput={maxLengthCheck}
                                     type="number"
-                                    placeholder="Enter Qty Saleable"
+                                    className="qty-ctl"
+                                    step="1"
+                                    defaultValue={mssr.cls_stk_qty_saleable}
+                                    onKeyPress={(event) => {
+                                      if (
+                                        event.charCode < 48 ||
+                                        event.charCode > 58
+                                      ) {
+                                        event.preventDefault();
+                                      }
+                                    }}
                                     onChange={(e) =>
                                       handleInputChange(e, index, "qtySaleable")
                                     }
+                                    // onChange ={(e)=>handleQtyChange(e,mssr,"qtySaleable")}
+
                                   />
                                 </span>
                               </div>
-                              <div className="cart-prod-desc">
-                                <span className="cart-prod-lbl">
+                              <div className="cart-prod-desc pt-1">
+                                <span
+                                  className="cart-prod-lbl"
+                                  style={{ width: "180px" }}
+                                >
                                   Market Return Qty :{" "}
                                 </span>
                                 <span className="cart-prod-val">
                                   <input
+                                    disabled={
+                                      getStockEntryNO && getStockEntryNO.status_code == 0
+                                        ? false
+                                        : true
+                                    }
+                                    style={{ textAlign: "right" }}
+                                    min={0}
+                                    maxLength="3"
+                                    onInput={maxLengthCheck}
                                     type="number"
-                                    placeholder="Enter Return Qty"
+                                    className="qty-ctl"
+                                    step="1"
+                                    placeholder={mssr.market_return_qty}
+                                    onKeyPress={(event) => {
+                                      if (
+                                        event.charCode < 48 ||
+                                        event.charCode > 58
+                                      ) {
+                                        event.preventDefault();
+                                      }
+                                    }}
                                     onChange={(e) =>
                                       handleInputChange(e, index, "returnQty")
                                     }
@@ -225,12 +312,35 @@
                                 </span>
                               </div>
 
-                              <div className="cart-prod-desc">
-                                <span className="cart-prod-lbl">Damage Qty : </span>
-                                <span className="cart-prod-val">
-                                  <input
+                              <div className="cart-prod-desc pt-1">
+                                <span className="cart-prod-lbl">
+                                  Expiry Qty :{" "}
+                                </span>
+                                <span
+                                  className="cart-prod-val"
+                                  style={{ marginLeft: "47px" }}
+                                ><input
+                                    disabled={
+                                      getStockEntryNO && getStockEntryNO.status_code == 0
+                                        ? false
+                                        : true
+                                    }
+                                    style={{ textAlign: "right" }}
+                                    min={0}
+                                    maxLength="3"
+                                    onInput={maxLengthCheck}
                                     type="number"
-                                    placeholder="Enter Damage Qty"
+                                    className="qty-ctl"
+                                    step="1"
+                                    placeholder={mssr.cls_stk_qty_damage}
+                                    onKeyPress={(event) => {
+                                      if (
+                                        event.charCode < 48 ||
+                                        event.charCode > 58
+                                      ) {
+                                        event.preventDefault();
+                                      }
+                                    }}
                                     onChange={(e) =>
                                       handleInputChange(e, index, "damageQty")
                                     }
@@ -239,8 +349,10 @@
                               </div>
 
                               <div className="cart-prod-desc">
-                                <span className="cart-prod-lbl">Ui Status : </span>
-                                <span className="cart-prod-val">{mssr.ui_status}</span>
+                                <span className="cart-prod-lbl">Status : </span>
+                                <span className="cart-prod-val">
+                                  {mssr.ui_status}
+                                </span>
                               </div>
                             </div>
                           ))}
@@ -252,7 +364,7 @@
                         className="btn btn-primary  btn-md"
                         onClick={handleSubmit}
                       >
-                        <i className="fa-solid fa-check mr-2"></i> Submit
+                        <i className="fa-solid fa-check mr-2"></i> Save
                       </button>
                       {/*<button type="reset" className="btn btn-danger btn-md">
                         <i className="fa-solid fa-xmark mr-2"></i> Reject
